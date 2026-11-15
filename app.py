@@ -18,14 +18,59 @@ import stats_engine as sc
 st.set_page_config(page_title="StatCalc – Analisis Statistika", page_icon="📊", layout="wide")
 TPL = "plotly_white"
 
-st.markdown(
-    """
-    <style>
-    div[data-testid="stMetric"] {background:rgba(120,120,120,.08); padding:12px 16px; border-radius:10px;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+COLORS = ["#0F766E", "#4F46E5", "#F59E0B", "#EF4444", "#06B6D4", "#8B5CF6", "#16A34A", "#EC4899"]
+
+CSS = """<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
+html, body, .stApp, [data-testid="stSidebar"] {font-family:'Source Sans 3','Source Sans Pro',sans-serif;}
+.stApp {background:linear-gradient(135deg,#EAF1FF 0%,#F2F8F6 48%,#FFF6E9 100%); background-attachment:fixed;}
+header[data-testid="stHeader"] {background:transparent;}
+.block-container {padding-top:2rem; padding-bottom:3rem; max-width:1400px;}
+section[data-testid="stSidebar"] {background:linear-gradient(180deg,#F8FBFF 0%,#EDF7F4 100%); border-right:1px solid #DCE7F0;}
+section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
+.brand {font-size:1.55rem; font-weight:800; color:#0F2A43; margin-top:4px;}
+.brand-sub {color:#64748B; font-size:.95rem; margin:2px 0 6px;}
+.badge {display:inline-block; background:#CCF3EA; color:#0F766E; font-weight:800; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding:7px 14px; border-radius:10px; margin:16px 0 8px;}
+.hero {position:relative; overflow:hidden; border-radius:28px; padding:36px 44px 28px; margin-bottom:22px; color:#fff; background:radial-gradient(circle at 88% 18%,rgba(45,212,191,.55),transparent 45%),linear-gradient(120deg,#16306B 0%,#1E3A8A 50%,#0F766E 100%); box-shadow:0 18px 40px rgba(30,58,138,.22);}
+.hero-chip {display:inline-block; border:1px solid rgba(94,234,212,.65); color:#5EEAD4; background:rgba(255,255,255,.08); font-weight:800; font-size:.72rem; letter-spacing:.2em; padding:7px 16px; border-radius:999px;}
+.hero h1 {color:#fff; font-size:2.4rem; font-weight:800; margin:16px 0 10px; padding:0; line-height:1.15;}
+.hero p {color:#DCE8FF; font-size:1.05rem; line-height:1.65; max-width:920px; margin:0 0 16px;}
+.hero-tags span {display:inline-block; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.32); color:#fff; font-weight:700; font-size:.82rem; padding:7px 16px; border-radius:999px; margin:0 8px 8px 0;}
+div[data-testid="stMetric"] {background:linear-gradient(180deg,#FFFFFF 0%,#F4FBF9 100%); border:1px solid #E3ECF3; border-top:4px solid #0F766E; border-radius:16px; padding:14px 18px; box-shadow:0 6px 18px rgba(15,42,67,.07);}
+div[data-testid="stColumn"]:nth-child(2) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(2) div[data-testid="stMetric"] {border-top-color:#4F46E5;}
+div[data-testid="stColumn"]:nth-child(3) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(3) div[data-testid="stMetric"] {border-top-color:#16A34A;}
+div[data-testid="stColumn"]:nth-child(4) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(4) div[data-testid="stMetric"] {border-top-color:#F59E0B;}
+div[data-testid="stColumn"]:nth-child(5) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(5) div[data-testid="stMetric"] {border-top-color:#8B5CF6;}
+div[data-testid="stColumn"]:nth-child(6) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(6) div[data-testid="stMetric"] {border-top-color:#06B6D4;}
+[data-testid="stMetricLabel"] p {text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:800; color:#0F766E;}
+[data-testid="stMetricValue"] {color:#0B3B4C; font-weight:800; font-size:1.65rem;}
+.stTabs [data-baseweb="tab-list"] {gap:8px; border-bottom:none; flex-wrap:wrap;}
+.stTabs [data-baseweb="tab"] {background:rgba(255,255,255,.8); border:1px solid #DCE7F0; border-radius:999px; padding:8px 18px; height:auto; font-weight:700; color:#334155;}
+.stTabs [aria-selected="true"] {background:linear-gradient(120deg,#0F766E,#0E9AA7); border-color:transparent;}
+.stTabs [aria-selected="true"] p {color:#fff !important;}
+.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {display:none;}
+div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #E3ECF3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(15,42,67,.06);}
+div[data-testid="stDataFrame"] {border:1px solid #E3ECF3; border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(15,42,67,.05);}
+div[data-testid="stAlert"] {border-radius:14px;}
+div[data-testid="stExpander"] {background:#fff; border:1px solid #E3ECF3; border-radius:14px;}
+.stDownloadButton button {background:linear-gradient(120deg,#0F766E,#0E9AA7); color:#fff; border:none; border-radius:12px; font-weight:700; padding:.6rem 1.3rem;}
+.stDownloadButton button:hover {filter:brightness(1.07); color:#fff;}
+h2, h3 {color:#0F2A43; font-weight:800;}
+</style>"""
+st.markdown(CSS, unsafe_allow_html=True)
+
+
+def badge(text):
+    st.sidebar.markdown(f'<div class="badge">{text}</div>', unsafe_allow_html=True)
+
+
+def hero(title, desc, tags):
+    chips = "".join(f"<span>{t}</span>" for t in tags)
+    st.markdown(
+        f'<div class="hero"><span class="hero-chip">KALKULATOR STATISTIKA</span>'
+        f"<h1>{title}</h1><p>{desc}</p><div class=\"hero-tags\">{chips}</div></div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -39,7 +84,9 @@ def show_df(df, **kw):
 
 
 def show_plot(fig, key):
-    fig.update_layout(template=TPL, margin=dict(l=40, r=20, t=60, b=40))
+    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=40, r=20, t=60, b=40),
+                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                      font=dict(family="Source Sans 3, sans-serif", color="#0F2A43"))
     try:
         st.plotly_chart(fig, width="stretch", key=key)
     except Exception:
@@ -106,6 +153,7 @@ def residual_plots(fitted, resid, prefix):
 # Input data
 # ----------------------------------------------------------------------------
 def load_data(key):
+    badge("2 · Data")
     src = st.sidebar.radio("Sumber data", ["Data contoh", "Unggah file (CSV/Excel)", "Input manual"], key="src")
     if src == "Data contoh":
         return sc.sample_data(key), "contoh"
@@ -154,7 +202,7 @@ def page_regression(df, alpha):
         st.error("Dibutuhkan minimal 2 kolom numerik untuk regresi.")
         return
 
-    st.sidebar.subheader("⚙️ Variabel")
+    badge("3 · Variabel")
     y = st.sidebar.selectbox("Variabel dependen (Y)", num, index=len(num) - 1, key=f"reg_y_{sig}")
     x_opts = [c for c in num if c != y]
     xs = st.sidebar.multiselect("Variabel independen (X)", x_opts, default=x_opts, key=f"reg_x_{y}_{sig}")
@@ -351,7 +399,7 @@ def page_anova(df, alpha, kind):
     num = sc.numeric_cols(df)
     cols = list(df.columns)
     sig = str(abs(hash(tuple(map(str, df.columns)))))
-    st.sidebar.subheader("⚙️ Variabel")
+    badge("3 · Variabel")
     blk = None
     if kind == "ral":
         trt = st.sidebar.selectbox("Kolom perlakuan", cols, index=0, key=f"ral_trt_{sig}")
@@ -496,7 +544,7 @@ def page_anova(df, alpha, kind):
                 show_plot(fi, "rak_inter")
             with c4:
                 fh = px.imshow(R["matrix"].round(3), text_auto=True, aspect="auto",
-                               color_continuous_scale="Viridis",
+                               color_continuous_scale="Tealgrn",
                                labels=dict(x=trt, y=blk, color=resp), title="Heatmap Kelompok × Perlakuan")
                 show_plot(fh, "rak_heat")
         residual_plots(d["Fitted"], d["Galat"], kind)
@@ -530,10 +578,9 @@ def page_anova(df, alpha, kind):
 # Main
 # ----------------------------------------------------------------------------
 def main():
-    st.title("📊 StatCalc – Dashboard Analisis Statistika")
-    st.caption("Pilih analisis, masukkan data, lalu lihat ringkasan, tabel, dan visualisasinya.")
-
-    st.sidebar.header("🧮 Pengaturan")
+    st.sidebar.markdown('<div class="brand">📊 StatCalc</div><div class="brand-sub">Kalkulator analisis statistika</div>',
+                        unsafe_allow_html=True)
+    badge("1 · Analisis")
     choice = st.sidebar.radio(
         "Jenis analisis",
         ["Regresi Linear", "Rancangan Acak Lengkap (RAL)", "Rancangan Acak Kelompok (RAK)"],
@@ -541,6 +588,23 @@ def main():
     )
     key = {"Regresi Linear": "reg", "Rancangan Acak Lengkap (RAL)": "ral", "Rancangan Acak Kelompok (RAK)": "rak"}[choice]
     alpha = st.sidebar.select_slider("Taraf nyata (α)", options=[0.01, 0.05, 0.10], value=0.05, key="alpha")
+
+    heroes = {
+        "reg": ("Analisis Regresi Linear",
+                "Ukur hubungan antara variabel independen (X) dan variabel dependen (Y): persamaan regresi, uji F dan uji t, "
+                "R², uji asumsi klasik, hingga kalkulator prediksi. Hasil langsung berubah saat Anda mengubah data atau variabel di panel kiri.",
+                ["OLS", "Sederhana & berganda", "Uji asumsi klasik"]),
+        "ral": ("Rancangan Acak Lengkap (RAL)",
+                "Analisis ragam satu faktor untuk percobaan dengan satuan percobaan yang homogen: tabel ANOVA, koefisien keragaman, "
+                "uji lanjut bernotasi huruf, dan uji asumsi. Hasil langsung berubah saat Anda mengubah data di panel kiri.",
+                ["ANOVA satu arah", "DMRT · BNJ · BNT", "Uji asumsi"]),
+        "rak": ("Rancangan Acak Kelompok (RAK)",
+                "Analisis ragam dengan pengelompokan untuk mengendalikan keragaman lingkungan: ANOVA perlakuan dan kelompok, "
+                "efisiensi relatif terhadap RAL, serta uji lanjut bernotasi huruf. Hasil langsung berubah saat Anda mengubah data di panel kiri.",
+                ["ANOVA dua arah tanpa interaksi", "DMRT · BNJ · BNT", "Efisiensi relatif"]),
+    }
+    h = heroes[key]
+    hero(h[0], h[1], h[2] + [f"Taraf nyata α = {alpha}"])
 
     df, src = load_data(key)
     if df is None:
