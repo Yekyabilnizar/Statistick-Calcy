@@ -29,63 +29,82 @@ header[data-testid="stHeader"] *, [data-testid="stToolbar"] * {color:#475569 !im
 .block-container {padding-top:2rem; padding-bottom:3rem; max-width:1400px;}
 section[data-testid="stSidebar"] {background:linear-gradient(180deg,#F5F9FF 0%,#E6F0FC 100%); border-right:1px solid #CFE0F3;}
 section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
-/* ---- warna teks dasar (tetap terbaca walau tema gelap) ---- */
+/* ---------- teks dasar ---------- */
 .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp p, .stApp li, .stApp label,
 .stApp [data-testid="stWidgetLabel"] p, .stApp [data-testid="stCaptionContainer"] p,
 .stApp [data-testid="stRadio"] label p, .stApp [data-testid="stCheckbox"] label p {color:#0F2A43 !important;}
 .stApp [data-testid="stCaptionContainer"] p {color:#52667D !important;}
-.stApp h2, .stApp h3 {font-weight:800;}
-/* ---- sidebar brand & badge ---- */
+.stApp h3 {font-weight:800; font-size:1.3rem; border-left:5px solid #2563EB; padding-left:12px; line-height:1.3; margin-top:10px;}
+.stApp [data-testid="stRadio"] label:has(input:checked) > div:first-child {background-color:#1D4ED8 !important; border-color:#1D4ED8 !important;}
+.stApp [data-testid="stCheckbox"] label:has(input:checked) > span:first-child {background-color:#1D4ED8 !important; border-color:#1D4ED8 !important;}
+/* ---------- sidebar ---------- */
 .stApp .brand {font-size:1.55rem; font-weight:800; color:#0F2A43 !important; margin-top:4px;}
 .stApp .brand-sub {color:#52667D !important; font-size:.95rem; margin:2px 0 6px;}
 .stApp .badge {display:inline-block; background:#CFE6FF; color:#1D4ED8 !important; font-weight:800; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding:7px 14px; border-radius:10px; margin:16px 0 8px;}
-/* ---- hero ---- */
+/* ---------- hero ---------- */
 .stApp .hero {position:relative; overflow:hidden; border-radius:28px; padding:36px 44px 28px; margin-bottom:22px; background:radial-gradient(circle at 88% 18%,rgba(45,212,191,.50),transparent 45%),linear-gradient(120deg,#16306B 0%,#1E40AF 50%,#0F8A8A 100%); box-shadow:0 18px 40px rgba(30,64,175,.22);}
 .stApp .hero .hero-chip {display:inline-block; border:1px solid rgba(94,234,212,.65); color:#5EEAD4 !important; background:rgba(255,255,255,.08); font-weight:800; font-size:.72rem; letter-spacing:.2em; padding:7px 16px; border-radius:999px;}
-.stApp .hero h1 {color:#fff !important; font-size:2.4rem; font-weight:800; margin:16px 0 10px; padding:0; line-height:1.15;}
+.stApp .hero h1 {color:#fff !important; font-size:2.4rem; font-weight:800; margin:16px 0 10px; padding:0; line-height:1.15; border:none;}
 .stApp .hero p {color:#DCE8FF !important; font-size:1.05rem; line-height:1.65; max-width:920px; margin:0 0 16px;}
 .stApp .hero .hero-tags span {display:inline-block; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.35); color:#fff !important; font-weight:700; font-size:.82rem; padding:7px 16px; border-radius:999px; margin:0 8px 8px 0;}
-/* ---- kartu metrik ---- */
-div[data-testid="stMetric"] {background:#FFFFFF; border:1px solid #D5E3F3; border-top:4px solid #2563EB; border-radius:16px; padding:14px 18px; box-shadow:0 6px 18px rgba(30,64,120,.08);}
-div[data-testid="stColumn"]:nth-child(2) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(2) div[data-testid="stMetric"] {border-top-color:#0F766E;}
-div[data-testid="stColumn"]:nth-child(3) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(3) div[data-testid="stMetric"] {border-top-color:#7C3AED;}
-div[data-testid="stColumn"]:nth-child(4) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(4) div[data-testid="stMetric"] {border-top-color:#F59E0B;}
-div[data-testid="stColumn"]:nth-child(5) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(5) div[data-testid="stMetric"] {border-top-color:#EC4899;}
-div[data-testid="stColumn"]:nth-child(6) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(6) div[data-testid="stMetric"] {border-top-color:#06B6D4;}
-.stApp [data-testid="stMetricLabel"] p {text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:800; color:#1D4ED8 !important;}
-.stApp [data-testid="stMetricValue"], .stApp [data-testid="stMetricValue"] * {color:#0B2545 !important; font-weight:800; font-size:1.6rem;}
-/* ---- tab ---- */
-.stTabs [data-baseweb="tab-list"] {gap:8px; border-bottom:none !important; flex-wrap:wrap;}
+/* ---------- kartu KPI ---------- */
+.kpi-grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:14px; margin:6px 0 18px;}
+.kpi {background:#fff; border:1px solid #D5E3F3; border-top:4px solid #2563EB; border-radius:16px; padding:14px 18px; box-shadow:0 6px 18px rgba(30,64,120,.08);}
+.kpi.k1 {border-top-color:#0F766E;} .kpi.k2 {border-top-color:#7C3AED;} .kpi.k3 {border-top-color:#F59E0B;} .kpi.k4 {border-top-color:#EC4899;} .kpi.k5 {border-top-color:#06B6D4;}
+.stApp .kpi-l {text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:800; color:#1D4ED8 !important;}
+.stApp .kpi-v {color:#0B2545 !important; font-size:1.65rem; font-weight:800; margin-top:4px; line-height:1.2;}
+/* ---------- kartu interpretasi, persamaan, notifikasi ---------- */
+.card {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:18px 26px; box-shadow:0 6px 18px rgba(30,64,120,.07); margin:8px 0 16px;}
+.stApp .card-title {font-size:1.12rem; font-weight:800; color:#0F2A43 !important; margin-bottom:8px;}
+.card ul {margin:0; padding-left:20px;}
+.stApp .card li {color:#1E3A52 !important; line-height:1.7; margin:5px 0;}
+.stApp .card li b {color:#0B2545 !important;}
+.eq {background:linear-gradient(120deg,#EAF2FF,#F5F9FF); border:1px solid #C9DCF3; border-left:5px solid #2563EB; border-radius:14px; padding:14px 22px; margin:6px 0 16px;}
+.stApp .eq-l {text-transform:uppercase; letter-spacing:.1em; font-size:.72rem; font-weight:800; color:#1D4ED8 !important;}
+.stApp .eq-v {font-family:ui-monospace,Menlo,Consolas,monospace; color:#0B2545 !important; font-size:1.05rem; font-weight:600; margin-top:4px; word-break:break-word;}
+.notice {display:flex; gap:12px; align-items:flex-start; border-radius:14px; padding:13px 18px; margin:8px 0 14px; border:1px solid; font-size:.98rem; line-height:1.55;}
+.stApp .notice.info, .stApp .notice.info * {color:#16325C !important;}
+.stApp .notice.success, .stApp .notice.success * {color:#14452B !important;}
+.stApp .notice.warning, .stApp .notice.warning * {color:#5B4200 !important;}
+.stApp .notice.error, .stApp .notice.error * {color:#6B1D1D !important;}
+.notice.info {background:#E6F0FF; border-color:#BCD3F2;} .notice.success {background:#E3F6EC; border-color:#B7E4CB;}
+.notice.warning {background:#FFF4DA; border-color:#F2D98F;} .notice.error {background:#FFE7E7; border-color:#F2B8B8;}
+.stApp .sc-pre {background:#F3F8FF; border:1px solid #D5E3F3; border-radius:12px; padding:14px 16px; overflow:auto; color:#0F2A43 !important; font-size:.82rem; line-height:1.45; max-height:520px;}
+/* ---------- tab ---------- */
+.stTabs [data-baseweb="tab-list"], .stApp [role="tablist"] {gap:8px; border-bottom:none !important; box-shadow:none !important; flex-wrap:wrap;}
 .stApp .stTabs [data-baseweb="tab"] {background:rgba(255,255,255,.85); border:1px solid #CFE0F3; border-radius:999px; padding:8px 18px; height:auto; font-weight:700;}
 .stApp .stTabs [data-baseweb="tab"] p {color:#334E68 !important; font-weight:700;}
-.stApp .stTabs [aria-selected="true"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border-color:transparent;}
+.stApp .stTabs [aria-selected="true"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border-color:transparent; box-shadow:none !important;}
 .stApp .stTabs [aria-selected="true"] p {color:#fff !important;}
-.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
-/* ---- grafik & kartu ---- */
+[data-baseweb="tab-highlight"], [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
+/* ---------- grafik, expander ---------- */
 div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(30,64,120,.07);}
 div[data-testid="stExpander"] {background:#fff; border:1px solid #D5E3F3; border-radius:14px;}
 .stApp [data-testid="stExpander"] summary p, .stApp [data-testid="stExpander"] summary span {color:#0F2A43 !important;}
-.stApp [data-testid="stCode"] {border:1px solid #D5E3F3; border-radius:12px; overflow:hidden;}
-.stApp [data-testid="stCode"] pre, .stApp [data-testid="stCode"] code {background:#F3F8FF !important; color:#0F2A43 !important;}
-/* ---- notifikasi ---- */
-div[data-testid="stAlert"] {border-radius:14px; border:1px solid #BFD6F2; background:#E8F1FF;}
-div[data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) {background:#E3F6EC; border-color:#B7E4CB;}
-div[data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) {background:#FFF4DA; border-color:#F5DDA0;}
-div[data-testid="stAlert"]:has([data-testid="stAlertContentError"]) {background:#FFE7E7; border-color:#F5B8B8;}
-.stApp div[data-testid="stAlert"] p, .stApp div[data-testid="stAlert"] li, .stApp div[data-testid="stAlert"] strong {color:#16325C !important;}
-/* ---- input & dropdown ---- */
-.stApp div[data-baseweb="select"] > div, .stApp div[data-baseweb="input"], .stApp div[data-baseweb="base-input"] {background:#fff !important; border-color:#C5D7EC !important; border-radius:10px !important;}
-.stApp div[data-baseweb="select"] *, .stApp input, .stApp textarea {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
-.stApp span[data-baseweb="tag"], .stApp span[data-baseweb="tag"] * {background:#1D4ED8 !important; color:#fff !important; -webkit-text-fill-color:#fff;}
-div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li, div[data-baseweb="menu"] {background:#fff !important; color:#0F2A43 !important;}
-div[data-baseweb="popover"] li:hover {background:#E4EFFC !important;}
+/* ---------- input, dropdown ---------- */
+.stApp div[data-baseweb="select"] {background:#fff !important; border:1px solid #BFD1E8 !important; border-radius:10px !important;}
+.stApp div[data-baseweb="select"] div {background:transparent !important; border-color:transparent !important;}
+.stApp div[data-baseweb="select"] * {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
+.stApp div[data-baseweb="select"] svg {fill:#52667D !important;}
+.stApp div[data-baseweb="select"] span[data-baseweb="tag"] {background:#1D4ED8 !important; border-radius:8px !important;}
+.stApp div[data-baseweb="select"] span[data-baseweb="tag"] * {color:#fff !important; -webkit-text-fill-color:#fff; background:transparent !important;}
+.stApp div[data-baseweb="select"] span[data-baseweb="tag"] svg {fill:#fff !important;}
+.stApp div[data-baseweb="input"], .stApp div[data-baseweb="textarea"] {background:#fff !important; border:1px solid #BFD1E8 !important; border-radius:10px !important;}
+.stApp div[data-baseweb="base-input"] {background:transparent !important; border:none !important;}
+.stApp input, .stApp textarea {background:transparent !important; color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
+.stApp [data-testid="stNumberInput"] button {background:#EAF1FB !important; border:none !important;}
+.stApp [data-testid="stNumberInput"] button svg {fill:#0F2A43 !important;}
+div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li, div[data-baseweb="menu"] {background:#fff !important; color:#0F2A43 !important;}
+div[data-baseweb="popover"] li *, div[data-baseweb="popover"] li {color:#0F2A43 !important;}
+div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li[aria-selected="true"] {background:#E4EFFC !important;}
 .stApp [data-testid="stFileUploaderDropzone"] {background:#fff; border:1px dashed #9DB9DA; border-radius:12px;}
 .stApp [data-testid="stFileUploaderDropzone"] * {color:#0F2A43 !important;}
-.stApp [data-testid="stSlider"] div[role="slider"] {background-color:#1D4ED8 !important;}
+.stApp [data-testid="stFileUploaderDropzone"] button {background:#1D4ED8 !important; border:none; border-radius:10px;}
+.stApp [data-testid="stFileUploaderDropzone"] button * {color:#fff !important;}
 .stDownloadButton button {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border:none; border-radius:12px; padding:.6rem 1.3rem;}
 .stApp .stDownloadButton button p {color:#fff !important; font-weight:700;}
 .stDownloadButton button:hover {filter:brightness(1.08);}
-/* ---- tabel HTML ---- */
+/* ---------- tabel HTML ---------- */
 .sc-wrap {background:#fff; border:1px solid #D5E3F3; border-radius:14px; overflow:auto; max-height:440px; box-shadow:0 4px 14px rgba(30,64,120,.07); margin:4px 0 12px;}
 .sc-table {border-collapse:collapse; width:100%; font-size:.92rem;}
 .sc-table th {position:sticky; top:0; z-index:1; background:#E1EDFB; color:#1E3A8A !important; font-weight:800; padding:9px 14px; text-align:left; white-space:nowrap; border-bottom:1px solid #C5D7EC;}
@@ -114,6 +133,59 @@ def hero(title, desc, tags):
 # ----------------------------------------------------------------------------
 # Helper tampilan
 # ----------------------------------------------------------------------------
+def _rich(text):
+    import html as _h
+    import re as _re
+    t = _h.escape(str(text)).replace("$", "&#36;")
+    return _re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t)
+
+
+def _notice(msg, kind):
+    icon = {"info": "ℹ️", "success": "✅", "warning": "⚠️", "error": "⛔"}[kind]
+    st.markdown(f'<div class="notice {kind}"><span>{icon}</span><div>{_rich(msg)}</div></div>', unsafe_allow_html=True)
+
+
+def n_info(msg):
+    _notice(msg, "info")
+
+
+def n_ok(msg):
+    _notice(msg, "success")
+
+
+def n_warn(msg):
+    _notice(msg, "warning")
+
+
+def n_err(msg):
+    _notice(msg, "error")
+
+
+def kpis(items):
+    import html as _h
+    cards = "".join(
+        f'<div class="kpi k{i % 6}"><div class="kpi-l">{_h.escape(str(l))}</div>'
+        f'<div class="kpi-v">{_h.escape(str(v))}</div></div>' for i, (l, v) in enumerate(items))
+    st.markdown(f'<div class="kpi-grid">{cards}</div>', unsafe_allow_html=True)
+
+
+def note_card(title, items):
+    lis = "".join(f"<li>{_rich(i)}</li>" for i in items)
+    st.markdown(f'<div class="card"><div class="card-title">{title}</div><ul>{lis}</ul></div>', unsafe_allow_html=True)
+
+
+def eq_card(label, text):
+    import html as _h
+    st.markdown(f'<div class="eq"><div class="eq-l">{_h.escape(label)}</div>'
+                f'<div class="eq-v">{_h.escape(text)}</div></div>', unsafe_allow_html=True)
+
+
+def pre_block(text):
+    import html as _h
+    body = "\n".join(l if l.strip() else "\u200b" for l in str(text).splitlines())
+    st.markdown(f'<pre class="sc-pre">{_h.escape(body)}</pre>', unsafe_allow_html=True)
+
+
 def _fmt_cell(v):
     try:
         if pd.isna(v):
@@ -163,13 +235,19 @@ def show_df(df, hide_index=False, max_rows=1000, **kw):
 
 
 def show_plot(fig, key):
-    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=40, r=20, t=60, b=40),
+    axis = dict(gridcolor="#E3ECF7", linecolor="#9FB4CC", zerolinecolor="#C9D8EA",
+                tickfont=dict(color="#41566F"), title_font=dict(color="#0F2A43"))
+    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=50, r=24, t=64, b=48),
                       paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                      font=dict(family="Source Sans 3, sans-serif", color="#0F2A43"))
+                      font=dict(family="Source Sans 3, sans-serif", color="#0F2A43", size=13),
+                      title_font=dict(size=17, color="#0F2A43"), title_x=0.02,
+                      legend=dict(font=dict(color="#0F2A43")))
+    fig.update_xaxes(**axis)
+    fig.update_yaxes(**axis)
     try:
-        st.plotly_chart(fig, width="stretch", key=key)
+        st.plotly_chart(fig, width="stretch", key=key, theme=None)
     except Exception:
-        st.plotly_chart(fig, use_container_width=True, key=key)
+        st.plotly_chart(fig, use_container_width=True, key=key, theme=None)
 
 
 def to_excel_bytes(sheets):
@@ -240,7 +318,7 @@ def load_data(key):
     if src.startswith("Unggah"):
         f = st.sidebar.file_uploader("Pilih file", type=["csv", "xlsx", "xls"], key=f"up_{key}")
         if f is None:
-            st.info("⬅️ Unggah file CSV atau Excel pada sidebar. Baris pertama harus berisi nama kolom.")
+            n_info("⬅️ Unggah file CSV atau Excel pada sidebar. Baris pertama harus berisi nama kolom.")
             return None, "unggah"
         try:
             if f.name.lower().endswith(".csv"):
@@ -248,7 +326,7 @@ def load_data(key):
             else:
                 df = pd.read_excel(f)
         except Exception as e:
-            st.error(f"Gagal membaca file: {e}")
+            n_err(f"Gagal membaca file: {e}")
             return None, "unggah"
         return df, "unggah"
 
@@ -258,7 +336,7 @@ def load_data(key):
     txt = st.text_input("Nama kolom (pisahkan dengan koma)", default_cols, key=f"cols_{key}")
     cols = [c.strip() for c in txt.split(",") if c.strip()]
     if len(set(cols)) != len(cols) or len(cols) < 2:
-        st.warning("Nama kolom harus unik dan minimal 2 kolom.")
+        n_warn("Nama kolom harus unik dan minimal 2 kolom.")
         return None, "manual"
     st.caption("Ketik langsung pada tabel, atau salin-tempel (copy-paste) dari Excel. "
                "Gunakan titik (.) sebagai pemisah desimal. Tambah baris dengan klik baris kosong di bagian bawah.")
@@ -266,7 +344,7 @@ def load_data(key):
     edited = st.data_editor(base, num_rows="dynamic", key=f"ed_{key}_{'|'.join(cols)}")
     edited = edited.dropna(how="all")
     if edited.empty:
-        st.info("Isi tabel di atas untuk memulai analisis.")
+        n_info("Isi tabel di atas untuk memulai analisis.")
         return None, "manual"
     return edited.reset_index(drop=True), "manual"
 
@@ -278,7 +356,7 @@ def page_regression(df, alpha):
     num = sc.numeric_cols(df)
     sig = str(abs(hash(tuple(map(str, df.columns)))))
     if len(num) < 2:
-        st.error("Dibutuhkan minimal 2 kolom numerik untuk regresi.")
+        n_err("Dibutuhkan minimal 2 kolom numerik untuk regresi.")
         return
 
     badge("3 · Variabel")
@@ -287,21 +365,21 @@ def page_regression(df, alpha):
     xs = st.sidebar.multiselect("Variabel independen (X)", x_opts, default=x_opts, key=f"reg_x_{y}_{sig}")
     intercept = st.sidebar.checkbox("Sertakan intersep (konstanta)", value=True, key="reg_int")
     if not xs:
-        st.info("Pilih minimal satu variabel independen (X) pada sidebar.")
+        n_info("Pilih minimal satu variabel independen (X) pada sidebar.")
         return
 
     try:
         R = sc.run_regression(df, y, xs, intercept, alpha)
     except ValueError as e:
-        st.error(str(e))
+        n_err(str(e))
         return
     except Exception as e:
-        st.error(f"Terjadi kesalahan saat menghitung regresi: {e}")
+        n_err(f"Terjadi kesalahan saat menghitung regresi: {e}")
         return
 
     model, d, k, n = R["model"], R["data"], R["k"], R["n"]
     if R["n_dropped"]:
-        st.warning(f"{R['n_dropped']} baris dengan nilai kosong/non-angka dikeluarkan dari analisis.")
+        n_warn(f"{R['n_dropped']} baris dengan nilai kosong/non-angka dikeluarkan dari analisis.")
 
     tabs = st.tabs(["📋 Data", "📊 Ringkasan", "📑 Tabel", "📈 Visualisasi", "✅ Uji Asumsi", "🔮 Prediksi", "💾 Unduh"])
 
@@ -316,41 +394,34 @@ def page_regression(df, alpha):
     # --- Ringkasan
     with tabs[1]:
         st.subheader("Ringkasan Model Regresi")
-        st.markdown("**Persamaan regresi:**")
-        st.code(R["equation"], language=None)
-        c = st.columns(6)
-        c[0].metric("n", n)
-        c[1].metric("R²", f"{model.rsquared:.4f}")
-        c[2].metric("R² Adjusted", f"{model.rsquared_adj:.4f}")
-        c[3].metric("F hitung", f"{model.fvalue:.3f}")
-        c[4].metric("P-value (F)", sc.fmt_p(model.f_pvalue))
-        c[5].metric("RMSE", f"{R['rmse']:.4f}")
+        eq_card("Persamaan regresi", R["equation"])
+        kpis([("n", n), ("R²", f"{model.rsquared:.4f}"), ("R² Adjusted", f"{model.rsquared_adj:.4f}"),
+              ("F hitung", f"{model.fvalue:.3f}"), ("P-value (F)", sc.fmt_p(model.f_pvalue)),
+              ("RMSE", f"{R['rmse']:.4f}")])
 
-        st.markdown("### 📝 Interpretasi")
         sig_model = model.f_pvalue < alpha
-        st.markdown(
-            f"- **Uji simultan (Uji F):** F = {model.fvalue:.3f}, P-value = {sc.fmt_p(model.f_pvalue)} "
+        items = [
+            f"**Uji simultan (Uji F):** F = {model.fvalue:.3f}, P-value = {sc.fmt_p(model.f_pvalue)} "
             f"{'<' if sig_model else '≥'} α ({alpha}). Model regresi "
             f"**{'signifikan' if sig_model else 'tidak signifikan'}**, artinya "
-            f"{'minimal satu variabel X berpengaruh nyata terhadap ' + y if sig_model else 'belum ada bukti bahwa variabel X berpengaruh terhadap ' + y}."
-        )
-        st.markdown(
-            f"- **Koefisien determinasi:** R² = {model.rsquared:.4f}, sehingga {model.rsquared * 100:.2f}% "
-            f"keragaman {y} dapat dijelaskan oleh {', '.join(xs)}."
-        )
+            f"{'minimal satu variabel X berpengaruh nyata terhadap ' + y if sig_model else 'belum ada bukti bahwa variabel X berpengaruh terhadap ' + y}.",
+            f"**Koefisien determinasi:** R² = {model.rsquared:.4f}, sehingga {model.rsquared * 100:.2f}% "
+            f"keragaman {y} dapat dijelaskan oleh {', '.join(xs)}.",
+        ]
         for nm in xs:
-            b, p = model.params[nm], model.pvalues[nm]
-            arah = "naik" if b > 0 else "turun"
-            if p < alpha:
-                st.markdown(f"- **{nm}**: berpengaruh nyata (P = {sc.fmt_p(p)}). Setiap kenaikan 1 satuan {nm} "
-                            f"membuat {y} {arah} sebesar {abs(b):.4f} satuan (variabel lain tetap).")
+            b_, p_ = model.params[nm], model.pvalues[nm]
+            arah = "naik" if b_ > 0 else "turun"
+            if p_ < alpha:
+                items.append(f"**{nm}**: berpengaruh nyata (P = {sc.fmt_p(p_)}). Setiap kenaikan 1 satuan {nm} "
+                             f"membuat {y} {arah} sebesar {abs(b_):.4f} satuan (variabel lain tetap).")
             else:
-                st.markdown(f"- **{nm}**: tidak berpengaruh nyata (P = {sc.fmt_p(p)}).")
+                items.append(f"**{nm}**: tidak berpengaruh nyata (P = {sc.fmt_p(p_)}).")
+        note_card("📝 Interpretasi", items)
         if not intercept:
-            st.info("Model tanpa intersep: R² dihitung terhadap total JK tak terpusat sehingga tidak sebanding dengan model berintersep.")
+            n_info("Model tanpa intersep: R² dihitung terhadap total JK tak terpusat sehingga tidak sebanding dengan model berintersep.")
 
         with st.expander("Lihat ringkasan lengkap (format statsmodels)"):
-            st.code(str(model.summary()), language=None)
+            pre_block(str(model.summary()))
 
     # --- Tabel
     with tabs[2]:
@@ -442,7 +513,7 @@ def page_regression(df, alpha):
             Xn.insert(0, "const", 1.0)
         sf = model.get_prediction(Xn).summary_frame(alpha=alpha)
         cl = int((1 - alpha) * 100)
-        st.metric(f"Prediksi {y}", f"{sf['mean'].iloc[0]:.4f}")
+        kpis([(f"Prediksi {y}", f"{sf['mean'].iloc[0]:.4f}")])
         out = pd.DataFrame({
             "Prediksi": [sf["mean"].iloc[0]],
             f"CI {cl}% (rata-rata) bawah": [sf["mean_ci_lower"].iloc[0]],
@@ -453,7 +524,7 @@ def page_regression(df, alpha):
         show_df(out, hide_index=True)
         outside = [x for x in xs if not (d[x].min() <= vals[x] <= d[x].max())]
         if outside:
-            st.warning(f"Nilai {', '.join(outside)} berada di luar rentang data (ekstrapolasi) sehingga prediksi kurang andal.")
+            n_warn(f"Nilai {', '.join(outside)} berada di luar rentang data (ekstrapolasi) sehingga prediksi kurang andal.")
 
     # --- Unduh
     with tabs[6]:
@@ -484,7 +555,7 @@ def page_anova(df, alpha, kind):
         trt = st.sidebar.selectbox("Kolom perlakuan", cols, index=0, key=f"ral_trt_{sig}")
         r_opts = [c for c in num if c != trt]
         if not r_opts:
-            st.error("Tidak ada kolom numerik untuk variabel respon.")
+            n_err("Tidak ada kolom numerik untuk variabel respon.")
             return
         resp = st.sidebar.selectbox("Kolom respon (numerik)", r_opts, index=len(r_opts) - 1, key=f"ral_resp_{trt}_{sig}")
     else:
@@ -493,7 +564,7 @@ def page_anova(df, alpha, kind):
         blk = st.sidebar.selectbox("Kolom kelompok (blok)", b_opts, index=0, key=f"rak_blk_{trt}_{sig}")
         r_opts = [c for c in num if c not in (trt, blk)]
         if not r_opts:
-            st.error("Tidak ada kolom numerik untuk variabel respon.")
+            n_err("Tidak ada kolom numerik untuk variabel respon.")
             return
         resp = st.sidebar.selectbox("Kolom respon (numerik)", r_opts, index=len(r_opts) - 1, key=f"rak_resp_{trt}_{blk}_{sig}")
 
@@ -502,10 +573,10 @@ def page_anova(df, alpha, kind):
     try:
         R = sc.run_ral(df, resp, trt) if kind == "ral" else sc.run_rak(df, resp, trt, blk)
     except ValueError as e:
-        st.error(str(e))
+        n_err(str(e))
         return
     except Exception as e:
-        st.error(f"Terjadi kesalahan saat menghitung: {e}")
+        n_err(f"Terjadi kesalahan saat menghitung: {e}")
         return
 
     d, levels = R["data"], R["levels"]
@@ -532,7 +603,7 @@ def page_anova(df, alpha, kind):
     with tabs[0]:
         st.subheader("Data yang dianalisis")
         if dropped:
-            st.warning(f"{dropped} baris dengan nilai kosong/non-angka dikeluarkan dari analisis.")
+            n_warn(f"{dropped} baris dengan nilai kosong/non-angka dikeluarkan dari analisis.")
         show_df(d[[c for c in [trt, blk, resp] if c]].reset_index(drop=True))
         if kind == "rak":
             st.subheader("Tabel dua arah (Kelompok × Perlakuan)")
@@ -545,15 +616,12 @@ def page_anova(df, alpha, kind):
     with tabs[1]:
         st.subheader(f"Ringkasan Analisis {nm_design}")
         t0 = R["tests"][0]
-        c = st.columns(6)
-        c[0].metric("Jumlah perlakuan", R["t"])
-        c[1].metric("Ulangan (r)", f"{R['r']:.0f}" if float(R["r"]).is_integer() else f"{R['r']:.2f}")
-        c[2].metric("F hitung (perlakuan)", f"{t0['F']:.3f}")
-        c[3].metric("P-value", sc.fmt_p(t0["p"]))
-        c[4].metric("KK (%)", f"{R['kk']:.2f}")
-        c[5].metric("Rata-rata umum", f"{R['grand']:.3f}")
+        kpis([("Jumlah perlakuan", R["t"]),
+              ("Ulangan (r)", f"{R['r']:.0f}" if float(R["r"]).is_integer() else f"{R['r']:.2f}"),
+              ("F hitung (perlakuan)", f"{t0['F']:.3f}"), ("P-value", sc.fmt_p(t0["p"])),
+              ("KK (%)", f"{R['kk']:.2f}"), ("Rata-rata umum", f"{R['grand']:.3f}")])
 
-        st.markdown("### 📝 Interpretasi")
+        items = []
         for t in R["tests"]:
             nm = t["name"]
             ok = t["p"] < alpha
@@ -562,21 +630,22 @@ def page_anova(df, alpha, kind):
                 kal = f"H₀ ditolak. Terdapat pengaruh **nyata** {subj} terhadap {resp}."
             else:
                 kal = f"H₀ gagal ditolak. Tidak terdapat pengaruh nyata {subj} terhadap {resp}."
-            st.markdown(f"- **{nm}:** F = {t['F']:.3f}, P-value = {sc.fmt_p(t['p'])} {'<' if ok else '≥'} α ({alpha}). {kal}")
-        st.markdown(f"- **Koefisien keragaman (KK)** = {R['kk']:.2f}%.")
+            items.append(f"**{nm}:** F = {t['F']:.3f}, P-value = {sc.fmt_p(t['p'])} {'<' if ok else '≥'} α ({alpha}). {kal}")
+        items.append(f"**Koefisien keragaman (KK)** = {R['kk']:.2f}%.")
         if kind == "rak":
             er = R["extra"]["ER"]
-            st.markdown(
-                f"- **Efisiensi relatif RAK terhadap RAL** = {er:.2f}. "
+            items.append(
+                f"**Efisiensi relatif RAK terhadap RAL** = {er:.2f}. "
                 + ("RAK lebih efisien daripada RAL (pengelompokan efektif)." if er > 1
                    else "Pengelompokan tidak meningkatkan efisiensi.")
             )
+        note_card("📝 Interpretasi", items)
         if t0["p"] < alpha:
             best = max(levels, key=lambda l: R["means"][l])
-            st.success(f"Uji lanjut {method} pada taraf {alpha}: rata-rata tertinggi pada **{best}** "
+            n_ok(f"Uji lanjut {method} pada taraf {alpha}: rata-rata tertinggi pada **{best}** "
                        f"({R['means'][best]:.3f}, notasi '{letters[best]}').")
         else:
-            st.info("Perlakuan tidak berpengaruh nyata, sehingga uji lanjut sebenarnya tidak diperlukan "
+            n_info("Perlakuan tidak berpengaruh nyata, sehingga uji lanjut sebenarnya tidak diperlukan "
                     "(hasilnya ditampilkan hanya sebagai informasi).")
         st.markdown("**Rata-rata perlakuan:**")
         show_df(desc, hide_index=True)
@@ -635,7 +704,7 @@ def page_anova(df, alpha, kind):
         st.caption(f"Pada taraf α = {alpha}: P-value > α berarti asumsi terpenuhi. "
                    "Lihat juga Q-Q plot dan plot galat pada tab Visualisasi.")
         if (assump["Kesimpulan"] == "Tidak terpenuhi").any():
-            st.warning("Ada asumsi yang tidak terpenuhi. Pertimbangkan transformasi data (log/akar) "
+            n_warn("Ada asumsi yang tidak terpenuhi. Pertimbangkan transformasi data (log/akar) "
                        "atau uji nonparametrik (Kruskal-Wallis untuk RAL, Friedman untuk RAK).")
 
     # --- Unduh
@@ -666,7 +735,8 @@ def main():
         key="analysis",
     )
     key = {"Regresi Linear": "reg", "Rancangan Acak Lengkap (RAL)": "ral", "Rancangan Acak Kelompok (RAK)": "rak"}[choice]
-    alpha = st.sidebar.select_slider("Taraf nyata (α)", options=[0.01, 0.05, 0.10], value=0.05, key="alpha")
+    alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1,
+                                 format_func=lambda a: f"α = {a:.2f}", key="alpha")
 
     heroes = {
         "reg": ("Analisis Regresi Linear",
@@ -689,7 +759,7 @@ def main():
     if df is None:
         return
     if src == "contoh":
-        st.info("Menggunakan **data contoh**. Pilih 'Unggah file' atau 'Input manual' pada sidebar untuk data Anda sendiri.")
+        n_info("Menggunakan **data contoh**. Pilih 'Unggah file' atau 'Input manual' pada sidebar untuk data Anda sendiri.")
 
     if key == "reg":
         page_regression(df, alpha)
