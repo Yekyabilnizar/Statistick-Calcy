@@ -79,28 +79,6 @@ section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
 /* ---------- grafik, expander ---------- */
 div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(30,64,120,.07);}
-div[data-testid="stExpander"] {background:#fff; border:1px solid #D5E3F3; border-radius:14px;}
-.stApp [data-testid="stExpander"] summary p, .stApp [data-testid="stExpander"] summary span {color:#0F2A43 !important;}
-/* ---------- input, dropdown ---------- */
-.stApp div[data-baseweb="select"] {background:#fff !important; border:1px solid #BFD1E8 !important; border-radius:10px !important;}
-.stApp div[data-baseweb="select"] div {background:transparent !important; border-color:transparent !important;}
-.stApp div[data-baseweb="select"] * {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
-.stApp div[data-baseweb="select"] svg {fill:#52667D !important;}
-.stApp div[data-baseweb="select"] span[data-baseweb="tag"] {background:#1D4ED8 !important; border-radius:8px !important;}
-.stApp div[data-baseweb="select"] span[data-baseweb="tag"] * {color:#fff !important; -webkit-text-fill-color:#fff; background:transparent !important;}
-.stApp div[data-baseweb="select"] span[data-baseweb="tag"] svg {fill:#fff !important;}
-.stApp div[data-baseweb="input"], .stApp div[data-baseweb="textarea"] {background:#fff !important; border:1px solid #BFD1E8 !important; border-radius:10px !important;}
-.stApp div[data-baseweb="base-input"] {background:transparent !important; border:none !important;}
-.stApp input, .stApp textarea {background:transparent !important; color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
-.stApp [data-testid="stNumberInput"] button {background:#EAF1FB !important; border:none !important;}
-.stApp [data-testid="stNumberInput"] button svg {fill:#0F2A43 !important;}
-div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li, div[data-baseweb="menu"] {background:#fff !important; color:#0F2A43 !important;}
-div[data-baseweb="popover"] li *, div[data-baseweb="popover"] li {color:#0F2A43 !important;}
-div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li[aria-selected="true"] {background:#E4EFFC !important;}
-.stApp [data-testid="stFileUploaderDropzone"] {background:#fff; border:1px dashed #9DB9DA; border-radius:12px;}
-.stApp [data-testid="stFileUploaderDropzone"] * {color:#0F2A43 !important;}
-.stApp [data-testid="stFileUploaderDropzone"] button {background:#1D4ED8 !important; border:none; border-radius:10px;}
-.stApp [data-testid="stFileUploaderDropzone"] button * {color:#fff !important;}
 .stDownloadButton button {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border:none; border-radius:12px; padding:.6rem 1.3rem;}
 .stApp .stDownloadButton button p {color:#fff !important; font-weight:700;}
 .stDownloadButton button:hover {filter:brightness(1.08);}
@@ -115,6 +93,36 @@ div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li[aria-select
 .sc-table th.idx {position:static; background:#F0F5FC; color:#64748B !important; font-weight:600; text-align:right; border-bottom:1px solid #EAF1FA;}
 </style>"""
 st.markdown(CSS, unsafe_allow_html=True)
+
+# Komponen bawaan Streamlit (input, dropdown, tabel editor) mengikuti tema aplikasi. Bila tema gelap aktif,
+# warna komponen itu dibalik (invert) agar menjadi terang dan serasi dengan latar biru soft.
+DARK_FIX = """
+[data-testid="stSelectbox"], [data-testid="stMultiSelect"], [data-testid="stTextInput"],
+[data-testid="stNumberInput"], [data-testid="stTextArea"], [data-testid="stFileUploader"],
+[data-testid="stDataFrame"], [data-testid="stDataEditor"],
+[data-testid="stRadio"] label > div:first-child, [data-testid="stCheckbox"] label > span:first-child
+{filter:invert(1) hue-rotate(180deg) brightness(1.06);}
+[data-testid="stSelectbox"] [data-testid="stWidgetLabel"], [data-testid="stMultiSelect"] [data-testid="stWidgetLabel"],
+[data-testid="stTextInput"] [data-testid="stWidgetLabel"], [data-testid="stNumberInput"] [data-testid="stWidgetLabel"],
+[data-testid="stTextArea"] [data-testid="stWidgetLabel"], [data-testid="stFileUploader"] [data-testid="stWidgetLabel"]
+{filter:invert(1) hue-rotate(180deg);}
+[data-testid="stDataFrame"], [data-testid="stDataEditor"] {border-radius:14px; overflow:hidden; border:1px solid #C5D7EC;}
+"""
+
+
+def _theme_type():
+    try:
+        return st.context.theme.type
+    except Exception:
+        return None
+
+
+_mode = _theme_type()
+if _mode == "dark":
+    st.markdown(f"<style>{DARK_FIX}</style>", unsafe_allow_html=True)
+elif _mode is None:
+    st.markdown(f"<style>@media (prefers-color-scheme: dark){{{DARK_FIX}}}</style>", unsafe_allow_html=True)
+
 
 
 def badge(text):
@@ -330,28 +338,54 @@ def load_data(key):
             return None, "unggah"
         return df, "unggah"
 
-    # Input manual
-    default_cols = {"reg": "X1, X2, Y", "ral": "Perlakuan, Hasil", "rak": "Perlakuan, Kelompok, Hasil"}[key]
+    # ---------------- Input manual ----------------
     st.subheader("✍️ Input data manual")
-    txt = st.text_input("Nama kolom (pisahkan dengan koma)", default_cols, key=f"cols_{key}")
-    cols = [c.strip() for c in txt.split(",") if c.strip()]
-    if len(set(cols)) != len(cols) or len(cols) < 2:
-        n_warn("Nama kolom harus unik dan minimal 2 kolom.")
-        return None, "manual"
-    st.caption("Ketik langsung pada tabel, atau salin-tempel (copy-paste) dari Excel. "
-               "Gunakan titik (.) sebagai pemisah desimal. Tambah baris dengan klik baris kosong di bagian bawah.")
-    base = pd.DataFrame({c: [None] * 10 for c in cols})
-    edited = st.data_editor(base, num_rows="dynamic", key=f"ed_{key}_{'|'.join(cols)}")
+    if key == "reg":
+        c1, c2 = st.columns([3, 1])
+        txt = c1.text_input("Nama kolom (pisahkan dengan koma, kolom terakhir = Y)", "X1, X2, Y", key="cols_reg")
+        nrow = int(c2.number_input("Jumlah baris", min_value=5, max_value=500, value=12, step=1, key="rows_reg"))
+        cols = [c.strip() for c in txt.split(",") if c.strip()]
+        if len(set(cols)) != len(cols) or len(cols) < 2:
+            n_warn("Nama kolom harus unik dan minimal 2 kolom.")
+            return None, "manual"
+        base = pd.DataFrame({c: [np.nan] * nrow for c in cols})
+        check_col, sig = cols[-1], f"reg|{'|'.join(cols)}|{nrow}"
+    else:
+        c1, c2, c3 = st.columns(3)
+        t_in = int(c1.number_input("Jumlah perlakuan", min_value=2, max_value=30, value=4, step=1, key=f"t_{key}"))
+        r = int(c2.number_input("Jumlah ulangan" if key == "ral" else "Jumlah kelompok",
+                                min_value=2, max_value=30, value=4, step=1, key=f"r_{key}"))
+        resp_col = c3.text_input("Nama kolom respon", "Hasil", key=f"resp_{key}").strip() or "Hasil"
+        names_txt = st.text_input("Nama perlakuan (opsional, pisahkan dengan koma)", "",
+                                  placeholder="contoh: P0, P1, P2, P3  (kosongkan untuk P1, P2, ...)", key=f"names_{key}")
+        levels = [x.strip() for x in names_txt.split(",") if x.strip()] or [f"P{i}" for i in range(1, t_in + 1)]
+        if len(set(levels)) != len(levels):
+            n_warn("Nama perlakuan harus unik.")
+            return None, "manual"
+        if resp_col in ("Perlakuan", "Ulangan", "Kelompok"):
+            n_warn("Nama kolom respon tidak boleh sama dengan kolom perlakuan/ulangan/kelompok; dipakai 'Hasil'.")
+            resp_col = "Hasil"
+        t = len(levels)
+        if key == "ral":
+            base = pd.DataFrame({"Perlakuan": np.repeat(levels, r), "Ulangan": np.tile(np.arange(1, r + 1), t),
+                                 resp_col: np.nan})
+        else:
+            blocks = [f"K{i}" for i in range(1, r + 1)]
+            base = pd.DataFrame({"Perlakuan": np.tile(levels, r), "Kelompok": np.repeat(blocks, t), resp_col: np.nan})
+        check_col, sig = resp_col, f"{key}|{'|'.join(levels)}|{r}|{resp_col}"
+    st.caption("Tabel sudah disusun otomatis. Cukup isi kolom nilai pengamatan (angka, titik sebagai desimal), "
+               "atau salin-tempel dari Excel. Mengubah jumlah perlakuan/ulangan akan mereset tabel.")
+    try:
+        edited = st.data_editor(base, num_rows="dynamic", hide_index=True, key=f"ed_{sig}")
+    except TypeError:
+        edited = st.data_editor(base, num_rows="dynamic", key=f"ed_{sig}")
     edited = edited.dropna(how="all")
-    if edited.empty:
-        n_info("Isi tabel di atas untuk memulai analisis.")
+    if pd.to_numeric(edited[check_col], errors="coerce").notna().sum() == 0:
+        n_info(f"Isi kolom **{check_col}** pada tabel di atas untuk memulai analisis.")
         return None, "manual"
     return edited.reset_index(drop=True), "manual"
 
 
-# ----------------------------------------------------------------------------
-# Halaman: Regresi Linear
-# ----------------------------------------------------------------------------
 def page_regression(df, alpha):
     num = sc.numeric_cols(df)
     sig = str(abs(hash(tuple(map(str, df.columns)))))
@@ -420,7 +454,7 @@ def page_regression(df, alpha):
         if not intercept:
             n_info("Model tanpa intersep: R² dihitung terhadap total JK tak terpusat sehingga tidak sebanding dengan model berintersep.")
 
-        with st.expander("Lihat ringkasan lengkap (format statsmodels)"):
+        if st.checkbox("Tampilkan ringkasan lengkap (format statsmodels)", key="reg_full"):
             pre_block(str(model.summary()))
 
     # --- Tabel
