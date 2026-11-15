@@ -23,39 +23,77 @@ COLORS = ["#0F766E", "#4F46E5", "#F59E0B", "#EF4444", "#06B6D4", "#8B5CF6", "#16
 CSS = """<style>
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap');
 html, body, .stApp, [data-testid="stSidebar"] {font-family:'Source Sans 3','Source Sans Pro',sans-serif;}
-.stApp {background:linear-gradient(135deg,#EAF1FF 0%,#F2F8F6 48%,#FFF6E9 100%); background-attachment:fixed;}
+.stApp {background:linear-gradient(160deg,#E6F0FF 0%,#D8E8FD 55%,#E8F2FF 100%); background-attachment:fixed;}
 header[data-testid="stHeader"] {background:transparent;}
+header[data-testid="stHeader"] *, [data-testid="stToolbar"] * {color:#475569 !important;}
 .block-container {padding-top:2rem; padding-bottom:3rem; max-width:1400px;}
-section[data-testid="stSidebar"] {background:linear-gradient(180deg,#F8FBFF 0%,#EDF7F4 100%); border-right:1px solid #DCE7F0;}
+section[data-testid="stSidebar"] {background:linear-gradient(180deg,#F5F9FF 0%,#E6F0FC 100%); border-right:1px solid #CFE0F3;}
 section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
-.brand {font-size:1.55rem; font-weight:800; color:#0F2A43; margin-top:4px;}
-.brand-sub {color:#64748B; font-size:.95rem; margin:2px 0 6px;}
-.badge {display:inline-block; background:#CCF3EA; color:#0F766E; font-weight:800; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding:7px 14px; border-radius:10px; margin:16px 0 8px;}
-.hero {position:relative; overflow:hidden; border-radius:28px; padding:36px 44px 28px; margin-bottom:22px; color:#fff; background:radial-gradient(circle at 88% 18%,rgba(45,212,191,.55),transparent 45%),linear-gradient(120deg,#16306B 0%,#1E3A8A 50%,#0F766E 100%); box-shadow:0 18px 40px rgba(30,58,138,.22);}
-.hero-chip {display:inline-block; border:1px solid rgba(94,234,212,.65); color:#5EEAD4; background:rgba(255,255,255,.08); font-weight:800; font-size:.72rem; letter-spacing:.2em; padding:7px 16px; border-radius:999px;}
-.hero h1 {color:#fff; font-size:2.4rem; font-weight:800; margin:16px 0 10px; padding:0; line-height:1.15;}
-.hero p {color:#DCE8FF; font-size:1.05rem; line-height:1.65; max-width:920px; margin:0 0 16px;}
-.hero-tags span {display:inline-block; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.32); color:#fff; font-weight:700; font-size:.82rem; padding:7px 16px; border-radius:999px; margin:0 8px 8px 0;}
-div[data-testid="stMetric"] {background:linear-gradient(180deg,#FFFFFF 0%,#F4FBF9 100%); border:1px solid #E3ECF3; border-top:4px solid #0F766E; border-radius:16px; padding:14px 18px; box-shadow:0 6px 18px rgba(15,42,67,.07);}
-div[data-testid="stColumn"]:nth-child(2) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(2) div[data-testid="stMetric"] {border-top-color:#4F46E5;}
-div[data-testid="stColumn"]:nth-child(3) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(3) div[data-testid="stMetric"] {border-top-color:#16A34A;}
+/* ---- warna teks dasar (tetap terbaca walau tema gelap) ---- */
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp p, .stApp li, .stApp label,
+.stApp [data-testid="stWidgetLabel"] p, .stApp [data-testid="stCaptionContainer"] p,
+.stApp [data-testid="stRadio"] label p, .stApp [data-testid="stCheckbox"] label p {color:#0F2A43 !important;}
+.stApp [data-testid="stCaptionContainer"] p {color:#52667D !important;}
+.stApp h2, .stApp h3 {font-weight:800;}
+/* ---- sidebar brand & badge ---- */
+.stApp .brand {font-size:1.55rem; font-weight:800; color:#0F2A43 !important; margin-top:4px;}
+.stApp .brand-sub {color:#52667D !important; font-size:.95rem; margin:2px 0 6px;}
+.stApp .badge {display:inline-block; background:#CFE6FF; color:#1D4ED8 !important; font-weight:800; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; padding:7px 14px; border-radius:10px; margin:16px 0 8px;}
+/* ---- hero ---- */
+.stApp .hero {position:relative; overflow:hidden; border-radius:28px; padding:36px 44px 28px; margin-bottom:22px; background:radial-gradient(circle at 88% 18%,rgba(45,212,191,.50),transparent 45%),linear-gradient(120deg,#16306B 0%,#1E40AF 50%,#0F8A8A 100%); box-shadow:0 18px 40px rgba(30,64,175,.22);}
+.stApp .hero .hero-chip {display:inline-block; border:1px solid rgba(94,234,212,.65); color:#5EEAD4 !important; background:rgba(255,255,255,.08); font-weight:800; font-size:.72rem; letter-spacing:.2em; padding:7px 16px; border-radius:999px;}
+.stApp .hero h1 {color:#fff !important; font-size:2.4rem; font-weight:800; margin:16px 0 10px; padding:0; line-height:1.15;}
+.stApp .hero p {color:#DCE8FF !important; font-size:1.05rem; line-height:1.65; max-width:920px; margin:0 0 16px;}
+.stApp .hero .hero-tags span {display:inline-block; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.35); color:#fff !important; font-weight:700; font-size:.82rem; padding:7px 16px; border-radius:999px; margin:0 8px 8px 0;}
+/* ---- kartu metrik ---- */
+div[data-testid="stMetric"] {background:#FFFFFF; border:1px solid #D5E3F3; border-top:4px solid #2563EB; border-radius:16px; padding:14px 18px; box-shadow:0 6px 18px rgba(30,64,120,.08);}
+div[data-testid="stColumn"]:nth-child(2) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(2) div[data-testid="stMetric"] {border-top-color:#0F766E;}
+div[data-testid="stColumn"]:nth-child(3) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(3) div[data-testid="stMetric"] {border-top-color:#7C3AED;}
 div[data-testid="stColumn"]:nth-child(4) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(4) div[data-testid="stMetric"] {border-top-color:#F59E0B;}
-div[data-testid="stColumn"]:nth-child(5) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(5) div[data-testid="stMetric"] {border-top-color:#8B5CF6;}
+div[data-testid="stColumn"]:nth-child(5) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(5) div[data-testid="stMetric"] {border-top-color:#EC4899;}
 div[data-testid="stColumn"]:nth-child(6) div[data-testid="stMetric"], div[data-testid="column"]:nth-child(6) div[data-testid="stMetric"] {border-top-color:#06B6D4;}
-[data-testid="stMetricLabel"] p {text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:800; color:#0F766E;}
-[data-testid="stMetricValue"] {color:#0B3B4C; font-weight:800; font-size:1.65rem;}
-.stTabs [data-baseweb="tab-list"] {gap:8px; border-bottom:none; flex-wrap:wrap;}
-.stTabs [data-baseweb="tab"] {background:rgba(255,255,255,.8); border:1px solid #DCE7F0; border-radius:999px; padding:8px 18px; height:auto; font-weight:700; color:#334155;}
-.stTabs [aria-selected="true"] {background:linear-gradient(120deg,#0F766E,#0E9AA7); border-color:transparent;}
-.stTabs [aria-selected="true"] p {color:#fff !important;}
-.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {display:none;}
-div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #E3ECF3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(15,42,67,.06);}
-div[data-testid="stDataFrame"] {border:1px solid #E3ECF3; border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(15,42,67,.05);}
-div[data-testid="stAlert"] {border-radius:14px;}
-div[data-testid="stExpander"] {background:#fff; border:1px solid #E3ECF3; border-radius:14px;}
-.stDownloadButton button {background:linear-gradient(120deg,#0F766E,#0E9AA7); color:#fff; border:none; border-radius:12px; font-weight:700; padding:.6rem 1.3rem;}
-.stDownloadButton button:hover {filter:brightness(1.07); color:#fff;}
-h2, h3 {color:#0F2A43; font-weight:800;}
+.stApp [data-testid="stMetricLabel"] p {text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:800; color:#1D4ED8 !important;}
+.stApp [data-testid="stMetricValue"], .stApp [data-testid="stMetricValue"] * {color:#0B2545 !important; font-weight:800; font-size:1.6rem;}
+/* ---- tab ---- */
+.stTabs [data-baseweb="tab-list"] {gap:8px; border-bottom:none !important; flex-wrap:wrap;}
+.stApp .stTabs [data-baseweb="tab"] {background:rgba(255,255,255,.85); border:1px solid #CFE0F3; border-radius:999px; padding:8px 18px; height:auto; font-weight:700;}
+.stApp .stTabs [data-baseweb="tab"] p {color:#334E68 !important; font-weight:700;}
+.stApp .stTabs [aria-selected="true"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border-color:transparent;}
+.stApp .stTabs [aria-selected="true"] p {color:#fff !important;}
+.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
+/* ---- grafik & kartu ---- */
+div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(30,64,120,.07);}
+div[data-testid="stExpander"] {background:#fff; border:1px solid #D5E3F3; border-radius:14px;}
+.stApp [data-testid="stExpander"] summary p, .stApp [data-testid="stExpander"] summary span {color:#0F2A43 !important;}
+.stApp [data-testid="stCode"] {border:1px solid #D5E3F3; border-radius:12px; overflow:hidden;}
+.stApp [data-testid="stCode"] pre, .stApp [data-testid="stCode"] code {background:#F3F8FF !important; color:#0F2A43 !important;}
+/* ---- notifikasi ---- */
+div[data-testid="stAlert"] {border-radius:14px; border:1px solid #BFD6F2; background:#E8F1FF;}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentSuccess"]) {background:#E3F6EC; border-color:#B7E4CB;}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentWarning"]) {background:#FFF4DA; border-color:#F5DDA0;}
+div[data-testid="stAlert"]:has([data-testid="stAlertContentError"]) {background:#FFE7E7; border-color:#F5B8B8;}
+.stApp div[data-testid="stAlert"] p, .stApp div[data-testid="stAlert"] li, .stApp div[data-testid="stAlert"] strong {color:#16325C !important;}
+/* ---- input & dropdown ---- */
+.stApp div[data-baseweb="select"] > div, .stApp div[data-baseweb="input"], .stApp div[data-baseweb="base-input"] {background:#fff !important; border-color:#C5D7EC !important; border-radius:10px !important;}
+.stApp div[data-baseweb="select"] *, .stApp input, .stApp textarea {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43;}
+.stApp span[data-baseweb="tag"], .stApp span[data-baseweb="tag"] * {background:#1D4ED8 !important; color:#fff !important; -webkit-text-fill-color:#fff;}
+div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li, div[data-baseweb="menu"] {background:#fff !important; color:#0F2A43 !important;}
+div[data-baseweb="popover"] li:hover {background:#E4EFFC !important;}
+.stApp [data-testid="stFileUploaderDropzone"] {background:#fff; border:1px dashed #9DB9DA; border-radius:12px;}
+.stApp [data-testid="stFileUploaderDropzone"] * {color:#0F2A43 !important;}
+.stApp [data-testid="stSlider"] div[role="slider"] {background-color:#1D4ED8 !important;}
+.stDownloadButton button {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border:none; border-radius:12px; padding:.6rem 1.3rem;}
+.stApp .stDownloadButton button p {color:#fff !important; font-weight:700;}
+.stDownloadButton button:hover {filter:brightness(1.08);}
+/* ---- tabel HTML ---- */
+.sc-wrap {background:#fff; border:1px solid #D5E3F3; border-radius:14px; overflow:auto; max-height:440px; box-shadow:0 4px 14px rgba(30,64,120,.07); margin:4px 0 12px;}
+.sc-table {border-collapse:collapse; width:100%; font-size:.92rem;}
+.sc-table th {position:sticky; top:0; z-index:1; background:#E1EDFB; color:#1E3A8A !important; font-weight:800; padding:9px 14px; text-align:left; white-space:nowrap; border-bottom:1px solid #C5D7EC;}
+.sc-table td {color:#0F2A43 !important; padding:8px 14px; border-bottom:1px solid #EAF1FA; white-space:nowrap; text-align:left;}
+.sc-table tbody tr:nth-child(even) td, .sc-table tbody tr:nth-child(even) th.idx {background:#F6F9FE;}
+.sc-table tbody tr:hover td, .sc-table tbody tr:hover th.idx {background:#E8F1FF;}
+.sc-table th.r, .sc-table td.r {text-align:right;}
+.sc-table th.idx {position:static; background:#F0F5FC; color:#64748B !important; font-weight:600; text-align:right; border-bottom:1px solid #EAF1FA;}
 </style>"""
 st.markdown(CSS, unsafe_allow_html=True)
 
@@ -76,11 +114,52 @@ def hero(title, desc, tags):
 # ----------------------------------------------------------------------------
 # Helper tampilan
 # ----------------------------------------------------------------------------
-def show_df(df, **kw):
+def _fmt_cell(v):
     try:
-        st.dataframe(df, width="stretch", **kw)
-    except Exception:
-        st.dataframe(df, use_container_width=True, **kw)
+        if pd.isna(v):
+            return ""
+    except (TypeError, ValueError):
+        pass
+    if isinstance(v, (float, np.floating)):
+        t = f"{v:.4f}".rstrip("0").rstrip(".")
+        return "0" if t in ("", "-0") else t
+    return str(v)
+
+
+def _is_numlike(col):
+    if pd.api.types.is_numeric_dtype(col):
+        return True
+    txt = col.astype(str).str.replace("<", "", regex=False).str.strip()
+    txt = txt[(txt != "") & (txt.str.lower() != "nan") & (txt != "None")]
+    if txt.empty:
+        return False
+    return pd.to_numeric(txt, errors="coerce").notna().mean() >= 0.8
+
+
+def show_df(df, hide_index=False, max_rows=1000, **kw):
+    """Tabel HTML bergaya kartu (tidak bergantung pada tema gelap/terang Streamlit)."""
+    import html as _html
+
+    def esc(x):
+        return _html.escape(str(x)).replace("$", "&#36;")
+
+    total = len(df)
+    d = df.head(max_rows)
+    right = [_is_numlike(d.iloc[:, j]) for j in range(d.shape[1])]
+    head = "".join(f'<th class="{"r" if right[j] else ""}">{esc(c)}</th>' for j, c in enumerate(d.columns))
+    if not hide_index:
+        head = f'<th class="idx">{esc(d.index.name or "")}</th>' + head
+    rows = []
+    for idx, row in zip(d.index, d.itertuples(index=False, name=None)):
+        cells = "".join(f'<td class="{"r" if right[j] else ""}">{esc(_fmt_cell(v))}</td>' for j, v in enumerate(row))
+        if not hide_index:
+            cells = f'<th class="idx">{esc(idx)}</th>' + cells
+        rows.append(f"<tr>{cells}</tr>")
+    html = (f'<div class="sc-wrap"><table class="sc-table"><thead><tr>{head}</tr></thead>'
+            f'<tbody>{"".join(rows)}</tbody></table></div>')
+    st.markdown(html, unsafe_allow_html=True)
+    if total > max_rows:
+        st.caption(f"Menampilkan {max_rows} dari {total} baris.")
 
 
 def show_plot(fig, key):
