@@ -144,6 +144,38 @@ def search_overlay(reg_groups, des_groups):
                      label_visibility="collapsed", on_change=_search_go, args=(items,))
 
 
+NAV_HERO_CSS = """<style>
+.stApp .hero {padding-bottom:84px;}
+.stApp .hero .hero-tags {display:none;}
+.stApp .st-key-hero_nav {position:relative; z-index:55; height:40px; margin:-108px 0 36px 0; padding-left:44px; overflow:visible;}
+.stApp .st-key-hero_nav [data-testid="stRadio"] > label {display:none;}
+.stApp .st-key-hero_nav [role="radiogroup"] {flex-direction:row; flex-wrap:nowrap; gap:8px; align-items:center;}
+.stApp .st-key-hero_nav label[data-baseweb="radio"] {margin:0; padding:8px 16px; border-radius:999px; background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.32); cursor:pointer; transition:background .15s;}
+.stApp .st-key-hero_nav label[data-baseweb="radio"]:hover {background:rgba(255,255,255,.24);}
+.stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) {background:#fff; border-color:#fff;}
+.stApp .st-key-hero_nav label[data-baseweb="radio"] > div:first-child {display:none;}
+.stApp .st-key-hero_nav label[data-baseweb="radio"] div, .stApp .st-key-hero_nav label[data-baseweb="radio"] p
+    {color:#fff !important; font-weight:700; font-size:.86rem; white-space:nowrap;}
+.stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) div, .stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) p
+    {color:#16306B !important;}
+@media (max-width:900px) {
+  .stApp .hero {padding-bottom:28px;}
+  .stApp .st-key-hero_nav {height:auto; margin:0 0 14px 0; padding-left:0;}
+  .stApp .st-key-hero_nav [role="radiogroup"] {flex-wrap:wrap;}
+  .stApp .st-key-hero_nav label[data-baseweb="radio"] {background:#1E40AF;}
+  .stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) {background:#fff;}
+}
+</style>"""
+
+
+def hero_nav():
+    """Menu halaman di bagian bawah banner (menggantikan radio 'Halaman' di sidebar)."""
+    st.markdown(NAV_HERO_CSS, unsafe_allow_html=True)
+    with st.container(key="hero_nav"):
+        st.radio("Halaman", PAGES, key="page", horizontal=True, label_visibility="collapsed")
+
+
 def _head(title, sub=None):
     st.markdown(f'<div class="sec-h">{_h.escape(title)}</div>' + (f'<div class="sec-s">{_h.escape(sub)}</div>' if sub else ""),
                 unsafe_allow_html=True)
