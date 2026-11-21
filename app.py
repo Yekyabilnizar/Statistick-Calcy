@@ -140,6 +140,8 @@ WIDGET_CSS = """<style>
 .stApp [data-testid="stSlider"] [data-baseweb="slider"] > div > div {background:linear-gradient(90deg,#1D4ED8,#0E7FA8);}
 .stApp [data-testid="stSlider"] [data-testid="stThumbValue"] {color:#1D4ED8 !important;}
 /* tombol */
+.stApp button[kind="primary"], .stApp button[kind="primaryFormSubmit"], .stApp [data-testid="stBaseButton-primary"], .stApp [data-testid="stBaseButton-primaryFormSubmit"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8) !important; border:none !important; border-radius:12px !important; padding:.55rem 1.4rem !important; box-shadow:0 4px 12px rgba(29,78,216,.28);}
+.stApp button[kind="primary"] p, .stApp button[kind="primaryFormSubmit"] p, .stApp [data-testid="stBaseButton-primary"] p, .stApp [data-testid="stBaseButton-primaryFormSubmit"] p {color:#fff !important; font-weight:700 !important;}
 .stApp .stButton button {background:#fff; border:1px solid #C5D7EC; color:#1D4ED8;}
 .stApp .stButton button p {color:#1D4ED8 !important; font-weight:700;}
 .stApp .stButton button:hover {border-color:#2563EB; background:#EAF2FF;}
