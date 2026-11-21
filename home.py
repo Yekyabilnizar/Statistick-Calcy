@@ -5,8 +5,8 @@ import streamlit as st
 
 import nav
 
-PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_ABOUT = "🏠 Beranda", "📊 Analisis", "🧭 Panduan Metode", "ℹ️ Tentang"
-PAGES = [PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_ABOUT]
+PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_ABOUT = "🏠 Beranda", "📊 Analisis", "🧭 Panduan Metode", "🗺️ Alur Metode", "ℹ️ Tentang"
+PAGES = [PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_ABOUT]
 
 HOME_CSS = """<style>
 .stApp .sec-h {font-size:1.7rem; font-weight:800; color:#0F2A43 !important; margin:34px 0 4px; line-height:1.2;}
@@ -227,3 +227,30 @@ def page_about(hero):
     st.markdown(LEGAL_CSS, unsafe_allow_html=True)
     st.markdown(PRIVACY_HTML, unsafe_allow_html=True)
     st.markdown('<div class="foot">StatCalc · Kalkulator analisis statistika</div>', unsafe_allow_html=True)
+
+
+def page_flow(reg_groups, des_groups, hero):
+    """Flowchart alur analisis tiap metode (halaman tersendiri agar halaman analisis tetap bersih)."""
+    import flows
+    st.markdown(HOME_CSS, unsafe_allow_html=True)
+    st.markdown(flows.FLOW_CSS, unsafe_allow_html=True)
+    reg, des = _catalog(reg_groups, des_groups)
+    hero("Alur Analisis Setiap Metode", "Lihat urutan langkah dari data masuk, pemeriksaan asumsi, sampai hasil. Pilih metodenya di bawah.",
+         ["Flowchart", "Asumsi & keputusan", "Hasil"])
+    with st.container(border=True):
+        c1, c2, c3 = st.columns([1.2, 1.4, 2.2])
+        fam = c1.radio("Jenis analisis", [nav.FAMILY_DES, nav.FAMILY_REG], key="fl_fam")
+        groups = des if fam == nav.FAMILY_DES else reg
+        pre = "fd" if fam == nav.FAMILY_DES else "fr"
+        grp = c2.selectbox("Kelompok", list(groups.keys()), key=f"{pre}_grp")
+        labels = {m["label"]: m for m in groups[grp]}
+        lab = c3.selectbox("Metode", list(labels.keys()), key=f"{pre}_m_{grp}")
+    m = labels[lab]
+    family = "des" if fam == nav.FAMILY_DES else "reg"
+    _head(m["label"], m["desc"])
+    st.markdown(flows.flow_html(flows.nodes_for(m["key"], family)), unsafe_allow_html=True)
+    st.markdown('<div style="height:10px"></div>', unsafe_allow_html=True)
+    b1, b2, _ = st.columns([1.4, 1.4, 3])
+    b1.button("Buka metode ini →", key="fl_open", type="primary", on_click=_go, args=(PAGE_APP, fam, grp, lab), use_container_width=True)
+    b2.button("Panduan memilih metode", key="fl_guide", on_click=_go, args=(PAGE_GUIDE,), use_container_width=True)
+    st.markdown('<div class="foot">Flowchart bersifat ringkasan alur; detail perhitungan ada di halaman analisis tiap metode.</div>', unsafe_allow_html=True)
