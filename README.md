@@ -38,3 +38,18 @@ streamlit run app.py
 - `reg_samples.py` – data contoh regresi
 - `ui_core.py`, `pages_reg.py`, `pages_design.py` – penggambar grafik dan halaman tiap metode
 - `requirements.txt`, `.streamlit/config.toml`
+
+## Formulir Masukan (opsional, untuk developer)
+Masukan pengguna disimpan sebagai baris CSV di repo GitHub **privat** milik Anda lewat GitHub API.
+1. Buat repo privat baru, mis. `statcalc-masukan` (boleh kosong; berkas dibuat otomatis).
+2. GitHub › Settings › Developer settings › Fine-grained tokens: buat token khusus repo tersebut dengan izin **Contents: Read and write**.
+3. Streamlit Cloud › App › Settings › Secrets, isi:
+```
+[feedback]
+token  = "github_pat_xxx"
+repo   = "username/statcalc-masukan"
+path   = "masukan.csv"
+branch = "main"
+```
+4. Jangan commit token. Lokal: simpan di `.streamlit/secrets.toml` (sudah ada di `.gitignore`).
+Tanpa secrets, halaman Masukan menampilkan pemberitahuan bahwa fitur belum aktif.
