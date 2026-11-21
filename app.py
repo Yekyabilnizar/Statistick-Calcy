@@ -890,6 +890,11 @@ def main():
             home.page_home(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
         elif mkey == home.PAGE_GUIDE:
             home.page_guide(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
+        elif mkey == home.PAGE_FB:
+            import feedback
+            reg, des = nav._groups(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS)
+            opts = [m["label"] for v in list(des.values()) + list(reg.values()) for m in v]
+            feedback.page_feedback(hero, n_info, opts)
         elif mkey == home.PAGE_FLOW:
             home.page_flow(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
         else:
