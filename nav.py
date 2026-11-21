@@ -54,6 +54,16 @@ GUIDE_DES = [
     ("Rancangan kokoh dengan array ortogonal", "Metode Taguchi", "Optimasi Proses"),
 ]
 
+TARGET_REG = [LEGACY_REG["label"], "Regresi dengan Variabel Dummy", "Regresi Polinomial", "Diagnostik & Regresi Tanpa Intersep", "Regresi Nonlinear",
+              "Regresi Logistik Biner", "Regresi Logistik Multinomial", "Regresi Logistik Ordinal", "Regresi Poisson", "Regresi Gamma",
+              "Seleksi Variabel", "Regresi Ridge", "Regresi Robust – M-estimator Huber", "LOESS / LOWESS", "Regresi Kuantil",
+              "Regresi Data Panel", "Regresi Deret Waktu (ARIMAX)", "Regresi Spasial – SAR (Lag)", "Mixed Effect Model", "Regresi Cox (Survival)", "Regresi Tobit"]
+TARGET_DES = [LEGACY_DES[0]["label"], LEGACY_DES[1]["label"], "Rancangan Bujur Sangkar Latin (RBSL)", "Blok Tidak Lengkap (BIB / Lattice)",
+              "Percobaan Faktorial", "Faktorial Pecahan (Fractional Factorial)", "Petak Terbagi (Split-Plot)", "Rancangan Tersarang (Nested)",
+              "Pengukuran Berulang (Repeated Measures)", "Rancangan Cross-Over", "ANCOVA (Analisis Kovarians)", "MANOVA",
+              "Response Surface Methodology (RSM)", "Rancangan Campuran (Mixture)", "Metode Taguchi"]
+assert len(TARGET_REG) == len(GUIDE_REG) and len(TARGET_DES) == len(GUIDE_DES)
+
 FAMILY_REG = "📈 Regresi"
 FAMILY_DES = "🧪 Rancangan Percobaan"
 
@@ -76,6 +86,11 @@ def _step(n, text):
 
 def sidebar_nav(reg_groups, des_groups):
     """Mengembalikan (mode, kunci) dengan mode in {legacy, reg, design}."""
+    import home
+    page = st.sidebar.radio("Halaman", home.PAGES, key="page")
+    if page != home.PAGE_APP:
+        return "page", page
+    st.sidebar.markdown('<hr style="margin:10px 0 0;border:none;border-top:1px solid #CFE0F3">', unsafe_allow_html=True)
     reg, des = _groups(reg_groups, des_groups)
     _step(1, "Pilih jenis analisis")
     family = st.sidebar.radio("Jenis analisis", [FAMILY_REG, FAMILY_DES], key="family", label_visibility="collapsed")
