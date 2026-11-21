@@ -9,7 +9,7 @@ from scipy import stats
 import design_engine as de
 import reg_core as rc
 from posthoc_ext import METHODS, posthoc_any
-from ui_core import (H, all_cols, cat_like, draw_spec, draw_specs, num_cols, pick, pick_multi, pick_optional, safe_run)
+from ui_core import (H, section, form_header, crumb, all_cols, cat_like, draw_spec, draw_specs, num_cols, pick, pick_multi, pick_optional, safe_run)
 
 
 # ============================================================================
@@ -273,7 +273,7 @@ def render_anova_design(R, prefix, alpha, fname):
     tabs = st.tabs(["📋 ANOVA", "📊 Rata-rata & Uji Lanjut", "🧪 Asumsi", "📈 Grafik", "📝 Interpretasi", "⬇️ Unduh"])
     eff_tables = {}
     with tabs[0]:
-        st.subheader("Tabel Analisis Ragam")
+        section("Tabel Analisis Ragam")
         H["show_df"](R["anova"], hide_index=True)
         for en, e in err.items():
             st.caption(f"{en}: db = {e['df']}, KT = {e['kt']:.4f}, KK = {R['kk'][en]:.2f}%")
@@ -284,7 +284,7 @@ def render_anova_design(R, prefix, alpha, fname):
             H["n_warn"]("Rancangan tidak seimbang sempurna; perbandingan memakai rata-rata terkoreksi blok.")
         for name, v in (R.get("extra") or {}).items():
             if isinstance(v, pd.DataFrame):
-                st.subheader({"nest_means": "Rata-rata tersarang", "var_comp": "Komponen ragam", "sphericity": "Uji sphericity & koreksi",
+                section({"nest_means": "Rata-rata tersarang", "var_comp": "Komponen ragam", "sphericity": "Uji sphericity & koreksi",
                               "wide": "Data format lebar", "adj": "Rata-rata terkoreksi kovariat"}.get(name, name))
                 H["show_df"](v, hide_index=name != "wide" and True)
         ex = R.get("extra") or {}
@@ -392,7 +392,7 @@ def render_manova(R, prefix, alpha, fname):
     H["kpis"]([("Pengamatan", R["n"]), ("Variabel respon", R["p"]), ("Level faktor", R["q"]), ("db galat", R["v"])])
     tabs = st.tabs(["📋 Uji Multivariat", "📊 Univariat & Rata-rata", "📈 Grafik", "⬇️ Unduh"])
     with tabs[0]:
-        st.subheader("Uji multivariat (Pillai, Wilks, Hotelling-Lawley, Roy)")
+        section("Uji multivariat (Pillai, Wilks, Hotelling-Lawley, Roy)")
         H["show_df"](R["multi"], hide_index=True)
         b = R["box"]
         if b:
@@ -405,11 +405,11 @@ def render_manova(R, prefix, alpha, fname):
                                                                       if sig else "tidak berpengaruh nyata secara multivariat."),
                                          "Uji univariat (tab berikutnya) menunjukkan respon mana yang berbeda; gunakan P Bonferroni untuk mengendalikan galat tipe I."])
     with tabs[1]:
-        st.subheader("ANOVA univariat per respon")
+        section("ANOVA univariat per respon")
         H["show_df"](R["uni"], hide_index=True)
-        st.subheader("Rata-rata per level")
+        section("Rata-rata per level")
         H["show_df"](R["means"].reset_index(), hide_index=True)
-        st.subheader("Korelasi antar respon (galat)")
+        section("Korelasi antar respon (galat)")
         H["show_df"](R["corr"].reset_index(), hide_index=True)
     with tabs[2]:
         m = R["means"]
@@ -431,9 +431,9 @@ def render_rsm(R, prefix, alpha, fname):
                ("PRESS", f"{R['press']:.3f}")])
     tabs = st.tabs(["📋 Model", "🎯 Optimum", "📈 Kontur & Grafik", "⬇️ Unduh"])
     with tabs[0]:
-        st.subheader("Koefisien (satuan terkode)")
+        section("Koefisien (satuan terkode)")
         H["show_df"](R["coef"], hide_index=True)
-        st.subheader("ANOVA model")
+        section("ANOVA model")
         H["show_df"](R["anova"], hide_index=True)
         notes = [f"Model {'kuadratik' if R['order'] == 2 else 'linear'} " + ("signifikan" if R["pm"] < alpha else "tidak signifikan") + f" (P = {de.fmt_p(R['pm'])}).",
                  f"R² = {R['r2']:.3f}, R² prediksi = {R['r2p']:.3f}" + (" (selisih dengan R² adj > 0.2 menandakan overfitting)." if R["r2a"] - R["r2p"] > 0.2 else ".")]
@@ -445,13 +445,13 @@ def render_rsm(R, prefix, alpha, fname):
         if st_:
             kind = st_.get("kind", "")
             inside = st_.get("inside", True)
-            st.subheader("Titik stasioner")
+            section("Titik stasioner")
             row = {**{f: round(float(v), 4) for f, v in st_["actual"].items()}, "Respon prediksi": round(float(st_["y"]), 4), "Jenis": kind,
                    "Dalam daerah percobaan": "Ya" if inside else "Tidak"}
             H["show_df"](pd.DataFrame([row]), hide_index=True)
             if not inside:
                 H["n_warn"]("Titik stasioner berada di luar daerah percobaan; ekstrapolasi tidak andal. Gunakan optimum terbatas di bawah.")
-        st.subheader("Optimum dalam daerah percobaan")
+        section("Optimum dalam daerah percobaan")
         o = R["opt"]
         H["show_df"](pd.DataFrame([{"Tujuan": "Maksimum", **{k_: round(v, 4) for k_, v in o["max"].items()}},
                                    {"Tujuan": "Minimum", **{k_: round(v, 4) for k_, v in o["min"].items()}}]), hide_index=True)
@@ -470,9 +470,9 @@ def render_mixture(R, prefix, alpha, fname):
     H["kpis"]([("R²", f"{R['r2']:.4f}"), ("R² adj", f"{R['r2a']:.4f}"), ("P model", de.fmt_p(R["pm"])), ("Pengamatan", R["n"]), ("Model", R["model"])])
     tabs = st.tabs(["📋 Model", "🎯 Optimum", "📈 Grafik", "⬇️ Unduh"])
     with tabs[0]:
-        st.subheader("Koefisien model Scheffé")
+        section("Koefisien model Scheffé")
         H["show_df"](R["coef"], hide_index=True)
-        st.subheader("ANOVA")
+        section("ANOVA")
         H["show_df"](R["anova"], hide_index=True)
         H["note_card"]("Interpretasi", ["Model campuran tidak memiliki intersep; koefisien linear = respon prediksi komponen murni.",
                                          "Koefisien interaksi positif menunjukkan sinergi antar komponen, negatif menunjukkan antagonisme.",
@@ -508,11 +508,11 @@ def render_taguchi(R, prefix, alpha, fname):
                ("S/N rata-rata", f"{R['grand_sn']:.3f} dB"), ("S/N prediksi (optimum)", f"{R['pred_sn']:.3f} dB")])
     tabs = st.tabs(["📋 Respon S/N", "🎯 Kombinasi Optimum", "📈 Grafik", "⬇️ Unduh"])
     with tabs[0]:
-        st.subheader("Rata-rata S/N dan respon per level")
+        section("Rata-rata S/N dan respon per level")
         H["show_df"](R["table"], hide_index=True)
-        st.subheader("Peringkat pengaruh faktor (delta)")
+        section("Peringkat pengaruh faktor (delta)")
         H["show_df"](R["rank"], hide_index=True)
-        st.subheader("ANOVA terhadap S/N")
+        section("ANOVA terhadap S/N")
         H["show_df"](R["anova"], hide_index=True)
         if R.get("pooled"):
             st.caption(R["pooled"])
@@ -639,6 +639,7 @@ def run_design_page(mkey, alpha):
     from ui_core import hero_for, load_data_generic
     m = DESIGN_FLAT[mkey]
     hero_for(m["label"], m["desc"], m["tags"], alpha)
+    crumb("Rancangan Percobaan", _group_of(mkey), m["label"])
     df, src = load_data_generic(de.sample_design, m["sample"], f"des_{mkey}")
     if df is None:
         return
@@ -646,8 +647,16 @@ def run_design_page(mkey, alpha):
         H["n_info"]("Menggunakan **data contoh**. Pilih 'Unggah file' atau 'Input manual' pada sidebar untuk data Anda sendiri.")
     with st.expander("👁️ Pratinjau data", expanded=False):
         H["show_df"](df.head(200), hide_index=True)
-    st.markdown("#### ⚙️ Pengaturan analisis")
-    R = m["form"](df, alpha, f"d_{mkey}")
+    with st.container(border=True):
+        form_header("Pengaturan analisis")
+        R = m["form"](df, alpha, f"d_{mkey}")
     if R is None:
         return
     render_design(R, f"d_{mkey}", alpha, f"hasil_{mkey}.xlsx")
+
+
+def _group_of(mkey):
+    for g, items in DESIGN_GROUPS.items():
+        if any(i["key"] == mkey for i in items):
+            return g
+    return ""
