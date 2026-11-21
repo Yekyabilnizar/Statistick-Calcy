@@ -407,7 +407,7 @@ def residual_plots(fitted, resid, prefix):
 # Input data
 # ----------------------------------------------------------------------------
 def load_data(key):
-    badge("2 · Data")
+    badge("Sumber data")
     src = st.sidebar.radio("Sumber data", ["Data contoh", "Unggah file (CSV/Excel)", "Input manual"], key="src")
     if src == "Data contoh":
         return sc.sample_data(key), "contoh"
@@ -482,7 +482,7 @@ def page_regression(df, alpha):
         n_err("Dibutuhkan minimal 2 kolom numerik untuk regresi.")
         return
 
-    badge("3 · Variabel")
+    badge("Variabel")
     y = st.sidebar.selectbox("Variabel dependen (Y)", num, index=len(num) - 1, key=f"reg_y_{sig}")
     x_opts = [c for c in num if c != y]
     xs = st.sidebar.multiselect("Variabel independen (X)", x_opts, default=x_opts, key=f"reg_x_{y}_{sig}")
@@ -672,7 +672,7 @@ def page_anova(df, alpha, kind):
     num = sc.numeric_cols(df)
     cols = list(df.columns)
     sig = str(abs(hash(tuple(map(str, df.columns)))))
-    badge("3 · Variabel")
+    badge("Variabel")
     blk = None
     if kind == "ral":
         trt = st.sidebar.selectbox("Kolom perlakuan", cols, index=0, key=f"ral_trt_{sig}")
@@ -861,33 +861,12 @@ def main():
     _bind_ui()
     import pages_design
     import pages_reg
-    badge("1 · Analisis")
-    CATS = ["Dasar: Regresi Linear · RAL · RAK", "Rancangan Percobaan Lanjutan", "Regresi Lanjutan"]
-    cat = st.sidebar.radio("Kategori", CATS, key="category")
-    alpha_box = None
-
-    if cat == CATS[0]:
-        choice = st.sidebar.radio(
-            "Jenis analisis",
-            ["Regresi Linear", "Rancangan Acak Lengkap (RAL)", "Rancangan Acak Kelompok (RAK)"],
-            key="analysis",
-        )
-        mode, mkey = "legacy", {"Regresi Linear": "reg", "Rancangan Acak Lengkap (RAL)": "ral",
-                                "Rancangan Acak Kelompok (RAK)": "rak"}[choice]
-    elif cat == CATS[1]:
-        groups = pages_design.DESIGN_GROUPS
-        grp = st.sidebar.selectbox("Kelompok rancangan", list(groups.keys()), key="dgroup")
-        labels = {m["label"]: m["key"] for m in groups[grp]}
-        lab = st.sidebar.selectbox("Metode", list(labels.keys()), key=f"dmethod_{grp}")
-        mode, mkey = "design", labels[lab]
-    else:
-        groups = pages_reg.REG_GROUPS
-        grp = st.sidebar.selectbox("Kelompok regresi", list(groups.keys()), key="rgroup")
-        labels = {m["label"]: m["key"] for m in groups[grp]}
-        lab = st.sidebar.selectbox("Metode", list(labels.keys()), key=f"rmethod_{grp}")
-        mode, mkey = "reg", labels[lab]
-
-    alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1,
+    import nav
+    st.sidebar.markdown(nav.NAV_CSS, unsafe_allow_html=True)
+    alpha = None
+    mode, mkey = nav.sidebar_nav(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS)
+    st.sidebar.markdown('<div class="step"><span>4</span>Atur taraf nyata (α)</div>', unsafe_allow_html=True)
+    alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1, label_visibility="collapsed",
                                  format_func=lambda a: f"α = {a:.2f}", key="alpha")
 
     if mode == "design":
