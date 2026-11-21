@@ -148,10 +148,10 @@ NAV_HERO_CSS = """<style>
 .stApp .st-key-hero_nav {position:relative; z-index:55; height:40px; margin:-108px 0 36px 0; padding:0 44px; overflow:visible;}
 .stApp .st-key-hero_nav [data-testid="stHorizontalBlock"] {gap:8px; max-width:860px;}
 .stApp .st-key-hero_nav .stButton button {background:rgba(255,255,255,.12) !important; border:1px solid rgba(255,255,255,.38) !important; border-radius:999px !important; min-height:38px; padding:.25rem .6rem; width:100%; box-shadow:none !important;}
-.stApp .st-key-hero_nav .stButton button p {color:#fff !important; font-weight:700 !important; font-size:.84rem; white-space:nowrap;}
+.stApp .st-key-hero_nav .stButton button p {color:#fff !important; -webkit-text-fill-color:#fff !important; font-weight:700 !important; font-size:.84rem; white-space:nowrap;}
 .stApp .st-key-hero_nav .stButton button:hover {background:rgba(255,255,255,.25) !important; border-color:rgba(94,234,212,.85) !important;}
 .stApp .st-key-hero_nav .stButton button[kind="primary"], .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] {background:#fff !important; border-color:#fff !important;}
-.stApp .st-key-hero_nav .stButton button[kind="primary"] p, .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] p {color:#16306B !important;}
+.stApp .st-key-hero_nav .stButton button[kind="primary"] p, .stApp .st-key-hero_nav .stButton button[kind="primary"] div, .stApp .st-key-hero_nav .stButton button[kind="primary"] span, .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] p, .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] div {color:#16306B !important; -webkit-text-fill-color:#16306B !important;}
 @media (max-width:900px) {
   .stApp .hero {padding-bottom:28px;}
   .stApp .st-key-hero_nav {height:auto; margin:0 0 14px 0; padding:0;}
