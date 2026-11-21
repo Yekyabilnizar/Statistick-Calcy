@@ -92,13 +92,19 @@ def _go(page=PAGE_APP, family=None, group=None, label=None):
 
 SEARCH_CSS = """<style>
 .stApp .st-key-hero_searchbox {position:relative; z-index:60; height:0; margin:0 0 -1rem 0; overflow:visible;}
-.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:absolute; top:20px; right:26px; width:min(400px,62%);}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] > div {border-radius:999px !important; background:#fff !important; border:1px solid rgba(255,255,255,.7) !important;
-    box-shadow:0 8px 22px rgba(15,42,67,.25); min-height:42px; padding-left:6px;}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] input, .stApp .st-key-hero_searchbox [data-baseweb="select"] div {font-size:.9rem;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:absolute; top:52px; right:30px; width:min(380px,58%);}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] > div {border-radius:999px !important; background:rgba(255,255,255,.14) !important;
+    border:1px solid rgba(255,255,255,.38) !important; box-shadow:none !important; min-height:40px; padding-left:6px; backdrop-filter:blur(6px);}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] > div:hover, .stApp .st-key-hero_searchbox [data-baseweb="select"] > div:focus-within
+    {background:rgba(255,255,255,.22) !important; border-color:rgba(94,234,212,.8) !important;}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] div, .stApp .st-key-hero_searchbox [data-baseweb="select"] input
+    {color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:.88rem; background:transparent;}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] input::placeholder {color:rgba(255,255,255,.82) !important; -webkit-text-fill-color:rgba(255,255,255,.82) !important;}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] svg {fill:#fff !important; color:#fff !important;}
 @media (max-width:760px) {
   .stApp .st-key-hero_searchbox {height:auto; margin:0;}
   .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:static; width:100%;}
+  .stApp .st-key-hero_searchbox [data-baseweb="select"] > div {background:#1E40AF !important;}
 }
 </style>"""
 
