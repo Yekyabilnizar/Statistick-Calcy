@@ -90,6 +90,54 @@ def _go(page=PAGE_APP, family=None, group=None, label=None):
                 st.session_state[f"{pre}_m_{group}"] = label
 
 
+SEARCH_CSS = """<style>
+.stApp .st-key-hero_searchbox {position:relative; z-index:60; height:0; margin:0 0 -1rem 0; overflow:visible;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:absolute; top:20px; right:26px; width:min(400px,62%);}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] > div {border-radius:999px !important; background:#fff !important; border:1px solid rgba(255,255,255,.7) !important;
+    box-shadow:0 8px 22px rgba(15,42,67,.25); min-height:42px; padding-left:6px;}
+.stApp .st-key-hero_searchbox [data-baseweb="select"] input, .stApp .st-key-hero_searchbox [data-baseweb="select"] div {font-size:.9rem;}
+@media (max-width:760px) {
+  .stApp .st-key-hero_searchbox {height:auto; margin:0;}
+  .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:static; width:100%;}
+}
+</style>"""
+
+
+def _search_items(reg_groups, des_groups):
+    """Daftar yang bisa dicari: metode (dengan kelompoknya) dan halaman informasi."""
+    reg, des = _catalog(reg_groups, des_groups)
+    items = []
+    for fam, groups, short in ((nav.FAMILY_DES, des, "Rancangan"), (nav.FAMILY_REG, reg, "Regresi")):
+        for g, ms in groups.items():
+            for m in ms:
+                items.append((f"{m['label']}  ·  {short} › {g}", ("m", fam, g, m["label"])))
+    for p in (PAGE_GUIDE, PAGE_FLOW, PAGE_FB, PAGE_ABOUT):
+        items.append((p, ("p", p)))
+    return items
+
+
+def _search_go(items):
+    i = st.session_state.get("hero_search")
+    if i is None:
+        return
+    tgt = items[i][1]
+    if tgt[0] == "p":
+        _go(tgt[1])
+    else:
+        _go(PAGE_APP, tgt[1], tgt[2], tgt[3])
+    st.session_state["hero_search"] = None
+
+
+def search_overlay(reg_groups, des_groups):
+    """Kotak pencarian di pojok kanan atas banner; memilih hasil langsung membuka metode/halamannya."""
+    st.markdown(SEARCH_CSS, unsafe_allow_html=True)
+    items = _search_items(reg_groups, des_groups)
+    with st.container(key="hero_searchbox"):
+        st.selectbox("Cari metode", list(range(len(items))), index=None, key="hero_search",
+                     format_func=lambda i: items[i][0], placeholder="🔍 Cari metode… (mis. logistik, RAK, panel)",
+                     label_visibility="collapsed", on_change=_search_go, args=(items,))
+
+
 def _head(title, sub=None):
     st.markdown(f'<div class="sec-h">{_h.escape(title)}</div>' + (f'<div class="sec-s">{_h.escape(sub)}</div>' if sub else ""),
                 unsafe_allow_html=True)
