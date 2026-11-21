@@ -40,6 +40,43 @@ HOME_CSS = """<style>
 </style>"""
 
 
+
+LEGAL_CSS = """<style>
+.stApp .legal-note {display:flex; gap:10px; align-items:flex-start; background:rgba(255,255,255,.6); border:1px solid #D5E3F3; border-radius:12px; padding:9px 14px; margin:22px 0 8px; font-size:.84rem; color:#52667D !important; line-height:1.5;}
+.stApp .legal-note b {color:#334E68 !important;}
+.stApp .legal h5 {margin:14px 0 4px; color:#0F2A43 !important; font-size:1rem;}
+.stApp .legal p, .stApp .legal li {color:#334E68 !important; font-size:.93rem; line-height:1.65;}
+</style>"""
+
+DISCLAIMER_SHORT = ("<b>Penafian:</b> hasil bersifat alat bantu analisis, bukan pengganti konsultasi dengan ahli statistika. "
+                    "Pengguna bertanggung jawab atas pemilihan metode, kebenaran data, dan penggunaan hasilnya.")
+
+PRIVACY_HTML = """<div class="legal">
+<h5>Kebijakan Privasi</h5>
+<ul>
+<li><b>Data yang Anda masukkan</b> (unggahan file atau input manual) hanya diproses di memori selama sesi berjalan untuk menghitung hasil. Aplikasi ini tidak menyimpan data Anda ke basis data atau berkas permanen, dan tidak membagikannya kepada pihak lain.</li>
+<li><b>Penyedia hosting</b> dapat mencatat data teknis standar (mis. alamat IP, waktu akses, log kesalahan) sesuai kebijakan mereka sendiri. Aplikasi tidak menambahkan pelacak atau iklan.</li>
+<li><b>Jangan mengunggah data pribadi sensitif</b> (identitas, data kesehatan individual, dan sejenisnya) tanpa persetujuan dan anonimisasi yang layak. Gunakan kode atau ID samaran untuk subjek penelitian.</li>
+<li>Berkas Excel hasil unduhan dibuat di sesi Anda dan menjadi tanggung jawab Anda sepenuhnya setelah diunduh.</li>
+<li>Kebijakan ini dapat diperbarui sewaktu-waktu; versi terbaru selalu ditampilkan di halaman ini.</li>
+</ul>
+<h5>Penafian</h5>
+<ul>
+<li><b>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika.</b> Keputusan penelitian, kebijakan, medis, keuangan, atau hukum tidak boleh didasarkan semata-mata pada keluaran aplikasi ini.</li>
+<li>Pemilihan metode, pemenuhan asumsi, dan interpretasi tetap menjadi tanggung jawab pengguna. Interpretasi otomatis bersifat umum dan tidak mempertimbangkan konteks penelitian Anda.</li>
+<li>Perhitungan dikerjakan dengan sungguh-sungguh dan diuji, tetapi tidak ada jaminan bebas dari kesalahan. Untuk publikasi ilmiah atau pengambilan keputusan penting, verifikasi dengan perangkat lunak statistik lain dan konsultasikan dengan ahli statistika.</li>
+<li>Aplikasi disediakan "apa adanya" tanpa jaminan tersurat maupun tersirat. Pengelola tidak bertanggung jawab atas kerugian yang timbul dari penggunaan aplikasi atau hasilnya.</li>
+</ul></div>"""
+
+
+def legal_block(expanded=False):
+    """Penafian ringkas + kebijakan privasi dalam expander (tidak mengganggu tampilan utama)."""
+    st.markdown(LEGAL_CSS, unsafe_allow_html=True)
+    st.markdown(f'<div class="legal-note"><span>⚖️</span><div>{DISCLAIMER_SHORT}</div></div>', unsafe_allow_html=True)
+    with st.expander("🔒 Kebijakan Privasi & Penafian lengkap", expanded=expanded):
+        st.markdown(PRIVACY_HTML, unsafe_allow_html=True)
+
+
 def _go(page=PAGE_APP, family=None, group=None, label=None):
     """Callback tombol: pindah halaman (dan opsional langsung memilih metode)."""
     st.session_state["page"] = page
@@ -143,7 +180,8 @@ panel, spasial, dan survival.</p><ul><li>Linear, dummy, polinomial, nonlinear, d
         st.write("** = sangat nyata (P < 0,01), * = nyata (P < 0,05), tn = tidak nyata. Taraf nyata α dapat diubah di sidebar.")
     with st.expander("Hasil saya berbeda dengan software lain"):
         st.write("Periksa jenis jumlah kuadrat (aplikasi memakai Tipe I sekuensial pada data seimbang), kategori referensi pada variabel dummy, "
-                 "dan metode penaksiran (mis. REML pada mixed model). Pada data seimbang, hasil ANOVA identik dengan SAS/R/SPSS.")
+                 "dan metode penaksiran (mis. REML pada mixed model). Pada data seimbang, hasil ANOVA umumnya sama dengan software lain; verifikasi tetap dianjurkan untuk publikasi.")
+    legal_block()
     st.markdown('<div class="foot">StatCalc · Kalkulator analisis statistika</div>', unsafe_allow_html=True)
 
 
@@ -185,4 +223,7 @@ def page_about(hero):
 - Uji lanjut sebaiknya dipakai hanya bila uji F nyata. **BNT** tidak mengendalikan galat tipe I pada banyak perbandingan; **Tukey** dan **Scheffé** lebih konservatif; **Dunnett** khusus perbandingan terhadap kontrol.
 - Model lanjutan (panel, spasial, mixed, Cox, Tobit) bersifat **alat bantu analisis**; periksa asumsi model dan konsultasikan dengan ahli statistika untuk publikasi.
 """)
+    _head("Kebijakan privasi & penafian")
+    st.markdown(LEGAL_CSS, unsafe_allow_html=True)
+    st.markdown(PRIVACY_HTML, unsafe_allow_html=True)
     st.markdown('<div class="foot">StatCalc · Kalkulator analisis statistika</div>', unsafe_allow_html=True)
