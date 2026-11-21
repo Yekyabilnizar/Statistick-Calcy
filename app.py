@@ -106,35 +106,52 @@ div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; bor
 </style>"""
 st.markdown(CSS, unsafe_allow_html=True)
 
-# Komponen bawaan Streamlit (input, dropdown, tabel editor) mengikuti tema aplikasi. Bila tema gelap aktif,
-# warna komponen itu dibalik (invert) agar menjadi terang dan serasi dengan latar biru soft.
-DARK_FIX = """
-[data-testid="stSelectbox"], [data-testid="stMultiSelect"], [data-testid="stTextInput"],
-[data-testid="stNumberInput"], [data-testid="stTextArea"], [data-testid="stFileUploader"],
-[data-testid="stDataFrame"], [data-testid="stDataEditor"],
-[data-testid="stRadio"] label > div:first-child, [data-testid="stCheckbox"] label > span:first-child
-{filter:invert(1) hue-rotate(180deg) brightness(1.06);}
-[data-testid="stSelectbox"] [data-testid="stWidgetLabel"], [data-testid="stMultiSelect"] [data-testid="stWidgetLabel"],
-[data-testid="stTextInput"] [data-testid="stWidgetLabel"], [data-testid="stNumberInput"] [data-testid="stWidgetLabel"],
-[data-testid="stTextArea"] [data-testid="stWidgetLabel"], [data-testid="stFileUploader"] [data-testid="stWidgetLabel"]
-{filter:invert(1) hue-rotate(180deg);}
-[data-testid="stDataFrame"], [data-testid="stDataEditor"] {border-radius:14px; overflow:hidden; border:1px solid #C5D7EC;}
-"""
-
-
-def _theme_type():
-    try:
-        return st.context.theme.type
-    except Exception:
-        return None
-
-
-_mode = _theme_type()
-if _mode == "dark":
-    st.markdown(f"<style>{DARK_FIX}</style>", unsafe_allow_html=True)
-elif _mode is None:
-    st.markdown(f"<style>@media (prefers-color-scheme: dark){{{DARK_FIX}}}</style>", unsafe_allow_html=True)
-
+# Komponen input dipaksa bertema terang yang serasi dengan latar biru soft, apa pun tema sistem/Streamlit pengguna.
+WIDGET_CSS = """<style>
+:root, .stApp {color-scheme: light;}
+/* kotak input, select, number */
+.stApp [data-baseweb="input"], .stApp [data-baseweb="base-input"], .stApp [data-baseweb="select"] > div,
+.stApp [data-baseweb="textarea"], .stApp [data-testid="stTextArea"] textarea {
+  background:#FFFFFF !important; border:1px solid #C5D7EC !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(30,64,120,.06) !important; color:#0F2A43 !important;}
+.stApp [data-baseweb="input"]:focus-within, .stApp [data-baseweb="select"] > div:focus-within, .stApp [data-baseweb="textarea"]:focus-within {
+  border-color:#2563EB !important; box-shadow:0 0 0 3px rgba(37,99,235,.18) !important;}
+.stApp input, .stApp textarea, .stApp [data-baseweb="select"] div, .stApp [data-baseweb="select"] span {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43 !important;}
+.stApp input::placeholder {color:#8497AD !important; -webkit-text-fill-color:#8497AD !important;}
+.stApp [data-baseweb="select"] svg, .stApp [data-testid="stNumberInput"] svg {fill:#52667D !important; color:#52667D !important;}
+.stApp [data-testid="stNumberInput"] button {background:#EEF4FC !important; color:#1D4ED8 !important; border:none !important; border-left:1px solid #D5E3F3 !important;}
+.stApp [data-testid="stNumberInput"] button:hover {background:#DCE9FF !important;}
+/* multiselect */
+.stApp [data-baseweb="tag"] {background:#DCE9FF !important; border-radius:8px !important;}
+.stApp [data-baseweb="tag"] span, .stApp [data-baseweb="tag"] svg {color:#1D4ED8 !important; fill:#1D4ED8 !important; -webkit-text-fill-color:#1D4ED8 !important; font-weight:700;}
+/* menu dropdown */
+[data-baseweb="popover"] > div, [data-baseweb="menu"], [data-baseweb="popover"] ul {background:#FFFFFF !important; border:1px solid #D5E3F3; border-radius:12px !important; box-shadow:0 10px 28px rgba(30,64,120,.18) !important;}
+[data-baseweb="popover"] li, [data-baseweb="menu"] li {background:#FFFFFF !important; color:#0F2A43 !important;}
+[data-baseweb="popover"] li *, [data-baseweb="menu"] li * {color:#0F2A43 !important; -webkit-text-fill-color:#0F2A43 !important;}
+[data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover, [data-baseweb="popover"] li[aria-selected="true"] {background:#EAF2FF !important;}
+/* unggah file, editor tabel */
+.stApp [data-testid="stFileUploaderDropzone"] {background:#FFFFFF !important; border:1.5px dashed #9FB9D9 !important; border-radius:14px !important;}
+.stApp [data-testid="stFileUploaderDropzone"] * {color:#334E68 !important;}
+.stApp [data-testid="stFileUploaderDropzone"] button {background:#EEF4FC !important; border:1px solid #C5D7EC !important; border-radius:10px !important;}
+.stApp [data-testid="stDataFrame"], .stApp [data-testid="stDataEditor"] {border:1px solid #C5D7EC; border-radius:14px; overflow:hidden; background:#fff; box-shadow:0 4px 14px rgba(30,64,120,.07);}
+/* radio, checkbox, slider */
+.stApp [data-testid="stRadio"] label > div:first-child, .stApp [data-testid="stCheckbox"] label > span:first-child {background-color:#FFFFFF; border-color:#9FB9D9;}
+.stApp [data-testid="stSlider"] [role="slider"] {background:#1D4ED8 !important;}
+.stApp [data-testid="stSlider"] [data-baseweb="slider"] > div > div {background:linear-gradient(90deg,#1D4ED8,#0E7FA8);}
+.stApp [data-testid="stSlider"] [data-testid="stThumbValue"] {color:#1D4ED8 !important;}
+/* tombol */
+.stApp .stButton button {background:#fff; border:1px solid #C5D7EC; color:#1D4ED8;}
+.stApp .stButton button p {color:#1D4ED8 !important; font-weight:700;}
+.stApp .stButton button:hover {border-color:#2563EB; background:#EAF2FF;}
+/* expander & kartu berbingkai */
+.stApp [data-testid="stExpander"] details {background:rgba(255,255,255,.85) !important; border:1px solid #D5E3F3 !important; border-radius:14px !important;}
+.stApp [data-testid="stExpander"] summary {background:transparent !important;}
+.stApp [data-testid="stExpander"] summary:hover {background:#EEF4FC !important;}
+.stApp [data-testid="stExpander"] summary * {color:#0F2A43 !important;}
+.stApp code {background:#EEF4FC !important; color:#1E3A8A !important;}
+section[data-testid="stSidebar"] [data-baseweb="select"] > div {background:#FFFFFF !important;}
+</style>"""
+st.markdown(WIDGET_CSS, unsafe_allow_html=True)
 
 
 def badge(text):
