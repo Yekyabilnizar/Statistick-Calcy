@@ -84,11 +84,17 @@ def _step(n, text):
     st.sidebar.markdown(f'<div class="step"><span>{n}</span>{_h.escape(text)}</div>', unsafe_allow_html=True)
 
 
+def _note():
+    st.sidebar.markdown('<div style="margin-top:18px;font-size:.74rem;line-height:1.45;color:#64748B">⚖️ Hasil bersifat alat bantu, '
+                        'bukan pengganti konsultasi statistika. Lihat Beranda › Kebijakan Privasi &amp; Penafian.</div>', unsafe_allow_html=True)
+
+
 def sidebar_nav(reg_groups, des_groups):
     """Mengembalikan (mode, kunci) dengan mode in {legacy, reg, design}."""
     import home
     page = st.sidebar.radio("Halaman", home.PAGES, key="page")
     if page != home.PAGE_APP:
+        _note()
         return "page", page
     st.sidebar.markdown('<hr style="margin:10px 0 0;border:none;border-top:1px solid #CFE0F3">', unsafe_allow_html=True)
     reg, des = _groups(reg_groups, des_groups)
@@ -115,6 +121,7 @@ def sidebar_nav(reg_groups, des_groups):
         st.markdown(f'<div class="rec"><span>Disarankan</span><b>{_h.escape(rec)}</b>'
                     f'<small>Menu: {_h.escape(family.split(" ", 1)[1])} › {_h.escape(path)}</small></div>', unsafe_allow_html=True)
 
+    _note()
     if m["key"] in ("reg", "ral", "rak"):
         return "legacy", m["key"]
     return ("reg" if family == FAMILY_REG else "design"), m["key"]
