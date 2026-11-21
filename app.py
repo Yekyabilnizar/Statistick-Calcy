@@ -78,19 +78,29 @@ section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
 .stApp .stTabs [aria-selected="true"] p {color:#fff !important;}
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
 /* ---------- grafik, expander ---------- */
-div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:10px; box-shadow:0 6px 18px rgba(30,64,120,.07);}
+div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:12px 10px 4px; box-shadow:0 6px 20px rgba(30,64,120,.08);}
 .stDownloadButton button {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border:none; border-radius:12px; padding:.6rem 1.3rem;}
 .stApp .stDownloadButton button p {color:#fff !important; font-weight:700;}
 .stDownloadButton button:hover {filter:brightness(1.08);}
 /* ---------- tabel HTML ---------- */
-.sc-wrap {background:#fff; border:1px solid #D5E3F3; border-radius:14px; overflow:auto; max-height:440px; box-shadow:0 4px 14px rgba(30,64,120,.07); margin:4px 0 12px;}
-.sc-table {border-collapse:collapse; width:100%; font-size:.92rem;}
-.sc-table th {position:sticky; top:0; z-index:1; background:#E1EDFB; color:#1E3A8A !important; font-weight:800; padding:9px 14px; text-align:left; white-space:nowrap; border-bottom:1px solid #C5D7EC;}
-.sc-table td {color:#0F2A43 !important; padding:8px 14px; border-bottom:1px solid #EAF1FA; white-space:nowrap; text-align:left;}
-.sc-table tbody tr:nth-child(even) td, .sc-table tbody tr:nth-child(even) th.idx {background:#F6F9FE;}
-.sc-table tbody tr:hover td, .sc-table tbody tr:hover th.idx {background:#E8F1FF;}
+.sc-wrap {background:#fff; border:1px solid #D5E3F3; border-radius:14px; overflow:auto; max-height:460px; box-shadow:0 6px 20px rgba(30,64,120,.08); margin:4px 0 14px;}
+.sc-table {border-collapse:separate; border-spacing:0; width:100%; font-size:.92rem; font-variant-numeric:tabular-nums;}
+.sc-table th {position:sticky; top:0; z-index:2; background:linear-gradient(180deg,#16325C,#10264A); color:#fff !important; font-weight:700; font-size:.76rem; letter-spacing:.06em; text-transform:uppercase; padding:11px 14px; text-align:left; white-space:nowrap; border-bottom:2px solid #2563EB;}
+.sc-table td {color:#0F2A43 !important; padding:9px 14px; border-bottom:1px solid #E8EFF8; white-space:nowrap; text-align:left;}
+.sc-table td.first {font-weight:700; color:#0B2545 !important;}
+.sc-table td.wrap {white-space:normal; min-width:220px; max-width:520px;}
+.sc-table tbody tr:nth-child(even) td, .sc-table tbody tr:nth-child(even) th.idx {background:#F5F9FF;}
+.sc-table tbody tr:hover td, .sc-table tbody tr:hover th.idx {background:#E3EEFF;}
+.sc-table tbody tr.tot td {background:#E8F0FC !important; font-weight:800; border-top:2px solid #BCD0EA;}
 .sc-table th.r, .sc-table td.r {text-align:right;}
-.sc-table th.idx {position:static; background:#F0F5FC; color:#64748B !important; font-weight:600; text-align:right; border-bottom:1px solid #EAF1FA;}
+.sc-table th.c, .sc-table td.c {text-align:center;}
+.sc-table th.idx {position:sticky; left:0; background:#10264A; color:#9FB4CC !important; font-weight:600; text-align:right; border-bottom:1px solid #E8EFF8;}
+.sc-table tbody th.idx {background:#F0F5FC; color:#64748B !important; position:static;}
+.sc-table td.psig {font-weight:800; color:#1D4ED8 !important;}
+.sc-table td.pns {color:#64748B !important;}
+.pill {display:inline-block; border-radius:999px; padding:2px 11px; font-size:.78rem; font-weight:800; letter-spacing:.02em; line-height:1.5;}
+.pill.ok {background:#D1FAE5; color:#065F46 !important;} .pill.mid {background:#FEF3C7; color:#92400E !important;}
+.pill.no {background:#E2E8F0; color:#475569 !important;} .pill.bad {background:#FEE2E2; color:#991B1B !important;}
 </style>"""
 st.markdown(CSS, unsafe_allow_html=True)
 
@@ -200,9 +210,17 @@ def _fmt_cell(v):
             return ""
     except (TypeError, ValueError):
         pass
+    if isinstance(v, (bool, np.bool_)):
+        return "Ya" if v else "Tidak"
+    if isinstance(v, (int, np.integer)):
+        return f"{int(v):,}".replace(",", " ") if abs(int(v)) >= 100000 else str(int(v))
     if isinstance(v, (float, np.floating)):
-        t = f"{v:.4f}".rstrip("0").rstrip(".")
-        return "0" if t in ("", "-0") else t
+        v = float(v)
+        if v == int(v) and 1000 <= abs(v) < 1e6:
+            return f"{int(v)}"
+        if abs(v) >= 1e6 or (0 < abs(v) < 1e-4):
+            return f"{v:.3e}"
+        return f"{v:.4f}"
     return str(v)
 
 
@@ -216,6 +234,27 @@ def _is_numlike(col):
     return pd.to_numeric(txt, errors="coerce").notna().mean() >= 0.8
 
 
+_POS = ("terpenuhi", "berbeda nyata", "nyata", "signifikan", "ya", "baik", "stasioner", "cocok", "dipilih")
+_NEG = ("tidak terpenuhi", "tidak", "buruk", "ditolak", "dipertanyakan")
+
+
+def _pill_for(col_name, text):
+    t = str(text).strip()
+    tl = t.lower()
+    if t in ("**", "*", "tn", "ns"):
+        return {"**": ("ok", "**"), "*": ("mid", "*"), "tn": ("no", "tn"), "ns": ("no", "tn")}[t]
+    if "kesimpulan" in col_name.lower() or "asumsi" in col_name.lower() or col_name.lower() in ("status", "keputusan"):
+        if tl.startswith("tidak terpenuhi") or tl.startswith("dipertanyakan") or tl.startswith("asumsi ph dipertanyakan"):
+            return ("bad", t)
+        if tl.startswith("terpenuhi") or tl.startswith("asumsi ph terpenuhi"):
+            return ("ok", t)
+        if tl.startswith("tidak"):
+            return ("no", t)
+        if tl.startswith("berbeda nyata") or "nyata" in tl[:12]:
+            return ("ok", t)
+    return None
+
+
 def show_df(df, hide_index=False, max_rows=1000, **kw):
     """Tabel HTML bergaya kartu (tidak bergantung pada tema gelap/terang Streamlit)."""
     import html as _html
@@ -225,16 +264,49 @@ def show_df(df, hide_index=False, max_rows=1000, **kw):
 
     total = len(df)
     d = df.head(max_rows)
+    cols = [str(c) for c in d.columns]
     right = [_is_numlike(d.iloc[:, j]) for j in range(d.shape[1])]
-    head = "".join(f'<th class="{"r" if right[j] else ""}">{esc(c)}</th>' for j, c in enumerate(d.columns))
+    kinds = []
+    for j, c in enumerate(cols):
+        cl = c.lower()
+        kinds.append("sig" if cl in ("sig.", "sig") else "p" if cl.startswith("p-value") or cl.startswith("p ") or cl in ("p", "p bonferroni") or cl.startswith("p-") else "")
+    long_txt = []
+    for j in range(d.shape[1]):
+        col = d.iloc[:, j]
+        long_txt.append((not right[j]) and col.astype(str).str.len().max() > 38 if len(col) else False)
+    head = "".join(
+        f'<th class="{"c" if kinds[j] == "sig" else "r" if right[j] else ""}">{esc(c)}</th>' for j, c in enumerate(cols))
     if not hide_index:
         head = f'<th class="idx">{esc(d.index.name or "")}</th>' + head
     rows = []
     for idx, row in zip(d.index, d.itertuples(index=False, name=None)):
-        cells = "".join(f'<td class="{"r" if right[j] else ""}">{esc(_fmt_cell(v))}</td>' for j, v in enumerate(row))
+        first = str(row[0]).strip().lower() if len(row) else ""
+        tot = first == "total" or first.startswith("total")
+        cells = []
+        for j, v in enumerate(row):
+            txt = _fmt_cell(v)
+            cls = []
+            if right[j]:
+                cls.append("r")
+            if kinds[j] == "sig":
+                cls.append("c")
+            if j == 0 and not right[j]:
+                cls.append("first")
+            if long_txt[j]:
+                cls.append("wrap")
+            if kinds[j] == "p" and txt:
+                try:
+                    pv = float(txt.replace("<", ""))
+                    cls.append("psig" if (txt.startswith("<") or pv < 0.05) else "pns")
+                except ValueError:
+                    pass
+            pill = _pill_for(cols[j], txt) if txt else None
+            inner = f'<span class="pill {pill[0]}">{esc(pill[1])}</span>' if pill else esc(txt)
+            cells.append(f'<td class="{" ".join(cls)}">{inner}</td>')
+        cells = "".join(cells)
         if not hide_index:
             cells = f'<th class="idx">{esc(idx)}</th>' + cells
-        rows.append(f"<tr>{cells}</tr>")
+        rows.append(f'<tr class="{"tot" if tot else ""}">{cells}</tr>')
     html = (f'<div class="sc-wrap"><table class="sc-table"><thead><tr>{head}</tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
     st.markdown(html, unsafe_allow_html=True)
@@ -242,20 +314,37 @@ def show_df(df, hide_index=False, max_rows=1000, **kw):
         st.caption(f"Menampilkan {max_rows} dari {total} baris.")
 
 
+PALETTE = ["#2563EB", "#0D9488", "#F59E0B", "#E11D48", "#7C3AED", "#0891B2", "#65A30D", "#DB2777"]
+
+
+def style_fig(fig):
+    """Tema grafik profesional: bersih, kontras jelas, legenda di bawah."""
+    ax = dict(showgrid=True, gridcolor="#E9EFF7", gridwidth=1, zeroline=False, showline=True, linecolor="#B6C6DA",
+              linewidth=1, ticks="outside", tickcolor="#B6C6DA", ticklen=4, tickfont=dict(size=12, color="#41566F"),
+              title_font=dict(size=12.5, color="#52667D"), automargin=True, title_standoff=10)
+    fig.update_layout(
+        template="plotly_white", colorway=PALETTE, height=420,
+        margin=dict(l=56, r=26, t=62, b=56),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(255,255,255,0)",
+        font=dict(family="Source Sans 3, sans-serif", color="#0F2A43", size=13),
+        title=dict(font=dict(size=16, color="#0F2A43", family="Source Sans 3, sans-serif"), x=0.015, xanchor="left", y=0.96),
+        legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="left", x=0, font=dict(size=12, color="#334E68"),
+                    bgcolor="rgba(0,0,0,0)", itemsizing="constant"),
+        hoverlabel=dict(bgcolor="#FFFFFF", bordercolor="#B6C6DA", font=dict(size=12.5, color="#0F2A43")),
+        hovermode="closest", bargap=0.3,
+    )
+    fig.update_xaxes(**ax)
+    fig.update_yaxes(**ax)
+    return fig
+
+
 def show_plot(fig, key):
-    axis = dict(gridcolor="#E3ECF7", linecolor="#9FB4CC", zerolinecolor="#C9D8EA",
-                tickfont=dict(color="#41566F"), title_font=dict(color="#0F2A43"))
-    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=50, r=24, t=64, b=48), height=400,
-                      paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                      font=dict(family="Source Sans 3, sans-serif", color="#0F2A43", size=13),
-                      title_font=dict(size=17, color="#0F2A43"), title_x=0.02,
-                      legend=dict(font=dict(color="#0F2A43"), orientation="h", yanchor="top", y=-0.18, xanchor="left", x=0))
-    fig.update_xaxes(**axis)
-    fig.update_yaxes(**axis)
+    style_fig(fig)
+    cfg = {"displaylogo": False, "modeBarButtonsToRemove": ["lasso2d", "select2d"], "toImageButtonOptions": {"scale": 2}}
     try:
-        st.plotly_chart(fig, width="stretch", key=key, theme=None, config={"displaylogo": False})
+        st.plotly_chart(fig, width="stretch", key=key, theme=None, config=cfg)
     except Exception:
-        st.plotly_chart(fig, use_container_width=True, key=key, theme=None, config={"displaylogo": False})
+        st.plotly_chart(fig, use_container_width=True, key=key, theme=None, config=cfg)
 
 
 def to_excel_bytes(sheets):
