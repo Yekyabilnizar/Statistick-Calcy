@@ -93,16 +93,16 @@ def _go(page=PAGE_APP, family=None, group=None, label=None):
 SEARCH_CSS = """<style>
 .stApp .st-key-hero_searchbox {position:relative; z-index:60; height:0; margin:0 0 -1rem 0; overflow:visible;}
 .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:absolute; top:52px; right:30px; width:min(380px,58%);}
-.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] {border-radius:999px !important; background:rgba(255,255,255,.14) !important; border:1px solid rgba(255,255,255,.40) !important; box-shadow:none !important; overflow:hidden;}
-.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"]:hover, .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {background:rgba(255,255,255,.24) !important; border-color:rgba(94,234,212,.85) !important;}
-.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] div {background:transparent !important; border:0 !important; box-shadow:none !important; color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:.88rem;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {border-radius:999px !important; background:rgba(255,255,255,.14) !important; border:1px solid rgba(255,255,255,.40) !important; backdrop-filter:blur(6px); overflow:hidden;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"]:hover, .stApp .st-key-hero_searchbox [data-testid="stSelectbox"]:focus-within {background:rgba(255,255,255,.24) !important; border-color:rgba(94,234,212,.85) !important;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] * {background:transparent !important; background-color:transparent !important; border:0 !important; box-shadow:none !important; outline:none !important; color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:.88rem;}
 .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] input {color:#fff !important; -webkit-text-fill-color:#fff !important; background:transparent !important;}
 .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] input::placeholder {color:rgba(255,255,255,.85) !important; -webkit-text-fill-color:rgba(255,255,255,.85) !important;}
 .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] svg {fill:#fff !important; color:#fff !important;}
 @media (max-width:760px) {
   .stApp .st-key-hero_searchbox {height:auto; margin:0;}
   .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:static; width:100%;}
-  .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] {background:#1E40AF !important;}
+  .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {background:#1E40AF !important;}
 }
 </style>"""
 
