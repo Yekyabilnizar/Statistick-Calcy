@@ -175,53 +175,67 @@ def build_fig(spec):
             b = spec["band"]
             fig.add_trace(go.Scatter(x=_arr(b["x"]), y=_arr(b["hi"]), mode="lines", line=dict(width=0), showlegend=False, hoverinfo="skip"))
             fig.add_trace(go.Scatter(x=_arr(b["x"]), y=_arr(b["lo"]), mode="lines", line=dict(width=0), fill="tonexty",
-                                     fillcolor="rgba(79,70,229,0.15)", name=b.get("name", "Pita kepercayaan"), hoverinfo="skip"))
+                                     fillcolor="rgba(37,99,235,0.14)", name=b.get("name", "Pita kepercayaan"), hoverinfo="skip"))
         for s in spec["series"]:
             mode = s.get("mode", "lines")
             line = dict(dash=s["dash"]) if s.get("dash") else {}
             if k == "step":
                 line["shape"] = "hv"
+            line.setdefault("width", 2.4)
+            kw = {}
+            if "markers" in mode:
+                kw["marker"] = dict(size=7.5, opacity=0.85, line=dict(width=0.8, color="#FFFFFF"))
             fig.add_trace(go.Scatter(x=_arr(s["x"]), y=_arr(s["y"]), mode=mode, name=str(s.get("name", "")), line=line,
-                                     showlegend=not s.get("nolegend", False)))
+                                     showlegend=not s.get("nolegend", False), **kw))
         if spec.get("xlog"):
             fig.update_xaxes(type="log")
     elif k == "bar":
         x, y = list(spec["x"]), _arr(spec["y"])
         err = dict(type="data", array=_arr(spec["err"])) if spec.get("err") is not None else None
         if spec.get("horizontal"):
-            fig.add_trace(go.Bar(x=y, y=x, orientation="h", error_x=err, showlegend=False))
+            fig.add_trace(go.Bar(x=y, y=x, orientation="h", error_x=err, showlegend=False,
+                                 marker=dict(color="#2563EB", opacity=0.92)))
         else:
             txt = spec.get("text")
             fig.add_trace(go.Bar(x=[str(v) for v in x], y=y, error_y=err, showlegend=False,
+                                 marker=dict(color="#2563EB", opacity=0.92, line=dict(width=0)),
                                  text=txt, textposition="outside" if txt else None))
     elif k == "heat":
         z = _arr(spec["z"]).astype(float)
         kw = {"zmid": spec["zmid"]} if spec.get("zmid") is not None else {}
-        fig.add_trace(go.Heatmap(z=z, x=[str(v) for v in spec["x"]], y=[str(v) for v in spec["y"]], colorscale="RdBu_r",
-                                 text=np.round(z, 2), texttemplate="%{text}", **kw))
+        fig.add_trace(go.Heatmap(z=z, x=[str(v) for v in spec["x"]], y=[str(v) for v in spec["y"]], colorscale=[[0, "#B91C1C"], [0.25, "#F4A58A"], [0.5, "#F8FAFC"], [0.75, "#8DB5EA"], [1, "#1D4ED8"]],
+                                 text=np.round(z, 2), texttemplate="%{text}", textfont=dict(size=12),
+                                 colorbar=dict(thickness=12, outlinewidth=0), xgap=2, ygap=2, **kw))
     elif k == "contour":
-        fig.add_trace(go.Contour(x=_arr(spec["x"]), y=_arr(spec["y"]), z=_arr(spec["z"]), colorscale="Blues",
-                                 contours=dict(showlabels=True), colorbar=dict(title="Respon")))
+        fig.add_trace(go.Contour(x=_arr(spec["x"]), y=_arr(spec["y"]), z=_arr(spec["z"]), colorscale=[[0, "#EFF6FF"], [0.35, "#93C5FD"], [0.7, "#2563EB"], [1, "#1E3A8A"]],
+                                 contours=dict(showlabels=True, labelfont=dict(size=11, color="#0F2A43")),
+                                 line=dict(width=0.8, color="rgba(255,255,255,.7)"),
+                                 colorbar=dict(title="Respon", thickness=12, outlinewidth=0)))
         if spec.get("px") is not None:
             fig.add_trace(go.Scatter(x=_arr(spec["px"]), y=_arr(spec["py"]), mode="markers", name="Titik percobaan",
-                                     marker=dict(color="#EF4444", size=8)))
+                                     marker=dict(color="#E11D48", size=9, line=dict(width=1, color="#FFFFFF"))))
     elif k == "hist":
         v = _arr(spec["values"]).astype(float)
-        fig.add_trace(go.Histogram(x=v, nbinsx=max(5, min(20, int(np.sqrt(len(v))) + 2)), showlegend=False))
+        fig.add_trace(go.Histogram(x=v, nbinsx=max(5, min(20, int(np.sqrt(len(v))) + 2)), showlegend=False,
+                                   marker=dict(color="#2563EB", opacity=0.9, line=dict(color="#FFFFFF", width=1))))
         fig.update_layout(bargap=0.05)
     elif k == "hist2":
         for name, v in spec["groups"].items():
-            fig.add_trace(go.Histogram(x=_arr(v).astype(float), name=name, opacity=0.65, nbinsx=15))
+            fig.add_trace(go.Histogram(x=_arr(v).astype(float), name=name, opacity=0.7, nbinsx=15,
+                                       marker=dict(line=dict(color="#FFFFFF", width=0.8))))
         fig.update_layout(barmode="overlay")
     elif k == "qq":
         (osm, osr), (slope, intercept, _) = stats.probplot(_arr(spec["values"]).astype(float), dist="norm")
-        fig.add_trace(go.Scatter(x=osm, y=osr, mode="markers", name="Data"))
-        fig.add_trace(go.Scatter(x=osm, y=slope * osm + intercept, mode="lines", name="Garis normal"))
+        fig.add_trace(go.Scatter(x=osm, y=osr, mode="markers", name="Data",
+                                 marker=dict(size=7.5, opacity=0.85, line=dict(width=0.8, color="#FFFFFF"))))
+        fig.add_trace(go.Scatter(x=osm, y=slope * osm + intercept, mode="lines", name="Garis normal",
+                                 line=dict(color="#E11D48", dash="dash", width=2)))
         spec = {**spec, "xlabel": spec.get("xlabel", "Kuantil teoretis"), "ylabel": spec.get("ylabel", "Kuantil sampel")}
     elif k == "map":
         fig.add_trace(go.Scatter(x=_arr(spec["x"]), y=_arr(spec["y"]), mode="markers",
-                                 marker=dict(size=11, color=_arr(spec["color"]), colorscale="Viridis", showscale=True,
-                                             colorbar=dict(title=spec.get("clabel", "")), line=dict(width=0.5, color="#FFFFFF")),
+                                 marker=dict(size=12, color=_arr(spec["color"]), colorscale="Viridis", showscale=True,
+                                             colorbar=dict(title=spec.get("clabel", ""), thickness=12, outlinewidth=0),
+                                             line=dict(width=0.8, color="#FFFFFF")),
                                  showlegend=False))
     elif k == "tern":
         fig.add_trace(go.Scatterternary(a=_arr(spec["a"]), b=_arr(spec["b"]), c=_arr(spec["c"]), mode="markers",
@@ -237,9 +251,9 @@ def build_fig(spec):
         fig.update_xaxes(title=spec.get("xlabel", ""))
         fig.update_yaxes(title=spec.get("ylabel", ""))
     for h in spec.get("hlines", []) or []:
-        fig.add_hline(y=h, line_dash="dash", line_color="#EF4444")
+        fig.add_hline(y=h, line_dash="dash", line_color="#E11D48", line_width=1.5)
     for v in spec.get("vlines", []) or []:
-        fig.add_vline(x=v, line_dash="dash", line_color="#EF4444")
+        fig.add_vline(x=v, line_dash="dash", line_color="#E11D48", line_width=1.5)
     return fig
 
 
