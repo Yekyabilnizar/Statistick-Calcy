@@ -167,6 +167,8 @@ def hero(title, desc, tags):
         f"<h1>{title}</h1><p>{desc}</p><div class=\"hero-tags\">{chips}</div></div>",
         unsafe_allow_html=True,
     )
+    import home
+    home.hero_nav()
 
 
 # ----------------------------------------------------------------------------
