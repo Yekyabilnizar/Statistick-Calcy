@@ -93,18 +93,16 @@ def _go(page=PAGE_APP, family=None, group=None, label=None):
 SEARCH_CSS = """<style>
 .stApp .st-key-hero_searchbox {position:relative; z-index:60; height:0; margin:0 0 -1rem 0; overflow:visible;}
 .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:absolute; top:52px; right:30px; width:min(380px,58%);}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] > div {border-radius:999px !important; background:rgba(255,255,255,.14) !important;
-    border:1px solid rgba(255,255,255,.38) !important; box-shadow:none !important; min-height:40px; padding-left:6px; backdrop-filter:blur(6px);}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] > div:hover, .stApp .st-key-hero_searchbox [data-baseweb="select"] > div:focus-within
-    {background:rgba(255,255,255,.22) !important; border-color:rgba(94,234,212,.8) !important;}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] div, .stApp .st-key-hero_searchbox [data-baseweb="select"] input
-    {color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:.88rem; background:transparent;}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] input::placeholder {color:rgba(255,255,255,.82) !important; -webkit-text-fill-color:rgba(255,255,255,.82) !important;}
-.stApp .st-key-hero_searchbox [data-baseweb="select"] svg {fill:#fff !important; color:#fff !important;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] {border-radius:999px !important; background:rgba(255,255,255,.14) !important; border:1px solid rgba(255,255,255,.40) !important; box-shadow:none !important; overflow:hidden;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"]:hover, .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"]:focus-within {background:rgba(255,255,255,.24) !important; border-color:rgba(94,234,212,.85) !important;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] div {background:transparent !important; border:0 !important; box-shadow:none !important; color:#fff !important; -webkit-text-fill-color:#fff !important; font-size:.88rem;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] input {color:#fff !important; -webkit-text-fill-color:#fff !important; background:transparent !important;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] input::placeholder {color:rgba(255,255,255,.85) !important; -webkit-text-fill-color:rgba(255,255,255,.85) !important;}
+.stApp .st-key-hero_searchbox [data-testid="stSelectbox"] svg {fill:#fff !important; color:#fff !important;}
 @media (max-width:760px) {
   .stApp .st-key-hero_searchbox {height:auto; margin:0;}
   .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] {position:static; width:100%;}
-  .stApp .st-key-hero_searchbox [data-baseweb="select"] > div {background:#1E40AF !important;}
+  .stApp .st-key-hero_searchbox [data-testid="stSelectbox"] [data-baseweb="select"] {background:#1E40AF !important;}
 }
 </style>"""
 
@@ -147,24 +145,20 @@ def search_overlay(reg_groups, des_groups):
 NAV_HERO_CSS = """<style>
 .stApp .hero {padding-bottom:84px;}
 .stApp .hero .hero-tags {display:none;}
-.stApp .st-key-hero_nav {position:relative; z-index:55; height:40px; margin:-108px 0 36px 0; padding-left:44px; overflow:visible;}
-.stApp .st-key-hero_nav [data-testid="stRadio"] > label {display:none;}
-.stApp .st-key-hero_nav [role="radiogroup"] {flex-direction:row; flex-wrap:nowrap; gap:8px; align-items:center;}
-.stApp .st-key-hero_nav label[data-baseweb="radio"] {margin:0; padding:8px 16px; border-radius:999px; background:rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.32); cursor:pointer; transition:background .15s;}
-.stApp .st-key-hero_nav label[data-baseweb="radio"]:hover {background:rgba(255,255,255,.24);}
-.stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) {background:#fff; border-color:#fff;}
-.stApp .st-key-hero_nav label[data-baseweb="radio"] > div:first-child {display:none;}
-.stApp .st-key-hero_nav label[data-baseweb="radio"] div, .stApp .st-key-hero_nav label[data-baseweb="radio"] p
-    {color:#fff !important; font-weight:700; font-size:.86rem; white-space:nowrap;}
-.stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) div, .stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) p
-    {color:#16306B !important;}
+.stApp .st-key-hero_nav {position:relative; z-index:55; height:40px; margin:-108px 0 36px 0; padding:0 44px; overflow:visible;}
+.stApp .st-key-hero_nav [data-testid="stHorizontalBlock"] {gap:8px; max-width:860px;}
+.stApp .st-key-hero_nav .stButton button {background:rgba(255,255,255,.12) !important; border:1px solid rgba(255,255,255,.38) !important; border-radius:999px !important; min-height:38px; padding:.25rem .6rem; width:100%; box-shadow:none !important;}
+.stApp .st-key-hero_nav .stButton button p {color:#fff !important; font-weight:700 !important; font-size:.84rem; white-space:nowrap;}
+.stApp .st-key-hero_nav .stButton button:hover {background:rgba(255,255,255,.25) !important; border-color:rgba(94,234,212,.85) !important;}
+.stApp .st-key-hero_nav .stButton button[kind="primary"], .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] {background:#fff !important; border-color:#fff !important;}
+.stApp .st-key-hero_nav .stButton button[kind="primary"] p, .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] p {color:#16306B !important;}
 @media (max-width:900px) {
   .stApp .hero {padding-bottom:28px;}
-  .stApp .st-key-hero_nav {height:auto; margin:0 0 14px 0; padding-left:0;}
-  .stApp .st-key-hero_nav [role="radiogroup"] {flex-wrap:wrap;}
-  .stApp .st-key-hero_nav label[data-baseweb="radio"] {background:#1E40AF;}
-  .stApp .st-key-hero_nav label[data-baseweb="radio"]:has(input:checked) {background:#fff;}
+  .stApp .st-key-hero_nav {height:auto; margin:0 0 14px 0; padding:0;}
+  .stApp .st-key-hero_nav [data-testid="stHorizontalBlock"] {flex-wrap:wrap;}
+  .stApp .st-key-hero_nav [data-testid="stColumn"] {min-width:45% !important;}
+  .stApp .st-key-hero_nav .stButton button {background:#1E40AF !important;}
+  .stApp .st-key-hero_nav .stButton button[kind="primary"], .stApp .st-key-hero_nav .stButton button[data-testid="stBaseButton-primary"] {background:#fff !important;}
 }
 </style>"""
 
@@ -172,8 +166,11 @@ NAV_HERO_CSS = """<style>
 def hero_nav():
     """Menu halaman di bagian bawah banner (menggantikan radio 'Halaman' di sidebar)."""
     st.markdown(NAV_HERO_CSS, unsafe_allow_html=True)
+    cur = st.session_state.get("page", PAGE_HOME)
     with st.container(key="hero_nav"):
-        st.radio("Halaman", PAGES, key="page", horizontal=True, label_visibility="collapsed")
+        cols = st.columns([1, 1.05, 1.6, 1.4, 1.05, 0.95], gap="small")
+        for i, (c, p) in enumerate(zip(cols, PAGES)):
+            c.button(p, key=f"hn_{i}", type="primary" if p == cur else "secondary", on_click=_go, args=(p,), use_container_width=True)
 
 
 def _head(title, sub=None):
