@@ -5,8 +5,8 @@ import streamlit as st
 
 import nav
 
-PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_ABOUT = "🏠 Beranda", "📊 Analisis", "🧭 Panduan Metode", "🗺️ Alur Metode", "ℹ️ Tentang"
-PAGES = [PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_ABOUT]
+PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_FB, PAGE_ABOUT = "🏠 Beranda", "📊 Analisis", "🧭 Panduan Metode", "🗺️ Alur Metode", "💬 Masukan", "ℹ️ Tentang"
+PAGES = [PAGE_HOME, PAGE_APP, PAGE_GUIDE, PAGE_FLOW, PAGE_FB, PAGE_ABOUT]
 
 HOME_CSS = """<style>
 .stApp .sec-h {font-size:1.7rem; font-weight:800; color:#0F2A43 !important; margin:34px 0 4px; line-height:1.2;}
@@ -57,6 +57,7 @@ PRIVACY_HTML = """<div class="legal">
 <li><b>Data yang Anda masukkan</b> (unggahan file atau input manual) hanya diproses di memori selama sesi berjalan untuk menghitung hasil. Aplikasi ini tidak menyimpan data Anda ke basis data atau berkas permanen, dan tidak membagikannya kepada pihak lain.</li>
 <li><b>Penyedia hosting</b> dapat mencatat data teknis standar (mis. alamat IP, waktu akses, log kesalahan) sesuai kebijakan mereka sendiri. Aplikasi tidak menambahkan pelacak atau iklan.</li>
 <li><b>Jangan mengunggah data pribadi sensitif</b> (identitas, data kesehatan individual, dan sejenisnya) tanpa persetujuan dan anonimisasi yang layak. Gunakan kode atau ID samaran untuk subjek penelitian.</li>
+<li><b>Formulir Masukan:</b> bila Anda mengirim masukan, isi pesan, jenis masukan, metode terkait, penilaian, dan kontak (jika Anda isi) disimpan di repositori privat milik pengembang yang hanya dapat diakses pengembang, semata-mata untuk memperbaiki aplikasi. Data analisis yang Anda unggah tidak ikut tersimpan. Untuk meminta penghapusan masukan Anda, hubungi pengembang.</li>
 <li>Berkas Excel hasil unduhan dibuat di sesi Anda dan menjadi tanggung jawab Anda sepenuhnya setelah diunduh.</li>
 <li>Kebijakan ini dapat diperbarui sewaktu-waktu; versi terbaru selalu ditampilkan di halaman ini.</li>
 </ul>
