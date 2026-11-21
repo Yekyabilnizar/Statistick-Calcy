@@ -71,12 +71,14 @@ section[data-testid="stSidebar"] .block-container {padding-top:1.2rem;}
 .notice.warning {background:#FFF4DA; border-color:#F2D98F;} .notice.error {background:#FFE7E7; border-color:#F2B8B8;}
 .stApp .sc-pre {background:#F3F8FF; border:1px solid #D5E3F3; border-radius:12px; padding:14px 16px; overflow:auto; color:#0F2A43 !important; font-size:.82rem; line-height:1.45; max-height:520px;}
 /* ---------- tab ---------- */
-.stTabs [data-baseweb="tab-list"], .stApp [role="tablist"] {gap:8px; border-bottom:none !important; box-shadow:none !important; flex-wrap:wrap;}
-.stApp .stTabs [data-baseweb="tab"] {background:rgba(255,255,255,.85); border:1px solid #CFE0F3; border-radius:999px; padding:8px 18px; height:auto; font-weight:700;}
-.stApp .stTabs [data-baseweb="tab"] p {color:#334E68 !important; font-weight:700;}
-.stApp .stTabs [aria-selected="true"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border-color:transparent; box-shadow:none !important;}
-.stApp .stTabs [aria-selected="true"] p {color:#fff !important;}
+.stApp div[data-baseweb="tab-list"] {display:flex !important; flex-wrap:wrap; gap:6px !important; background:#fff; border:1px solid #D5E3F3 !important; border-radius:16px; padding:6px !important; box-shadow:0 6px 18px rgba(30,64,120,.08) !important; width:fit-content; max-width:100%; margin:4px 0 18px;}
+.stApp button[data-baseweb="tab"], .stApp button[role="tab"] {background:transparent !important; border:none !important; border-radius:11px !important; padding:9px 18px !important; margin:0 !important; height:auto !important; min-height:0; transition:background .15s;}
+.stApp button[role="tab"]:hover {background:#EAF2FF !important;}
+.stApp button[role="tab"] p, .stApp button[role="tab"] div {color:#334E68 !important; font-weight:700 !important; font-size:.95rem !important; margin:0;}
+.stApp button[role="tab"][aria-selected="true"] {background:linear-gradient(120deg,#1D4ED8,#0E7FA8) !important; box-shadow:0 4px 12px rgba(29,78,216,.30) !important;}
+.stApp button[role="tab"][aria-selected="true"] p, .stApp button[role="tab"][aria-selected="true"] div {color:#fff !important;}
 [data-baseweb="tab-highlight"], [data-baseweb="tab-border"] {display:none !important; height:0 !important; background:transparent !important;}
+.stApp div[data-baseweb="tab-panel"] {padding-top:4px !important;}
 /* ---------- grafik, expander ---------- */
 div[data-testid="stPlotlyChart"] {background:#fff; border:1px solid #D5E3F3; border-radius:18px; padding:12px 10px 4px; box-shadow:0 6px 20px rgba(30,64,120,.08);}
 .stDownloadButton button {background:linear-gradient(120deg,#1D4ED8,#0E7FA8); border:none; border-radius:12px; padding:.6rem 1.3rem;}
