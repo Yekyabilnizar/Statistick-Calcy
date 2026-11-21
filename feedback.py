@@ -62,6 +62,7 @@ def append_row(cfg, row, session=None, retries=4):
     s = session or requests
     url = f"{API}/repos/{cfg['repo']}/contents/{cfg['path']}"
     headers = {"Authorization": f"Bearer {cfg['token']}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    last_status = None
     for attempt in range(retries):
         r = s.get(url, headers=headers, params={"ref": cfg["branch"]}, timeout=15)
         if r.status_code == 200:
@@ -75,13 +76,17 @@ def append_row(cfg, row, session=None, retries=4):
         else:
             raise RuntimeError(f"GitHub GET {r.status_code}")
         new = current + _row_to_csv(row)
-        body = {"message": "Masukan baru", "content": base64.b64encode(new.encode("utf-8")).decode("ascii"), "branch": cfg["branch"]}
+        body = {"message": "Masukan baru", "content": base64.b64encode(new.encode("utf-8")).decode("ascii")}
+        # Repo kosong (belum ada branch): percobaan pertama tanpa 'branch' agar GitHub membuat branch bawaan.
+        if sha or last_status not in (404, 409, 422):
+            body["branch"] = cfg["branch"]
         if sha:
             body["sha"] = sha
         w = s.put(url, headers=headers, json=body, timeout=15)
         if w.status_code in (200, 201):
             return True
-        if w.status_code in (409, 422):  # berkas berubah di antara baca dan tulis → coba lagi
+        last_status = w.status_code
+        if w.status_code in (404, 409, 422) and attempt < retries - 1:  # bentrok penulisan / repo kosong → coba lagi
             time.sleep(0.4 * (attempt + 1))
             continue
         raise RuntimeError(f"GitHub PUT {w.status_code}")
@@ -110,10 +115,9 @@ def page_feedback(hero, kpi_notice, method_options):
         metode = c2.selectbox("Metode terkait (opsional)", ["(umum / tidak spesifik)"] + list(method_options), key="fb_met")
         pesan = st.text_area("Pesan Anda", height=170, max_chars=MAX_MSG, key="fb_msg",
                              placeholder="Ceritakan sejelas mungkin. Untuk laporan masalah: apa yang Anda lakukan, apa yang terjadi, dan apa yang diharapkan.")
-        c3, c4 = st.columns(2)
-        nilai = c3.radio("Penilaian aplikasi (opsional)", [0, 1, 2, 3, 4, 5], horizontal=True, key="fb_rate",
-                         format_func=lambda v: "—" if v == 0 else "⭐" * v)
-        kontak = c4.text_input("Email/kontak bila ingin dibalas (opsional)", max_chars=MAX_CONTACT, key="fb_contact")
+        nilai = st.select_slider("Penilaian aplikasi (opsional; geser, 0 = tidak menilai)", options=[0, 1, 2, 3, 4, 5], value=0, key="fb_rate",
+                                 format_func=lambda v: "—" if v == 0 else "⭐" * v)
+        kontak = st.text_input("Email/kontak bila ingin dibalas (opsional)", max_chars=MAX_CONTACT, key="fb_contact")
         st.caption("Jangan menuliskan data pribadi sensitif atau data penelitian mentah pada pesan. Data analisis yang Anda unggah **tidak** ikut terkirim.")
         setuju = st.checkbox("Saya setuju masukan ini disimpan oleh pengembang untuk perbaikan aplikasi.", key="fb_ok")
         # kolom jebakan anti-spam: pengguna asli tidak melihatnya
@@ -140,5 +144,8 @@ def page_feedback(hero, kpi_notice, method_options):
                 st.session_state["fb_last"] = now
                 st.session_state["fb_done"] = True
                 st.rerun()
-            except Exception:  # noqa: BLE001
-                st.error("Maaf, masukan belum berhasil terkirim. Silakan coba lagi beberapa saat lagi.")
+            except Exception as e:  # noqa: BLE001
+                import sys
+                print(f"[feedback] gagal mengirim: {type(e).__name__}: {e}", file=sys.stderr)  # tampil di log pengembang, tanpa token
+                kode = str(e)[:40] if str(e).startswith("GitHub") else type(e).__name__
+                st.error(f"Maaf, masukan belum berhasil terkirim. Silakan coba lagi beberapa saat lagi. (kode: {kode})")
