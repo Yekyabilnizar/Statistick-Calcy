@@ -886,8 +886,9 @@ def main():
     st.sidebar.markdown(nav.NAV_CSS, unsafe_allow_html=True)
     alpha = None
     mode, mkey = nav.sidebar_nav(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS)
+    import home
+    home.search_overlay(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS)
     if mode == "page":
-        import home
         if mkey == home.PAGE_HOME:
             home.page_home(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
         elif mkey == home.PAGE_GUIDE:
