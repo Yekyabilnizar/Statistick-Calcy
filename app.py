@@ -245,17 +245,17 @@ def show_df(df, hide_index=False, max_rows=1000, **kw):
 def show_plot(fig, key):
     axis = dict(gridcolor="#E3ECF7", linecolor="#9FB4CC", zerolinecolor="#C9D8EA",
                 tickfont=dict(color="#41566F"), title_font=dict(color="#0F2A43"))
-    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=50, r=24, t=64, b=48),
+    fig.update_layout(template=TPL, colorway=COLORS, margin=dict(l=50, r=24, t=64, b=48), height=400,
                       paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family="Source Sans 3, sans-serif", color="#0F2A43", size=13),
                       title_font=dict(size=17, color="#0F2A43"), title_x=0.02,
-                      legend=dict(font=dict(color="#0F2A43")))
+                      legend=dict(font=dict(color="#0F2A43"), orientation="h", yanchor="top", y=-0.18, xanchor="left", x=0))
     fig.update_xaxes(**axis)
     fig.update_yaxes(**axis)
     try:
-        st.plotly_chart(fig, width="stretch", key=key, theme=None)
+        st.plotly_chart(fig, width="stretch", key=key, theme=None, config={"displaylogo": False})
     except Exception:
-        st.plotly_chart(fig, use_container_width=True, key=key, theme=None)
+        st.plotly_chart(fig, use_container_width=True, key=key, theme=None, config={"displaylogo": False})
 
 
 def to_excel_bytes(sheets):
@@ -789,13 +789,13 @@ def main():
         groups = pages_design.DESIGN_GROUPS
         grp = st.sidebar.selectbox("Kelompok rancangan", list(groups.keys()), key="dgroup")
         labels = {m["label"]: m["key"] for m in groups[grp]}
-        lab = st.sidebar.radio("Metode", list(labels.keys()), key=f"dmethod_{grp}")
+        lab = st.sidebar.selectbox("Metode", list(labels.keys()), key=f"dmethod_{grp}")
         mode, mkey = "design", labels[lab]
     else:
         groups = pages_reg.REG_GROUPS
         grp = st.sidebar.selectbox("Kelompok regresi", list(groups.keys()), key="rgroup")
         labels = {m["label"]: m["key"] for m in groups[grp]}
-        lab = st.sidebar.radio("Metode", list(labels.keys()), key=f"rmethod_{grp}")
+        lab = st.sidebar.selectbox("Metode", list(labels.keys()), key=f"rmethod_{grp}")
         mode, mkey = "reg", labels[lab]
 
     alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1,
