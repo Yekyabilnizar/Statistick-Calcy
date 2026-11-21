@@ -145,6 +145,8 @@ WIDGET_CSS = """<style>
 .stApp .stButton button {background:#fff; border:1px solid #C5D7EC; color:#1D4ED8;}
 .stApp .stButton button p {color:#1D4ED8 !important; font-weight:700;}
 .stApp .stButton button:hover {border-color:#2563EB; background:#EAF2FF;}
+.stApp .stButton button[kind="primary"] p, .stApp .stButton button[data-testid="stBaseButton-primary"] p, .stApp .stButton button[kind="primary"] div, .stApp .stButton button[kind="primary"] span {color:#fff !important; -webkit-text-fill-color:#fff !important;}
+.stApp .stButton button[kind="primary"]:hover, .stApp .stButton button[data-testid="stBaseButton-primary"]:hover {background:linear-gradient(120deg,#1E40AF,#0B6E94) !important;}
 /* expander & kartu berbingkai */
 .stApp [data-testid="stExpander"] details {background:rgba(255,255,255,.85) !important; border:1px solid #D5E3F3 !important; border-radius:14px !important;}
 .stApp [data-testid="stExpander"] summary {background:transparent !important;}
