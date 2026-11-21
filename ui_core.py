@@ -112,7 +112,7 @@ def pick_optional(label, options, key, want=None, help=None):
 # Data: contoh / unggah / tabel manual
 # ----------------------------------------------------------------------------
 def load_data_generic(sample_fn, kind, label):
-    H["badge"]("2 · Data")
+    H["badge"]("Sumber data")
     src = st.sidebar.radio("Sumber data", ["Data contoh", "Unggah file (CSV/Excel)", "Input manual"], key="src")
     if src == "Data contoh":
         return sample_fn(kind), "contoh"
