@@ -92,7 +92,9 @@ def _note():
 def sidebar_nav(reg_groups, des_groups):
     """Mengembalikan (mode, kunci) dengan mode in {legacy, reg, design}."""
     import home
-    page = st.sidebar.radio("Halaman", home.PAGES, key="page")
+    page = st.session_state.get("page", home.PAGE_HOME)
+    if page not in home.PAGES:
+        page = st.session_state["page"] = home.PAGE_HOME
     if page != home.PAGE_APP:
         _note()
         return "page", page
