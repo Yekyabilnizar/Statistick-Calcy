@@ -11,7 +11,7 @@ import reg_models1 as r1
 import reg_models2 as r2
 import reg_models3 as r3
 from reg_samples import sample_reg
-from ui_core import (H, all_cols, cat_like, num_cols, pick, pick_multi, pick_optional, render_result, safe_run)
+from ui_core import (H, section, form_header, crumb, all_cols, cat_like, num_cols, pick, pick_multi, pick_optional, render_result, safe_run)
 
 # --------------------------------------------------------------------------
 # Form per metode. Argumen: (df, alpha, k) dengan k = kunci unik untuk widget.
@@ -427,6 +427,7 @@ def run_reg_page(mkey, alpha):
     m = REG_FLAT[mkey]
     from ui_core import hero_for, load_data_generic
     hero_for(m["label"], m["desc"], m["tags"], alpha)
+    crumb("Regresi Lanjutan", _group_of(mkey), m["label"])
     df, src = load_data_generic(sample_reg, m["sample"], f"reg_{mkey}")
     if df is None:
         return
@@ -434,8 +435,16 @@ def run_reg_page(mkey, alpha):
         H["n_info"]("Menggunakan **data contoh**. Pilih 'Unggah file' atau 'Input manual' pada sidebar untuk data Anda sendiri.")
     with st.expander("👁️ Pratinjau data", expanded=False):
         H["show_df"](df.head(200), hide_index=True)
-    st.markdown("#### ⚙️ Pengaturan model")
-    R = m["form"](df, alpha, f"r_{mkey}")
+    with st.container(border=True):
+        form_header("Pengaturan model")
+        R = m["form"](df, alpha, f"r_{mkey}")
     if R is None:
         return
     render_result(R, f"r_{mkey}", f"hasil_{mkey}.xlsx")
+
+
+def _group_of(mkey):
+    for g, items in REG_GROUPS.items():
+        if any(i["key"] == mkey for i in items):
+            return g
+    return ""
