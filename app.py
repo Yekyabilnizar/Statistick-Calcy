@@ -884,6 +884,15 @@ def main():
     st.sidebar.markdown(nav.NAV_CSS, unsafe_allow_html=True)
     alpha = None
     mode, mkey = nav.sidebar_nav(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS)
+    if mode == "page":
+        import home
+        if mkey == home.PAGE_HOME:
+            home.page_home(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
+        elif mkey == home.PAGE_GUIDE:
+            home.page_guide(pages_reg.REG_GROUPS, pages_design.DESIGN_GROUPS, hero)
+        else:
+            home.page_about(hero)
+        return
     st.sidebar.markdown('<div class="step"><span>4</span>Atur taraf nyata (α)</div>', unsafe_allow_html=True)
     alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1, label_visibility="collapsed",
                                  format_func=lambda a: f"α = {a:.2f}", key="alpha")
