@@ -23,9 +23,45 @@ class _Proxy:
 H = _Proxy()
 
 
+CSS_EXTRA = """<style>
+.stApp .sec {display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:22px 0 8px;}
+.stApp .sec-t {font-size:1.12rem; font-weight:800; color:#0F2A43 !important; padding-left:12px; border-left:5px solid #2563EB; line-height:1.25;}
+.stApp .sec-c {font-size:.9rem; color:#52667D !important;}
+.stApp .crumb {display:flex; gap:8px; align-items:center; margin:-6px 0 14px; flex-wrap:wrap;}
+.stApp .crumb span {background:rgba(255,255,255,.85); border:1px solid #CFE0F3; color:#334E68 !important; border-radius:999px; padding:3px 12px; font-size:.82rem; font-weight:700;}
+.stApp .crumb span.cur {background:#1D4ED8; border-color:#1D4ED8; color:#fff !important;}
+div[data-testid="stVerticalBlockBorderWrapper"]:has(> div > div[data-testid="stVerticalBlock"] .form-marker) {background:#fff; border:1px solid #D5E3F3 !important; border-radius:18px; padding:8px 12px 4px; box-shadow:0 6px 18px rgba(30,64,120,.07);}
+.stApp .form-marker {display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.05rem; color:#0F2A43 !important; margin-bottom:4px;}
+.stApp .form-marker i {font-style:normal; background:#E1EDFB; border-radius:10px; padding:4px 9px;}
+.stApp .stTabs {margin-top:6px;}
+.stApp details {background:rgba(255,255,255,.7); border:1px solid #D5E3F3 !important; border-radius:14px !important;}
+.stApp [data-testid="stExpander"] summary p {color:#0F2A43 !important; font-weight:700;}
+.stApp .stSelectbox > div > div, .stApp .stMultiSelect > div > div {border-radius:10px;}
+.stApp .stButton button {border-radius:12px;}
+</style>"""
+
+
 def bind(helpers):
     _H.clear()
     _H.update(helpers)
+    st.markdown(CSS_EXTRA, unsafe_allow_html=True)
+
+
+def section(title, caption=None):
+    import html as _h
+    cap = f'<span class="sec-c">{_h.escape(str(caption))}</span>' if caption else ""
+    st.markdown(f'<div class="sec"><span class="sec-t">{_h.escape(str(title))}</span>{cap}</div>', unsafe_allow_html=True)
+
+
+def form_header(title):
+    import html as _h
+    st.markdown(f'<div class="form-marker"><i>⚙️</i>{_h.escape(title)}</div>', unsafe_allow_html=True)
+
+
+def crumb(*parts):
+    import html as _h
+    spans = "".join(f'<span class="{"cur" if i == len(parts) - 1 else ""}">{_h.escape(str(p))}</span>' for i, p in enumerate(parts))
+    st.markdown(f'<div class="crumb">{spans}</div>', unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------------------
@@ -91,7 +127,7 @@ def load_data_generic(sample_fn, kind, label):
             H["n_err"](f"Gagal membaca file: {e}")
             return None, "unggah"
         return df, "unggah"
-    st.subheader("✍️ Input data manual")
+    section("✍️ Input data manual")
     st.caption("Tabel di bawah dimulai dari data contoh sebagai kerangka format kolom. Ganti isinya dengan data Anda "
                "(boleh menambah/menghapus baris, atau salin-tempel dari Excel). Nama kolom dapat diganti dengan mengunggah file.")
     base = sample_fn(kind).copy()
@@ -233,7 +269,7 @@ def render_result(R, prefix, filename="hasil.xlsx"):
     tabs = st.tabs(["📋 Hasil", "📈 Grafik", "📝 Interpretasi", "⬇️ Unduh"])
     with tabs[0]:
         for name, t in R["tables"].items():
-            st.subheader(name)
+            section(name)
             H["show_df"](t, hide_index=True)
     with tabs[1]:
         if R["plots"]:
@@ -243,7 +279,7 @@ def render_result(R, prefix, filename="hasil.xlsx"):
     with tabs[2]:
         H["note_card"]("Interpretasi otomatis", R["notes"] or ["-"])
     with tabs[3]:
-        st.subheader("Unduh Hasil")
+        section("Unduh Hasil")
         sheets = {}
         for name, t in R["tables"].items():
             sheets[name[:28]] = t
