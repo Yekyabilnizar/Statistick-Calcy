@@ -759,18 +759,56 @@ def page_anova(df, alpha, kind):
 # ----------------------------------------------------------------------------
 # Main
 # ----------------------------------------------------------------------------
+def _bind_ui():
+    import ui_core
+    ui_core.bind(dict(show_df=show_df, show_plot=show_plot, kpis=kpis, note_card=note_card, eq_card=eq_card,
+                      n_info=n_info, n_ok=n_ok, n_warn=n_warn, n_err=n_err, badge=badge, hero=hero,
+                      download_excel=download_excel))
+
+
 def main():
     st.sidebar.markdown('<div class="brand">📊 StatCalc</div><div class="brand-sub">Kalkulator analisis statistika</div>',
                         unsafe_allow_html=True)
+    _bind_ui()
+    import pages_design
+    import pages_reg
     badge("1 · Analisis")
-    choice = st.sidebar.radio(
-        "Jenis analisis",
-        ["Regresi Linear", "Rancangan Acak Lengkap (RAL)", "Rancangan Acak Kelompok (RAK)"],
-        key="analysis",
-    )
-    key = {"Regresi Linear": "reg", "Rancangan Acak Lengkap (RAL)": "ral", "Rancangan Acak Kelompok (RAK)": "rak"}[choice]
+    CATS = ["Dasar: Regresi Linear · RAL · RAK", "Rancangan Percobaan Lanjutan", "Regresi Lanjutan"]
+    cat = st.sidebar.radio("Kategori", CATS, key="category")
+    alpha_box = None
+
+    if cat == CATS[0]:
+        choice = st.sidebar.radio(
+            "Jenis analisis",
+            ["Regresi Linear", "Rancangan Acak Lengkap (RAL)", "Rancangan Acak Kelompok (RAK)"],
+            key="analysis",
+        )
+        mode, mkey = "legacy", {"Regresi Linear": "reg", "Rancangan Acak Lengkap (RAL)": "ral",
+                                "Rancangan Acak Kelompok (RAK)": "rak"}[choice]
+    elif cat == CATS[1]:
+        groups = pages_design.DESIGN_GROUPS
+        grp = st.sidebar.selectbox("Kelompok rancangan", list(groups.keys()), key="dgroup")
+        labels = {m["label"]: m["key"] for m in groups[grp]}
+        lab = st.sidebar.radio("Metode", list(labels.keys()), key=f"dmethod_{grp}")
+        mode, mkey = "design", labels[lab]
+    else:
+        groups = pages_reg.REG_GROUPS
+        grp = st.sidebar.selectbox("Kelompok regresi", list(groups.keys()), key="rgroup")
+        labels = {m["label"]: m["key"] for m in groups[grp]}
+        lab = st.sidebar.radio("Metode", list(labels.keys()), key=f"rmethod_{grp}")
+        mode, mkey = "reg", labels[lab]
+
     alpha = st.sidebar.selectbox("Taraf nyata (α)", [0.01, 0.05, 0.10], index=1,
                                  format_func=lambda a: f"α = {a:.2f}", key="alpha")
+
+    if mode == "design":
+        pages_design.run_design_page(mkey, alpha)
+        return
+    if mode == "reg":
+        pages_reg.run_reg_page(mkey, alpha)
+        return
+
+    key = mkey
 
     heroes = {
         "reg": ("Analisis Regresi Linear",
