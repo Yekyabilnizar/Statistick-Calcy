@@ -1,4 +1,4 @@
-"""main.py – aplikasi web Comput (Starlette). Jalankan: uvicorn web.main:app --host 0.0.0.0 --port $PORT"""
+"""main.py – aplikasi web GetComput (Starlette). Jalankan: uvicorn web.main:app --host 0.0.0.0 --port $PORT"""
 import asyncio
 import json
 import logging
@@ -27,7 +27,7 @@ from starlette.templating import Jinja2Templates  # noqa: E402
 import flows  # noqa: E402
 from web import belajar, core, feedback_web, guide_data, registry, render  # noqa: E402
 
-log = logging.getLogger("comput")
+log = logging.getLogger("getcomput")
 HERE = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(HERE, "templates"))
 
@@ -67,7 +67,7 @@ def search_index():
                     ("Panduan Memilih Metode", "/panduan", "pilih situasi data kapan dipakai bingung memilih"),
                     ("Alur Metode (flowchart)", "/alur-metode", "flowchart alur langkah analisis tiap metode"),
                     ("Kirim Masukan", "/masukan", "masukan saran bug laporan pertanyaan kesan"),
-                    ("Tentang Comput", "/tentang", "tentang cara membaca hasil catatan metodologi"),
+                    ("Tentang GetComput", "/tentang", "tentang cara membaca hasil catatan metodologi"),
                     ("Kebijakan Privasi & Penafian", "/privasi", "privasi cookie penafian iklan")]:
         items.append({"t": t, "u": u, "d": d, "k": "", "g": "Halaman informasi"})
     return json.dumps(items, ensure_ascii=False).replace("<", "\\u003c")
@@ -127,15 +127,15 @@ async def home(request):
     g = {f: registry.groups(f) for f in (registry.FAM_DES, registry.FAM_REG)}
     n_des = sum(len(v) for v in g["des"].values())
     n_reg = sum(len(v) for v in g["reg"].values())
-    return page(request, "home.html", title="Comput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
+    return page(request, "home.html", title="GetComput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
                 description="Belajar statistika berbahasa Indonesia: 62 modul dengan persamaan, contoh hitung, dan latihan, dari dasar, rancangan percobaan, sampai regresi lanjutan. "
                             "Dilengkapi alat hitung ANOVA, uji lanjut, dan regresi untuk berlatih.",
                 path="/", hero_title="Belajar statistika, lalu praktikkan",
-                hero_lead="Comput adalah web pembelajaran statistika berbahasa Indonesia: 62 modul dengan konsep, persamaan, contoh hitung, dan latihan. "
+                hero_lead="GetComput adalah web pembelajaran statistika berbahasa Indonesia: 62 modul dengan konsep, persamaan, contoh hitung, dan latihan. "
                           "Alat hitung di dalamnya membantu Anda mempraktikkan setiap materi dengan data sendiri.",
                 hero_tags=["62 modul belajar", "Persamaan & contoh hitung", "Alat hitung untuk latihan", "Gratis"],
                 groups=g, n_des=n_des, n_reg=n_reg, n_all=n_des + n_reg,
-                jsonld=json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": "Comput", "applicationCategory": "EducationalApplication",
+                jsonld=json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": "GetComput", "applicationCategory": "EducationalApplication",
                                    "inLanguage": "id", "operatingSystem": "Web", "url": base_url(request) + "/",
                                    "description": "Web pembelajaran statistika dengan alat hitung untuk berlatih."}, ensure_ascii=False))
 
@@ -146,7 +146,7 @@ async def family_page(request):
     name = registry.FAM_NAME[fam]
     lead = ("Analisis ragam untuk percobaan terkontrol: dari RAL dan RAK sampai rancangan lanjutan." if fam == registry.FAM_DES
             else "Dari regresi linear berganda sampai model untuk data biner, cacahan, dan respon positif.")
-    return page(request, "catalog.html", title=f"{name} – Comput", description=lead, path=path, hero_title=name, hero_lead=lead,
+    return page(request, "catalog.html", title=f"{name} – GetComput", description=lead, path=path, hero_title=name, hero_lead=lead,
                 groups=registry.groups(fam), fam_name=name)
 
 
@@ -162,14 +162,14 @@ async def method_page(request):
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": m["title"], "applicationCategory": "EducationalApplication",
                      "inLanguage": "id", "url": base_url(request) + path, "description": m["desc"]}, ensure_ascii=False)
     gen = json.dumps(m["gen"], ensure_ascii=False).replace("<", "\\u003c") if m.get("gen") else "null"
-    return page(request, "method.html", title=f"{m['title']} – Kalkulator Online | Comput",
+    return page(request, "method.html", title=f"{m['title']} – Kalkulator Online | GetComput",
                 description=f"{m['desc']} Hitung online: tabel hasil, uji asumsi, grafik, dan interpretasi otomatis.", path=path, active="/" + registry.FAM_PATH[m["family"]],
                 hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=registry.FAM_NAME[m["family"]],
                 fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=belajar.MODULES.get(m["slug"]))
 
 
 async def guide(request):
-    return page(request, "guide.html", title="Panduan Memilih Metode Analisis Statistika – Comput",
+    return page(request, "guide.html", title="Panduan Memilih Metode Analisis Statistika – GetComput",
                 description="Bingung memilih metode? Lihat kapan tiap rancangan percobaan dan metode regresi dipakai.", path="/panduan",
                 hero_title="Panduan Memilih Metode", hero_lead="Pilih situasi data atau percobaan Anda; kami tunjukkan metode yang cocok dan membukanya langsung.",
                 hero_tags=["Rancangan percobaan", "Regresi"], rows=guide_data.rows(),
@@ -193,7 +193,7 @@ def _learn_stages():
 
 
 async def learn_index(request):
-    return page(request, "belajar.html", title="Belajar Statistika: Jalur Materi dan Latihan – Comput",
+    return page(request, "belajar.html", title="Belajar Statistika: Jalur Materi dan Latihan – GetComput",
                 description="Jalur belajar statistika berbahasa Indonesia dari dasar sampai rancangan percobaan dan regresi, dengan latihan langsung di kalkulator.",
                 path="/belajar", hero_title="Belajar Statistika",
                 hero_lead="Pelajari konsepnya dulu, lalu praktikkan langsung di kalkulator. Ikuti jalur berurutan dari dasar sampai metode lanjutan.",
@@ -212,7 +212,7 @@ async def learn_module(request):
     prac = registry.BY_SLUG.get(mod["method"]) if mod["method"] else None
     ld = json.dumps({"@context": "https://schema.org", "@type": "LearningResource", "name": mod["title"], "inLanguage": "id", "description": mod["ringkas"],
                      "learningResourceType": "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
-    return page(request, "modul.html", title=f"Materi: {mod['title']} – Belajar Statistika | Comput", description=mod["ringkas"],
+    return page(request, "modul.html", title=f"Materi: {mod['title']} – Belajar Statistika | GetComput", description=mod["ringkas"],
                 path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
                 mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
                 pras=[belajar.MODULES[p] for p in mod["pra"]], ext=belajar.TEORI.get(mod["slug"]), jsonld=ld)
@@ -227,7 +227,7 @@ async def flow_page(request):
     ms = [m for m in registry.METHODS if m["family"] == fam]
     cur = cur if cur and cur["family"] == fam else ms[0]
     flow = flows.flow_html(flows.nodes_for(cur["key"], cur["family"]))
-    return page(request, "flow.html", title="Alur Analisis Setiap Metode (Flowchart) – Comput",
+    return page(request, "flow.html", title="Alur Analisis Setiap Metode (Flowchart) – GetComput",
                 description="Lihat urutan langkah analisis tiap metode statistika: data masuk, pemeriksaan asumsi, keputusan, sampai hasil.",
                 path="/alur-metode", hero_title="Alur Analisis Setiap Metode",
                 hero_lead="Lihat urutan langkah dari data masuk, pemeriksaan asumsi, sampai hasil. Pilih metodenya di bawah.",
@@ -237,7 +237,7 @@ async def flow_page(request):
 
 async def feedback_page(request):
     ok = feedback_web.get_config() is not None
-    return page(request, "feedback.html", title="Kirim Masukan – Comput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang Comput.",
+    return page(request, "feedback.html", title="Kirim Masukan – GetComput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang GetComput.",
                 path="/masukan", hero_title="Kirim Masukan",
                 hero_lead="Temukan kekurangan, butuh metode baru, atau punya pertanyaan? Tulis di sini; masukan Anda dibaca langsung oleh pengembang.",
                 hero_tags=["Saran fitur", "Laporan masalah", "Pertanyaan"], enabled=ok, categories=feedback_web.CATEGORIES,
@@ -308,19 +308,19 @@ async def api_gen(request):
 
 
 async def about(request):
-    return page(request, "about.html", title="Tentang Comput", description="Tentang Comput: kalkulator analisis statistika berbahasa Indonesia.",
-                path="/tentang", hero_title="Tentang Comput", hero_lead="Cara membaca hasil, asumsi perhitungan, dan batasan yang perlu diketahui.",
+    return page(request, "about.html", title="Tentang GetComput", description="Tentang GetComput: kalkulator analisis statistika berbahasa Indonesia.",
+                path="/tentang", hero_title="Tentang GetComput", hero_lead="Cara membaca hasil, asumsi perhitungan, dan batasan yang perlu diketahui.",
                 hero_tags=["Panduan membaca hasil"], contact=contact_html())
 
 
 async def privacy(request):
-    return page(request, "privacy.html", title="Kebijakan Privasi & Penafian – Comput", description="Kebijakan privasi dan penafian Comput.",
+    return page(request, "privacy.html", title="Kebijakan Privasi & Penafian – GetComput", description="Kebijakan privasi dan penafian GetComput.",
                 path="/privasi", hero_title="Kebijakan Privasi & Penafian", hero_lead="Bagaimana data Anda diperlakukan dan batas tanggung jawab layanan.",
                 contact=contact_html(), updated=date.today().strftime("%d-%m-%Y"))
 
 
 async def not_found(request, exc):
-    return page(request, "notfound.html", title="Halaman tidak ditemukan – Comput", description="Halaman tidak ditemukan.", path=request.url.path,
+    return page(request, "notfound.html", title="Halaman tidak ditemukan – GetComput", description="Halaman tidak ditemukan.", path=request.url.path,
                 hero_title="Halaman tidak ditemukan", hero_lead="Alamat yang Anda buka tidak tersedia.", active="", status=404)
 
 
