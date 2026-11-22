@@ -1,5 +1,9 @@
 """flows.py – flowchart alur analisis untuk tiap metode (HTML/CSS murni, tanpa library tambahan)."""
 import html as _h
+try:
+    import flows_en as _E
+except ImportError:  # pragma: no cover
+    _E = None
 
 # Jenis simpul: in (data), proc (proses), chk (pemeriksaan + cabang), dec (keputusan + cabang), out (hasil)
 ICON = {"in": "📥", "proc": "⚙️", "chk": "🧪", "dec": "🔀", "out": "📤"}
@@ -137,44 +141,53 @@ REG = {
 }
 
 
-def nodes_for(key, family):
+def nodes_for(key, family, lang="id"):
     """Daftar simpul: (tipe, judul, detail, cabang_tidak=None)."""
+    if lang == "en":
+        import flows_en as E
+        DES_, DA_, CU_, RE_, G = E.DES, E.DES_ASSUME, E.CUSTOM, E.REG, E.GEN
+    else:
+        DES_, DA_, CU_, RE_, G = DES, DES_ASSUME, CUSTOM, REG, None
     if family == "des":
-        if key in CUSTOM:
-            return CUSTOM[key]
-        if key in DES:
-            data, model, ftest, out = DES[key]
-            nodes = [("in", "Data", data), ("proc", "Model", model), ("proc", "Analisis ragam", ftest)]
-            if key in DES_ASSUME:
-                a, alt = DES_ASSUME[key]
-                nodes.append(("chk", a, "Asumsi terpenuhi?", alt))
-            nodes += [("chk", "Asumsi galat", "Normalitas (Shapiro-Wilk) dan homogenitas ragam (Levene) terpenuhi?",
-                       "Transformasi (log/akar) atau uji nonparametrik."),
-                      ("dec", "Uji F nyata?", "Uji lanjut: BNT, DMRT, Tukey, Scheffé, atau Dunnett → notasi huruf.",
-                       "Berhenti: perlakuan tidak berbeda nyata."),
-                      ("out", "Hasil", out)]
+        if key in CU_:
+            return CU_[key]
+        if key in DES_:
+            data, model, ftest, out = DES_[key]
+            en = G is not None
+            nodes = [("in", G["data"] if en else "Data", data), ("proc", G["model"] if en else "Model", model), ("proc", G["anova"] if en else "Analisis ragam", ftest)]
+            if key in DA_:
+                a, alt = DA_[key]
+                nodes.append(("chk", a, G["assume_ok"] if en else "Asumsi terpenuhi?", alt))
+            nodes += [("chk", G["assump"] if en else "Asumsi galat", G["assump_d"] if en else "Normalitas (Shapiro-Wilk) dan homogenitas ragam (Levene) terpenuhi?",
+                       G["assump_no"] if en else "Transformasi (log/akar) atau uji nonparametrik."),
+                      ("dec", G["ftest"] if en else "Uji F nyata?", G["ftest_yes"] if en else "Uji lanjut: BNT, DMRT, Tukey, Scheffé, atau Dunnett → notasi huruf.",
+                       G["ftest_no"] if en else "Berhenti: perlakuan tidak berbeda nyata."),
+                      ("out", G["result"] if en else "Hasil", out)]
             return nodes
-    if family == "reg" and key in REG:
-        data, model, est, tests, chk, alt, out = REG[key]
-        nodes = [("in", "Data", data), ("proc", "Model", model), ("proc", "Penaksiran", est), ("proc", "Pengujian", tests)]
-        nodes.append(("chk", "Pemeriksaan & validasi", chk, alt) if alt != "—" else ("proc", "Pemeriksaan", chk))
-        nodes.append(("out", "Hasil", out))
+    if family == "reg" and key in RE_:
+        data, model, est, tests, chk, alt, out = RE_[key]
+        en = G is not None
+        nodes = [("in", "Data", data), ("proc", "Model", model), ("proc", G["estimation"] if en else "Penaksiran", est), ("proc", G["testing"] if en else "Pengujian", tests)]
+        nodes.append(("chk", G["checks"] if en else "Pemeriksaan & validasi", chk, alt) if alt != "—" else ("proc", G["checks2"] if en else "Pemeriksaan", chk))
+        nodes.append(("out", G["result"] if en else "Hasil", out))
         return nodes
+    if G:
+        return G["fallback"]
     return [("in", "Data", "Pilih kolom yang sesuai."), ("proc", "Analisis", "Metode dijalankan."), ("out", "Hasil", "Tabel, grafik, interpretasi.")]
 
 
-def flow_html(nodes):
+def flow_html(nodes, lang="id"):
     parts = ['<div class="flow">']
     for i, n in enumerate(nodes):
         typ, title, detail = n[0], n[1], n[2]
         no = n[3] if len(n) > 3 else None
         parts.append(f'<div class="fnode {typ}"><div class="fh"><span class="fi">{ICON[typ]}</span>'
-                     f'<span class="fk">{LABEL[typ]}</span><b>{_h.escape(title)}</b></div><div class="fd">{_h.escape(detail)}</div>')
+                     f'<span class="fk">{(_E.LABEL if lang == "en" else LABEL)[typ]}</span><b>{_h.escape(title)}</b></div><div class="fd">{_h.escape(detail)}</div>')
         if typ in ("chk", "dec") and no:
-            yes = "Lanjut ke langkah berikutnya" if typ == "chk" else detail
+            yes = ("Continue to the next step" if lang == "en" else "Lanjut ke langkah berikutnya") if typ == "chk" else detail
             if typ == "dec":
-                parts[-1] = parts[-1].replace(f'<div class="fd">{_h.escape(detail)}</div>', '<div class="fd">Ya / Tidak?</div>')
-            parts.append(f'<div class="fbr"><span class="y">✔ Ya → {_h.escape(yes)}</span><span class="n">✖ Tidak → {_h.escape(no)}</span></div>')
+                parts[-1] = parts[-1].replace(f'<div class="fd">{_h.escape(detail)}</div>', '<div class="fd">' + ("Yes / No?" if lang == "en" else "Ya / Tidak?") + '</div>')
+            parts.append(f'<div class="fbr"><span class="y">{"✔ Yes → " if lang == "en" else "✔ Ya → "}{_h.escape(yes)}</span><span class="n">{"✖ No → " if lang == "en" else "✖ Tidak → "}{_h.escape(no)}</span></div>')
         parts.append('</div>')
         if i < len(nodes) - 1:
             parts.append('<div class="farrow"><svg width="18" height="26" viewBox="0 0 18 26"><path d="M9 0v20M3 14l6 8 6-8" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>')
