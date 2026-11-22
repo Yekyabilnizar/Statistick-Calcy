@@ -1,0 +1,27 @@
+# Blueprint Render: buat layanan web dari repo ini (Render > New > Blueprint)
+services:
+  - type: web
+    name: statcalc
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: singapore          # terdekat dengan pengunjung Indonesia
+    plan: free                 # ganti ke starter ($7/bulan) sebelum mengajukan AdSense agar tidak "tertidur"
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: SITE_URL          # alamat resmi situs, tanpa garis miring akhir (isi setelah domain terpasang)
+        sync: false
+      - key: PRIMARY_HOST      # opsional: domain utama (tanpa https://), host lain dialihkan permanen ke sini
+        sync: false
+      - key: CONTACT_EMAIL     # opsional: tampil di halaman Tentang dan Privasi
+        sync: false
+      - key: RATE_LIMIT        # opsional: batas perhitungan per IP per menit (bawaan 60)
+        value: "60"
+      - key: FEEDBACK_TOKEN    # token GitHub (rahasia; isi di dashboard Render, jangan di repo)
+        sync: false
+      - key: FEEDBACK_REPO     # mis. namaanda/statcalc-masukan (repo privat)
+        sync: false
+      - key: FEEDBACK_PATH
+        value: masukan.csv
+      - key: FEEDBACK_BRANCH
+        value: main
