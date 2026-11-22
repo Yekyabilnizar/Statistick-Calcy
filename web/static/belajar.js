@@ -66,6 +66,18 @@
     });
   }
 
+  /* ---------- rumus (KaTeX dihosting sendiri, dimuat hanya bila ada) ---------- */
+  if (document.querySelector('.math')) {
+    var base = '/static/katex/', v = (document.querySelector('script[src*="belajar.js"]') || {}).src || '';
+    v = (v.split('?v=')[1] || '1');
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = base + 'katex.min.css?v=' + v; document.head.appendChild(css);
+    function ld(src, cb) { var s = document.createElement('script'); s.src = base + src + '?v=' + v; s.onload = cb; document.head.appendChild(s); }
+    ld('katex.min.js', function () { ld('auto-render.min.js', function () {
+      var root = document.getElementById('lc-wrap');
+      try { renderMathInElement(root, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\(', right: '\\)', display: false}], throwOnError: false}); root.classList.add('math-ok'); } catch (e) {}
+    }); });
+  }
+
   /* ---------- tombol selesai ---------- */
   var btn = document.getElementById('mod-done');
   if (btn) {

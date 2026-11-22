@@ -1,5 +1,6 @@
 """Materi belajar: modul dasar + satu modul ringkas per metode kalkulator."""
 
+TEORI = {}        # slug -> {"notasi","teori","contoh","faq"} (materi mendalam dengan persamaan LaTeX)
 MODULES = {}      # slug -> modul
 ORDER = []        # urutan jalur belajar
 
@@ -13,8 +14,19 @@ def T(slug, title, ringkas, tujuan, ide, rumus, langkah, baca, jebakan, latihan,
     return m
 
 
+def X(slug, notasi, teori, contoh, faq):
+    """Materi mendalam untuk satu modul.
+    notasi : [(simbol_latex, arti)]
+    teori  : [(judul, [paragraf...], [persamaan_latex...])]   (paragraf boleh memuat \\( ... \\))
+    contoh : dict(judul, soal, data=[[...]] atau None, langkah=[(teks, persamaan_latex_atau_None)], simpul)
+    faq    : [(pertanyaan, jawaban)]
+    """
+    TEORI[slug] = dict(notasi=[tuple(n) for n in notasi], teori=[(h, list(p), list(e)) for h, p, e in teori], contoh=contoh, faq=[tuple(f) for f in faq])
+
+
 def _load():
     from . import dasar, des, reg_a, reg_b  # noqa: F401
+    from . import teori_dasar, teori_des, teori_reg_a, teori_reg_b  # noqa: F401
 
 
 _load()

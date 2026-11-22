@@ -156,7 +156,9 @@ def plots_html(specs):
         except Exception:
             continue
         txt = json.dumps(pj, ensure_ascii=False).replace("<", "\\u003c")
-        out.append(f'<div class="plot-box"><div class="plot"></div><script type="application/json" class="plot-data">{txt}</script></div>')
+        hh = int(pj.get("layout", {}).get("height") or 420)
+        out.append(f'<div class="plot-box{" wide" if hh > 500 else ""}"><div class="plot" style="height:{hh}px"></div>'
+                   f'<script type="application/json" class="plot-data">{txt}</script></div>')
     if not out:
         return '<p class="cap">Tidak ada grafik untuk analisis ini.</p>'
     return f'<div class="plot-grid">{"".join(out)}</div>'

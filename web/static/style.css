@@ -285,3 +285,19 @@ td.fm{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.92rem;white-s
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
 
 .plot-box.wide{grid-column:1/-1}
+
+/* ---- teori, persamaan, contoh hitung ---- */
+.eq{margin:14px 0;padding:14px 12px;background:#F7FAFF;border:1px solid #DCE8F8;border-left:4px solid #2563EB;border-radius:12px;overflow-x:auto;text-align:center;font-size:1.02rem}
+.eq .katex-display{margin:0}
+.lc:not(.math-ok) .eq{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.9rem;white-space:pre-wrap;color:#16306B}
+.notasi{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+.notasi>div{display:flex;gap:12px;align-items:baseline;background:#F5F9FF;border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.notasi .ns{min-width:84px;flex:0 0 auto;font-size:1.05rem}
+ol.steps.worked li{padding-top:14px;padding-bottom:14px}
+ol.steps.worked li:before{top:22px;transform:none}
+ol.steps.worked .eq{margin:10px 0 0;background:#fff;text-align:left}
+.simpul{margin-top:16px;background:#ECFDF3;border:1px solid #BFE9D0;border-radius:14px;padding:12px 16px;color:#14532D}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:4px 16px;margin:8px 0;transition:box-shadow .2s}
+.faq details[open]{box-shadow:0 8px 20px rgba(30,64,120,.1);border-color:#9CC0F5}
+.faq summary{cursor:pointer;font-weight:800;padding:10px 0;color:#0F2A43}
+.faq details p{margin:0 0 12px}

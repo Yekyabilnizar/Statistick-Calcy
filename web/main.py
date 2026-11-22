@@ -211,7 +211,7 @@ async def learn_module(request):
     return page(request, "modul.html", title=f"Materi: {mod['title']} – Belajar Statistika | StatCalc", description=mod["ringkas"],
                 path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
                 mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
-                pras=[belajar.MODULES[p] for p in mod["pra"]], jsonld=ld)
+                pras=[belajar.MODULES[p] for p in mod["pra"]], ext=belajar.TEORI.get(mod["slug"]), jsonld=ld)
 
 
 async def flow_page(request):

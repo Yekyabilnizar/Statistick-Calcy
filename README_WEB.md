@@ -46,3 +46,7 @@ Bila token/repo kosong, halaman Masukan menampilkan pemberitahuan bahwa fitur be
 ## Modul belajar (/belajar)
 62 modul ringkas: 10 dasar statistika, 18 rancangan percobaan, 34 regresi. Isi ada di `web/belajar/*.py` (satu fungsi `T(...)`/`D(...)`/`R(...)` per modul: tujuan, ide, rumus, langkah, cara baca, kesalahan umum, latihan). Setiap modul metode tersambung ke kalkulatornya, dan halaman kalkulator menautkan balik ke modulnya. Penanda "selesai" disimpan di peramban (localStorage), tanpa akun.
 Menambah modul: tambahkan satu entri di file yang sesuai; urutan jalur mengikuti urutan penulisan.
+
+
+## Konten modul mendalam
+Setiap dari 62 modul di /belajar kini punya tab 📐 Teori (notasi, persamaan LaTeX via KaTeX self-hosted), 🧪 Contoh hitung (angka terverifikasi), dan ❓ FAQ. Isi di web/belajar/teori_*.py (fungsi X). Validasi persamaan: jalankan skrip validasi KaTeX. Mohon tinjau ketepatan materi sebelum dipublikasikan luas.

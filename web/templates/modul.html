@@ -17,11 +17,34 @@
     {% if own %}<h2>📍 Kapan dipakai</h2><p>{{ own.when }}</p>{% endif %}
   </article>
 
-  <article class="lc" data-label="🧮 Rumus">
+  {% if ext %}
+  <article class="lc math" data-label="📐 Teori">
+    {% if ext.notasi %}<h2>🔣 Notasi</h2>
+    <div class="notasi">{% for sym, arti in ext.notasi %}<div><span class="ns">\({{ sym }}\)</span><span>{{ arti }}</span></div>{% endfor %}</div>{% endif %}
+    {% for h, ps, eqs in ext.teori %}
+    <h2>{{ h }}</h2>
+    {% for p in ps %}<p>{{ p }}</p>{% endfor %}
+    {% for e in eqs %}<div class="eq">$${{ e }}$$</div>{% endfor %}
+    {% endfor %}
+  </article>
+  {% endif %}
+
+  <article class="lc math" data-label="🧮 Rumus">
     <h2>🧮 Rumus dan istilah kunci</h2>
     <div class="fchips">{% for k, v in mod.rumus %}<div class="fchip"><b>{{ k }}</b><code>{{ v }}</code></div>{% endfor %}</div>
     {% if own %}<h2>📋 Asumsi yang perlu dipenuhi</h2><p>{{ own.assume }}</p>{% endif %}
   </article>
+
+  {% if ext and ext.contoh %}
+  <article class="lc math" data-label="🧪 Contoh hitung">
+    <h2>🧪 {{ ext.contoh.judul }}</h2>
+    <p>{{ ext.contoh.soal }}</p>
+    {% if ext.contoh.data %}<div class="sc-wrap" style="max-height:none"><table class="sc-table"><thead><tr>{% for h in ext.contoh.data[0] %}<th>{{ h }}</th>{% endfor %}</tr></thead><tbody>
+    {% for r in ext.contoh.data[1:] %}<tr>{% for v in r %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}
+    <ol class="steps worked">{% for txt, eq in ext.contoh.langkah %}<li><span>{{ txt }}</span>{% if eq %}<div class="eq">$${{ eq }}$$</div>{% endif %}</li>{% endfor %}</ol>
+    <div class="simpul"><b>Kesimpulan:</b> {{ ext.contoh.simpul }}</div>
+  </article>
+  {% endif %}
 
   <article class="lc" data-label="🪜 Langkah">
     <h2>🪜 Langkah analisis</h2>
@@ -33,6 +56,8 @@
     <ul class="tips">{% for s in mod.baca %}<li>{{ s }}</li>{% endfor %}</ul>
     <h2>⚠️ Kesalahan yang sering terjadi</h2>
     <ul class="traps">{% for s in mod.jebakan %}<li>{{ s }}</li>{% endfor %}</ul>
+    {% if ext and ext.faq %}<h2>❓ Tanya jawab</h2>
+    <div class="faq">{% for q, a in ext.faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
   </article>
 
   <article class="lc" data-label="🎯 Latihan">

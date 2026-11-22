@@ -241,6 +241,10 @@ def _fmt_cell(v):
         return f"{int(v):,}".replace(",", " ") if abs(int(v)) >= 100000 else str(int(v))
     if isinstance(v, (float, np.floating)):
         v = float(v)
+        if v != v:
+            return ""
+        if v in (float("inf"), float("-inf")):
+            return "∞" if v > 0 else "−∞"
         if v == int(v) and 1000 <= abs(v) < 1e6:
             return f"{int(v)}"
         if abs(v) >= 1e6 or (0 < abs(v) < 1e-4):
