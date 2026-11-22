@@ -18,7 +18,7 @@
 <div class="wrap">
 <header class="hero">
   <div class="hero-top">
-    <a href="/" class="hero-chip" style="text-decoration:none">STATCALC · KALKULATOR STATISTIKA</a>
+    <a href="/" class="hero-chip" style="text-decoration:none">COMPUT · BELAJAR STATISTIKA</a>
     <div class="search" id="search">
       <input id="q" type="search" placeholder="Cari metode… (mis. logistik, RAK, panel)" autocomplete="off" aria-label="Cari metode">
       <div class="sres" id="sres"></div>
@@ -36,7 +36,7 @@
 </main>
 <div class="legal"><span>⚖️</span><div>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Verifikasi hasil penting (misalnya untuk publikasi) dengan software lain atau ahli statistika.</div></div>
 <footer class="foot">
-  StatCalc · Kalkulator analisis statistika<br>
+  Comput · Belajar statistika dengan alat hitung<br>
   <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a>
 </footer>
 </div>
@@ -44,5 +44,6 @@
 <script src="/static/site.js?v={{ asset_v }}" defer></script>
 <script src="/static/fx.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
+{% if goatcounter %}<script data-goatcounter="https://{{ goatcounter }}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>{% endif %}
 </body>
 </html>

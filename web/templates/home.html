@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="cta"><a class="btn pri" href="#katalog">🚀 Mulai analisis</a><a class="btn sec" href="/belajar">🎓 Belajar dulu</a><a class="btn sec" href="/panduan">🧭 Bingung memilih metode?</a></div>
+<div class="cta"><a class="btn pri" href="/belajar">🎓 Mulai belajar</a><a class="btn sec" href="#katalog">🛠️ Buka alat hitung</a><a class="btn sec" href="/panduan">🧭 Bingung memilih metode?</a></div>
 <div class="stats">
-  <div class="stat"><b>{{ n_all }}</b><span>metode analisis</span></div>
-  <div class="stat"><b>{{ n_des }}</b><span>rancangan percobaan</span></div>
-  <div class="stat"><b>{{ n_reg }}</b><span>metode regresi</span></div>
-  <div class="stat"><b>5</b><span>uji lanjut (BNT, DMRT, Tukey, Scheffé, Dunnett)</span></div>
-</div>
-<div class="panel learn-promo"><h3 style="margin:0 0 6px">🎓 Belajar lalu berlatih</h3><p style="margin:0 0 12px">Jalur belajar berurutan: dari dasar statistika, rancangan percobaan, sampai regresi lanjutan. Tiap modul diakhiri latihan langsung di kalkulator dengan data contoh.</p><a class="btn pri" href="/belajar">Mulai jalur belajar →</a></div>
-<h2 class="sec-h">Cara menggunakan</h2><p class="sec-s">Tiga langkah dari data mentah sampai laporan yang siap dipakai.</p>
+  <div class="stat"><b>62</b><span>modul belajar</span></div>
+  <div class="stat"><b>{{ n_all }}</b><span>alat hitung untuk latihan</span></div>
+  <div class="stat"><b>{{ n_des }}</b><span>materi rancangan percobaan</span></div>
+  <div class="stat"><b>{{ n_reg }}</b><span>materi regresi</span></div>
+  </div>
+<div class="panel learn-promo"><h3 style="margin:0 0 6px">🎓 Belajar dulu, praktik kemudian</h3><p style="margin:0 0 12px">Tiga tahap berurutan: dasar statistika, rancangan percobaan, dan regresi. Setiap modul berisi konsep, persamaan, contoh hitung, dan latihan yang dikerjakan di alat hitung.</p><a class="btn pri" href="/belajar">Mulai jalur belajar →</a></div>
+<h2 class="sec-h">Cara belajar di Comput</h2><p class="sec-s">Tiga langkah dari konsep sampai praktik.</p>
 <div class="steps">
-  <div class="stepc"><div class="n">1</div><h4>Pilih metode</h4><p>Cari lewat kotak pencarian, pilih dari katalog, atau buka Panduan Metode dan pilih situasi data Anda.</p></div>
-  <div class="stepc"><div class="n">2</div><h4>Masukkan data</h4><p>Pakai data contoh, tempel dari Excel, atau unggah CSV/Excel. Lalu pilih kolom untuk Y, X, perlakuan, atau kelompok.</p></div>
-  <div class="stepc"><div class="n">3</div><h4>Baca hasil</h4><p>Tabel ANOVA/koefisien, grafik, uji asumsi, dan interpretasi otomatis tampil seketika. Unduh semuanya ke Excel.</p></div>
+  <div class="stepc"><div class="n">1</div><h4>Pelajari modul</h4><p>Ikuti jalur belajar: baca konsep, teori dengan persamaan, dan contoh hitung langkah demi langkah.</p></div>
+  <div class="stepc"><div class="n">2</div><h4>Berlatih di alat hitung</h4><p>Buka alat hitung dari modul, pakai data contoh atau data Anda sendiri (tempel dari Excel atau unggah CSV).</p></div>
+  <div class="stepc"><div class="n">3</div><h4>Cocokkan dengan teori</h4><p>Bandingkan hasil alat hitung dengan contoh di modul, lalu baca interpretasinya dan tandai modul selesai.</p></div>
 </div>
-<h2 class="sec-h">Dua keluarga analisis</h2>
+<h2 class="sec-h">Alat hitung pendamping</h2>
 <div class="grid g2">
   <div class="fam"><h3>🧪 Rancangan Percobaan</h3><p>Analisis ragam untuk percobaan terkontrol, dari RAL dan RAK sampai rancangan lanjutan.</p>
     <ul><li>RAL, RAK, RBSL, Graeco-Latin, BIB/Lattice</li><li>Faktorial, split-plot, strip-plot, nested</li><li>Repeated measures, cross-over, ANCOVA, MANOVA</li><li>RSM, mixture, Taguchi, faktorial pecahan</li></ul>
@@ -23,7 +23,7 @@
     <ul><li>Linear, dummy, polinomial, nonlinear, diagnostik lengkap</li><li>Logistik, Poisson, binomial negatif, gamma, probit</li><li>Ridge, LASSO, robust, LOESS, spline, kuantil, GAM</li><li>Panel, ARIMAX, SAR/SEM/GWR, mixed effect, Cox, Tobit</li></ul>
     <a class="btn pri" href="/regresi">Jelajahi metode regresi →</a></div>
 </div>
-<h2 class="sec-h" id="katalog">Katalog metode</h2><p class="sec-s">Pilih metode untuk langsung membuka halaman analisisnya.</p>
+<h2 class="sec-h" id="katalog">Katalog alat hitung</h2><p class="sec-s">Sudah paham materinya? Buka alat hitungnya langsung.</p>
 {% for fam, label in [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')] %}
   {% for g, items in groups[fam].items() %}
   <p class="sec-s" style="margin:18px 0 8px"><b style="color:#0F2A43">{{ label }} · {{ g }}</b> · {{ items|length }} metode</p>

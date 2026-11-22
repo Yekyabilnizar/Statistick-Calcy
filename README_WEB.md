@@ -1,4 +1,4 @@
-# StatCalc Web (Render)
+# Comput Web (Render)
 
 Website baru (halaman per metode + API perhitungan) dengan Starlette. Mesin perhitungan (numpy/scipy) dipakai ulang dari aplikasi Streamlit.
 
