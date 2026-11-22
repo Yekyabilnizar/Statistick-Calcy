@@ -171,3 +171,29 @@ table.guide td.wrap,table.read td.wrap{white-space:normal;min-width:240px;line-h
 .chkgrid label{display:flex;gap:6px;align-items:center;font-weight:600;font-size:.92rem}
 #gen-out{margin-top:12px}
 .optl{white-space:nowrap}
+/* ---- belajar ---- */
+.learn-prog{display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.learn-prog>div{flex:1;min-width:240px}
+.progress{height:10px;border-radius:99px;background:#E1EAF6;margin-top:8px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,#1D4ED8,#0D9488);border-radius:99px;transition:width .3s}
+.mod-list{display:grid;gap:8px}
+.mod-row{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
+.mod-row:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(30,64,120,.12);text-decoration:none}
+.mod-ck{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid #B6C6DA;display:grid;place-items:center;font-weight:800;color:#B6C6DA;font-size:.85rem}
+.mod-row.done .mod-ck{background:#16A34A;border-color:#16A34A;color:#fff}
+.mod-t{flex:1;display:flex;flex-direction:column;gap:2px}
+.mod-t small{color:var(--mute);font-size:.86rem;line-height:1.4}
+.mod-row .go{flex:none;color:var(--blue);font-weight:700;font-size:.9rem}
+.mod-meta{display:flex;gap:14px;align-items:center;color:var(--mute);font-weight:600;font-size:.9rem;margin:2px 0 10px}
+.mod-state{color:#16A34A}
+.prose.learn h2{margin-top:26px}
+td.fm{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.92rem;white-space:normal}
+.practice{margin-top:22px;border-left:5px solid #0D9488}
+.practice .cta,.cta{display:flex;gap:10px;flex-wrap:wrap}
+.done-bar{margin:18px 0;text-align:center}
+.mod-nav{display:flex;gap:12px;justify-content:space-between;margin:18px 0}
+.mod-nav a{flex:1;max-width:48%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:2px}
+.mod-nav a:hover{box-shadow:0 8px 20px rgba(30,64,120,.12)}
+.mod-nav .next{text-align:right;margin-left:auto}
+.mod-nav small{color:var(--mute)}
+.learn-link{margin:0 0 14px}

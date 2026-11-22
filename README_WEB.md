@@ -42,3 +42,7 @@ Token tidak pernah masuk repo. Isi di Render → Environment:
 | `FEEDBACK_PATH` | opsional, default `masukan.csv` |
 | `FEEDBACK_BRANCH` | opsional, default `main` |
 Bila token/repo kosong, halaman Masukan menampilkan pemberitahuan bahwa fitur belum aktif.
+
+## Modul belajar (/belajar)
+62 modul ringkas: 10 dasar statistika, 18 rancangan percobaan, 34 regresi. Isi ada di `web/belajar/*.py` (satu fungsi `T(...)`/`D(...)`/`R(...)` per modul: tujuan, ide, rumus, langkah, cara baca, kesalahan umum, latihan). Setiap modul metode tersambung ke kalkulatornya, dan halaman kalkulator menautkan balik ke modulnya. Penanda "selesai" disimpan di peramban (localStorage), tanpa akun.
+Menambah modul: tambahkan satu entri di file yang sesuai; urutan jalur mengikuti urutan penulisan.

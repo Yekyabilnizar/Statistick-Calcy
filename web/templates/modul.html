@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="/">Beranda</a> › <a href="/belajar">Belajar</a> › {{ mod.tahap }} › {{ mod.title }}</p>
+<div class="mod-meta"><span>Modul {{ idx }} dari {{ total }}</span><span id="mod-state" class="mod-state"></span></div>
+
+{% if pras %}<div class="notice info"><span>📌</span><div>Disarankan dipelajari sebelumnya: {% for p in pras %}<a href="/belajar/{{ p.slug }}">{{ p.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</div></div>{% endif %}
+
+<section class="prose learn">
+  <h2>Tujuan belajar</h2>
+  <ul>{% for t in mod.tujuan %}<li>{{ t }}</li>{% endfor %}</ul>
+
+  <h2>Ide utama</h2>
+  {% for p in mod.ide %}<p>{{ p }}</p>{% endfor %}
+
+  {% if own %}<h2>Kapan dipakai</h2><p>{{ own.when }}</p>{% endif %}
+
+  <h2>Rumus dan istilah kunci</h2>
+  <div class="sc-wrap" style="max-height:none"><table class="sc-table formula"><tbody>
+  {% for k, v in mod.rumus %}<tr><td class="first wrap"><b>{{ k }}</b></td><td class="wrap fm">{{ v }}</td></tr>{% endfor %}
+  </tbody></table></div>
+
+  {% if own %}<h2>Asumsi yang perlu dipenuhi</h2><p>{{ own.assume }}</p>{% endif %}
+
+  <h2>Langkah analisis</h2>
+  <ol>{% for s in mod.langkah %}<li>{{ s }}</li>{% endfor %}</ol>
+
+  <h2>Cara membaca hasil</h2>
+  <ul>{% for s in mod.baca %}<li>{{ s }}</li>{% endfor %}</ul>
+
+  <h2>Kesalahan yang sering terjadi</h2>
+  <ul>{% for s in mod.jebakan %}<li>{{ s }}</li>{% endfor %}</ul>
+</section>
+
+<section class="panel practice">
+  <h3 class="step"><i>✍</i> Latihan di kalkulator</h3>
+  <p>{{ mod.latihan }}</p>
+  {% if prac %}<div class="cta"><a class="btn pri" href="/metode/{{ prac.slug }}">Buka kalkulator: {{ prac.title }} →</a>{% if own %}<a class="btn sec" href="/alur-metode?m={{ own.slug }}">Lihat alur metode</a>{% endif %}</div>{% endif %}
+</section>
+
+<div class="done-bar">
+  <button type="button" class="btn sec" id="mod-done" data-slug="{{ mod.slug }}">✓ Tandai selesai</button>
+</div>
+
+<nav class="mod-nav" aria-label="Navigasi modul">
+  {% if prev %}<a href="/belajar/{{ prev.slug }}" class="prev"><small>← Sebelumnya</small><b>{{ prev.title }}</b></a>{% else %}<span></span>{% endif %}
+  {% if nxt %}<a href="/belajar/{{ nxt.slug }}" class="next"><small>Berikutnya →</small><b>{{ nxt.title }}</b></a>{% else %}<span></span>{% endif %}
+</nav>
+<p class="cap" style="text-align:center">Materi ini ringkasan untuk belajar dan tidak menggantikan buku teks. Rujuk sumber utama untuk keperluan publikasi.</p>
+{% endblock %}
+{% block scripts %}<script src="/static/belajar.js?v={{ asset_v }}" defer></script>{% endblock %}

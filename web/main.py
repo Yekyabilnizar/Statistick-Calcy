@@ -24,7 +24,7 @@ from starlette.staticfiles import StaticFiles  # noqa: E402
 from starlette.templating import Jinja2Templates  # noqa: E402
 
 import flows  # noqa: E402
-from web import core, feedback_web, guide_data, registry, render  # noqa: E402
+from web import belajar, core, feedback_web, guide_data, registry, render  # noqa: E402
 
 log = logging.getLogger("statcalc")
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -33,10 +33,10 @@ templates = Jinja2Templates(directory=os.path.join(HERE, "templates"))
 SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")          # mis. https://namadomain.com
 PRIMARY_HOST = os.environ.get("PRIMARY_HOST", "").strip().lower()  # bila diisi, host lain dialihkan permanen ke sini
 CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "").strip()
-ASSET_V = os.environ.get("ASSET_V", "1")
+ASSET_V = os.environ.get("ASSET_V") or str(int(max((os.path.getmtime(os.path.join(os.path.dirname(__file__), "static", f)) for f in os.listdir(os.path.join(os.path.dirname(__file__), "static"))), default=1)))
 MAX_BODY = 4_500_000
 ALPHAS = (0.01, 0.05, 0.10)
-NAV = [("/", "🏠 Beranda"), ("/rancangan-percobaan", "🧪 Rancangan"), ("/regresi", "📈 Regresi"),
+NAV = [("/", "🏠 Beranda"), ("/belajar", "🎓 Belajar"), ("/rancangan-percobaan", "🧪 Rancangan"), ("/regresi", "📈 Regresi"),
        ("/panduan", "🧭 Panduan Metode"), ("/alur-metode", "🗺️ Alur Metode"), ("/masukan", "💬 Masukan"), ("/tentang", "ℹ️ Tentang")]
 SEM = asyncio.Semaphore(2)
 _hits = defaultdict(deque)
@@ -55,7 +55,12 @@ def search_index():
     for m in registry.METHODS:
         items.append({"t": m["title"], "u": f"/metode/{m['slug']}", "d": m["desc"], "k": " ".join(m["tags"]) + f" {m['key']} {m['slug']}",
                       "g": f"{registry.FAM_NAME[m['family']]} › {m['group']}"})
-    for t, u, d in [("Panduan Memilih Metode", "/panduan", "pilih situasi data kapan dipakai bingung memilih"),
+    for slug in belajar.ORDER:
+        mod = belajar.MODULES[slug]
+        items.append({"t": "Belajar: " + mod["title"], "u": f"/belajar/{slug}", "d": mod["ringkas"], "k": "materi modul belajar belajar statistika",
+                      "g": "Materi belajar › " + mod["tahap"]})
+    for t, u, d in [("Jalur Belajar Statistika", "/belajar", "belajar materi modul statistika dasar rancangan percobaan regresi latihan"),
+                    ("Panduan Memilih Metode", "/panduan", "pilih situasi data kapan dipakai bingung memilih"),
                     ("Alur Metode (flowchart)", "/alur-metode", "flowchart alur langkah analisis tiap metode"),
                     ("Kirim Masukan", "/masukan", "masukan saran bug laporan pertanyaan kesan"),
                     ("Tentang StatCalc", "/tentang", "tentang cara membaca hasil catatan metodologi"),
@@ -156,7 +161,7 @@ async def method_page(request):
     return page(request, "method.html", title=f"{m['title']} – Kalkulator Online | StatCalc",
                 description=f"{m['desc']} Hitung online: tabel hasil, uji asumsi, grafik, dan interpretasi otomatis.", path=path, active="/" + registry.FAM_PATH[m["family"]],
                 hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=registry.FAM_NAME[m["family"]],
-                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld)
+                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=belajar.MODULES.get(m["slug"]))
 
 
 async def guide(request):
@@ -165,6 +170,48 @@ async def guide(request):
                 hero_title="Panduan Memilih Metode", hero_lead="Pilih situasi data atau percobaan Anda; kami tunjukkan metode yang cocok dan membukanya langsung.",
                 hero_tags=["Rancangan percobaan", "Regresi"], rows=guide_data.rows(),
                 groups={f: registry.groups(f) for f in (registry.FAM_DES, registry.FAM_REG)})
+
+
+def _learn_stages():
+    """Kelompokkan modul menurut tahap, lalu menurut kelompok metode (bila ada)."""
+    out = []
+    for slug in belajar.ORDER:
+        mod = belajar.MODULES[slug]
+        meth = registry.BY_SLUG.get(slug)
+        grp = meth["group"] if meth else "Dasar statistika"
+        if not out or out[-1]["tahap"] != mod["tahap"]:
+            out.append({"tahap": mod["tahap"], "groups": []})
+        gs = out[-1]["groups"]
+        if not gs or gs[-1]["name"] != grp:
+            gs.append({"name": grp, "mods": []})
+        gs[-1]["mods"].append(mod)
+    return out
+
+
+async def learn_index(request):
+    return page(request, "belajar.html", title="Belajar Statistika: Jalur Materi dan Latihan – StatCalc",
+                description="Jalur belajar statistika berbahasa Indonesia dari dasar sampai rancangan percobaan dan regresi, dengan latihan langsung di kalkulator.",
+                path="/belajar", hero_title="Belajar Statistika",
+                hero_lead="Pelajari konsepnya dulu, lalu praktikkan langsung di kalkulator. Ikuti jalur berurutan dari dasar sampai metode lanjutan.",
+                hero_tags=["Materi ringkas", "Jalur berurutan", "Latihan di kalkulator"], stages=_learn_stages(), total=len(belajar.ORDER),
+                order=json.dumps(belajar.ORDER))
+
+
+async def learn_module(request):
+    mod = belajar.MODULES.get(request.path_params["slug"])
+    if not mod:
+        return await not_found(request, None)
+    i = belajar.ORDER.index(mod["slug"])
+    prev = belajar.MODULES[belajar.ORDER[i - 1]] if i > 0 else None
+    nxt = belajar.MODULES[belajar.ORDER[i + 1]] if i + 1 < len(belajar.ORDER) else None
+    own = registry.BY_SLUG.get(mod["slug"])
+    prac = registry.BY_SLUG.get(mod["method"]) if mod["method"] else None
+    ld = json.dumps({"@context": "https://schema.org", "@type": "LearningResource", "name": mod["title"], "inLanguage": "id", "description": mod["ringkas"],
+                     "learningResourceType": "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
+    return page(request, "modul.html", title=f"Materi: {mod['title']} – Belajar Statistika | StatCalc", description=mod["ringkas"],
+                path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
+                mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
+                pras=[belajar.MODULES[p] for p in mod["pra"]], jsonld=ld)
 
 
 async def flow_page(request):
@@ -279,7 +326,7 @@ async def robots(request):
 
 async def sitemap(request):
     b = base_url(request)
-    urls = ["/", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"] + [f"/metode/{m['slug']}" for m in registry.METHODS]
+    urls = ["/", "/belajar", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"] + [f"/metode/{m['slug']}" for m in registry.METHODS] + [f"/belajar/{s}" for s in belajar.ORDER]
     body = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + \
            "".join(f"<url><loc>{b}{u}</loc></url>" for u in urls) + "</urlset>"
     return Response(body, media_type="application/xml")
@@ -481,7 +528,7 @@ class Guard:
 
 routes = [
     Route("/", home), Route("/rancangan-percobaan", family_page), Route("/regresi", family_page),
-    Route("/metode/{slug}", method_page), Route("/panduan", guide), Route("/alur-metode", flow_page), Route("/masukan", feedback_page),
+    Route("/metode/{slug}", method_page), Route("/belajar", learn_index), Route("/belajar/{slug}", learn_module), Route("/panduan", guide), Route("/alur-metode", flow_page), Route("/masukan", feedback_page),
     Route("/api/feedback", api_feedback, methods=["POST"]), Route("/api/{slug}/gen", api_gen, methods=["POST"]), Route("/tentang", about), Route("/privasi", privacy),
     Route("/robots.txt", robots), Route("/sitemap.xml", sitemap), Route("/healthz", healthz),
     Route("/api/parse", api_parse, methods=["POST"]), Route("/api/inspect", api_inspect, methods=["POST"]),

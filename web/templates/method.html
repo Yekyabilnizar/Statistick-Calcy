@@ -2,6 +2,7 @@
 {% block content %}
 <p class="crumb"><a href="/">Beranda</a> › <a href="/{{ fam_path }}">{{ fam_name }}</a> › {{ m.group }} › {{ m.title }}</p>
 
+{% if module %}<div class="notice info learn-link"><span>🎓</span><div>Belum paham konsepnya? Baca dulu modul belajar: <a href="/belajar/{{ module.slug }}"><b>{{ module.title }}</b></a>, lalu kembali untuk berlatih di sini.</div></div>{% endif %}
 <section class="panel" id="alat" aria-label="Alat analisis">
   <h3 class="step"><i>1</i> Masukkan data</h3>
   <div class="src-tabs" role="tablist">

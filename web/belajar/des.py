@@ -1,0 +1,225 @@
+from . import T
+
+S = "Tahap 2 · Rancangan percobaan"
+
+
+def D(slug, title, ringkas, tujuan, ide, rumus, langkah, baca, jebakan, latihan, pra=()):
+    return T(slug, title, ringkas, tujuan, ide, rumus, langkah, baca, jebakan, latihan, pra=pra, tahap=S, method=slug)
+
+
+D("rancangan-acak-lengkap", "Rancangan Acak Lengkap (RAL)",
+  "Rancangan paling sederhana: perlakuan diacak penuh pada satuan percobaan yang homogen.",
+  ["Mengetahui kapan RAL cocok", "Memahami model dan tabel ANOVA satu faktor", "Melakukan dan membaca uji lanjut"],
+  ["RAL dipakai bila satuan percobaan relatif seragam (rumah kaca terkendali, bahan homogen, hewan sejenis). Seluruh perlakuan ditempatkan pada satuan percobaan secara acak tanpa pengelompokan.",
+   "Keunggulannya sederhana dan fleksibel: jumlah ulangan boleh tidak sama antar perlakuan, dan derajat bebas galat besar. Kelemahannya, bila lingkungan sebenarnya tidak homogen, keragaman lingkungan masuk ke galat dan menurunkan kepekaan uji."],
+  [("Model", "Yᵢⱼ = μ + τᵢ + εᵢⱼ"), ("db", "perlakuan t − 1; galat n − t; total n − 1"), ("Uji", "F = KT perlakuan / KT galat")],
+  ["Acak perlakuan ke seluruh satuan percobaan.", "Ukur respon dan masukkan data (kolom perlakuan, kolom respon).", "Periksa asumsi: normalitas dan homogenitas ragam.", "Baca tabel ANOVA, lalu uji lanjut bila F nyata."],
+  ["Lihat P-value perlakuan; nyata berarti ada perlakuan yang berbeda.", "KK kecil berarti percobaan teliti.", "Notasi huruf menyatakan kelompok perlakuan yang setara."],
+  ["Memakai RAL padahal ada gradien lokasi atau waktu yang jelas (gunakan RAK).", "Menghapus ulangan hilang tanpa mencatat.", "Mengabaikan uji asumsi."],
+  "Muat data contoh, jalankan, lalu uji pengaruh uji lanjut: ganti ke Tukey dan lihat apakah pengelompokan huruf berubah. Kemudian ubah satu data menjadi sangat besar dan lihat pengaruhnya pada F dan asumsi.",
+  pra=["dasar-uji-lanjut"])
+
+D("rancangan-acak-kelompok", "Rancangan Acak Kelompok (RAK)",
+  "Mengendalikan satu sumber keragaman dengan mengelompokkan satuan yang mirip.",
+  ["Menentukan kapan pengelompokan bermanfaat", "Membaca ANOVA dengan efek kelompok", "Menilai efisiensi relatif terhadap RAL"],
+  ["Dalam RAK, satuan percobaan dibagi menjadi kelompok (blok) yang homogen di dalamnya, misalnya berdasarkan lokasi, hari, atau bobot awal. Setiap perlakuan muncul sekali di tiap kelompok dan diacak di dalam kelompok.",
+   "Keragaman antar kelompok dikeluarkan dari galat, sehingga uji perlakuan lebih peka bila kelompok memang berbeda."],
+  [("Model", "Yᵢⱼ = μ + τᵢ + βⱼ + εᵢⱼ"), ("db", "perlakuan t − 1; kelompok b − 1; galat (t − 1)(b − 1)"),
+   ("Efisiensi relatif", "ER = [(b − 1)·KTK + b(t − 1)·KTG] / [(bt − 1)·KTG]")],
+  ["Bentuk kelompok berdasarkan sumber keragaman yang diketahui.", "Acak perlakuan secara terpisah di tiap kelompok.", "Masukkan data: perlakuan, kelompok, respon.", "Baca ANOVA, lalu uji lanjut perlakuan."],
+  ["ER > 1 berarti RAK lebih efisien daripada RAL pada data ini.", "Efek kelompok tidak nyata tidak berarti kelompok harus dibuang pada analisis; desain sudah memakainya.", "Interaksi perlakuan × kelompok dianggap tidak ada; plot interaksi membantu memeriksanya."],
+  ["Memakai kelompok yang tidak berkaitan dengan keragaman respon.", "Data hilang pada satu sel membuat tabel tak seimbang.", "Menafsirkan kelompok sebagai perlakuan."],
+  "Jalankan data contoh, lihat efek kelompok dan efisiensi relatif, lalu bandingkan konsepnya dengan RAL pada data yang sama.",
+  pra=["rancangan-acak-lengkap"])
+
+D("rancangan-bujur-sangkar-latin", "Rancangan Bujur Sangkar Latin (RBSL)",
+  "Mengendalikan dua sumber keragaman (baris dan kolom) sekaligus.",
+  ["Mengenali tata letak bujur sangkar Latin", "Membaca ANOVA tiga efek", "Mengetahui batasannya"],
+  ["RBSL berbentuk t × t: tiap perlakuan muncul tepat sekali di setiap baris dan setiap kolom. Cocok bila ada dua gradien yang saling tegak lurus, misalnya kesuburan lahan dari utara ke selatan dan kemiringan dari timur ke barat.",
+   "Jumlah ulangan sama dengan jumlah perlakuan, sehingga rancangan hanya praktis untuk t kira-kira 3 sampai 8, dan tidak ada interaksi antar baris, kolom, dan perlakuan yang diasumsikan."],
+  [("Model", "Yᵢⱼₖ = μ + ρᵢ + γⱼ + τₖ + εᵢⱼₖ"), ("db", "perlakuan, baris, kolom masing-masing t − 1; galat (t − 1)(t − 2)")],
+  ["Susun bujur sangkar Latin dan acak baris serta kolomnya.", "Catat baris, kolom, dan perlakuan tiap satuan.", "Masukkan data dengan tiga kolom pengelompokan dan satu respon.", "Baca ANOVA dan lanjutkan uji lanjut."],
+  ["Perlakuan diuji setelah pengaruh baris dan kolom dikeluarkan.", "Efek baris atau kolom nyata menunjukkan pengendalian yang berguna."],
+  ["Pada t kecil, db galat sangat sedikit (t = 3 hanya 2).", "Data ada yang hilang membuat analisis lebih rumit.", "Mengabaikan kemungkinan interaksi."],
+  "Jalankan data contoh dan perhatikan bahwa setiap perlakuan muncul sekali di tiap baris dan kolom. Bandingkan db galat dengan RAK pada jumlah perlakuan yang sama.",
+  pra=["rancangan-acak-kelompok"])
+
+D("rancangan-graeco-latin", "Rancangan Graeco-Latin",
+  "Perluasan RBSL untuk tiga sumber pengelompokan lewat dua bujur sangkar Latin ortogonal.",
+  ["Memahami struktur baris, kolom, dan huruf Yunani", "Membaca ANOVA dengan galat yang sangat kecil", "Menyadari batasan jumlah perlakuan"],
+  ["Rancangan ini menumpangkan dua bujur sangkar Latin yang ortogonal: satu untuk perlakuan (huruf Latin) dan satu untuk faktor pengelompok ketiga (huruf Yunani). Kini ada tiga sumber keragaman yang dikendalikan.",
+   "Ukuran t minimal 4 dan tidak ada untuk t = 6 (t = 3 tidak menyisakan derajat bebas galat), dan derajat bebas galat kecil, yaitu (t − 1)(t − 3). Untuk t = 4 hanya ada 3 db galat."],
+  [("Model", "Yᵢⱼₖₗ = μ + ρᵢ + γⱼ + τₖ + ωₗ + εᵢⱼₖₗ"), ("db galat", "(t − 1)(t − 3)")],
+  ["Susun dua bujur sangkar Latin ortogonal.", "Catat baris, kolom, perlakuan, dan huruf Yunani tiap satuan.", "Masukkan data dan jalankan.", "Baca efek perlakuan dengan hati-hati karena db galat kecil."],
+  ["Efek perlakuan diuji setelah tiga efek pengelompok dikeluarkan.", "Galat kecil membuat uji kurang bertenaga; hanya efek besar yang akan terdeteksi."],
+  ["Memakai rancangan ini bila hanya satu atau dua sumber keragaman benar-benar ada.", "Mengira rancangan selalu lebih baik daripada RBSL.", "Interaksi antar faktor diabaikan."],
+  "Jalankan data contoh, lihat tabel ANOVA, dan bandingkan db galat dengan RBSL pada t yang sama.",
+  pra=["rancangan-bujur-sangkar-latin"])
+
+D("blok-tidak-lengkap-bib-lattice", "Blok Tidak Lengkap (BIB / Lattice)",
+  "Saat blok tidak muat semua perlakuan: tiap blok hanya memuat sebagian, tetapi seimbang.",
+  ["Memahami blok tidak lengkap seimbang (BIB)", "Mengenal parameter t, b, r, k, λ", "Membaca rata-rata terkoreksi blok"],
+  ["Bila jumlah perlakuan lebih besar daripada ukuran blok yang homogen, setiap blok memuat k < t perlakuan. Pada BIB setiap pasang perlakuan bertemu dalam blok yang sama sebanyak λ kali, sehingga semua pasangan dibandingkan dengan ketelitian yang sama.",
+   "Karena perlakuan tidak muncul di semua blok, rata-rata mentah bias oleh blok. Rata-rata harus dikoreksi memakai informasi antar blok. Rancangan Lattice adalah keluarga blok tidak lengkap untuk t = k²."],
+  [("Hubungan", "bk = rt dan λ(t − 1) = r(k − 1)"), ("Efisiensi", "E = λt / (rk)"), ("Rata-rata terkoreksi", "dihitung dari rata-rata mentah dikurangi pengaruh blok")],
+  ["Pilih rancangan dengan parameter (t, b, r, k, λ) yang memenuhi hubungan di atas.", "Masukkan data: perlakuan, blok, respon.", "Baca rata-rata terkoreksi blok.", "Lakukan pembandingan berpasangan dengan koreksi yang dipilih."],
+  ["Bandingkan rata-rata terkoreksi, bukan rata-rata mentah.", "Efisiensi kurang dari 1 menunjukkan harga yang dibayar untuk memakai blok kecil."],
+  ["Memakai rata-rata mentah untuk perbandingan.", "Merancang blok yang tidak seimbang tanpa menyadarinya.", "Mengabaikan efek blok pada derajat bebas."],
+  "Jalankan data contoh. Bandingkan rata-rata mentah dan rata-rata terkoreksi untuk beberapa perlakuan, lalu jelaskan perbedaannya.",
+  pra=["rancangan-acak-kelompok"])
+
+D("percobaan-faktorial", "Percobaan Faktorial",
+  "Dua atau lebih faktor dipelajari bersamaan, termasuk interaksinya.",
+  ["Membedakan efek utama dan interaksi", "Membaca ANOVA faktorial", "Menafsirkan interaksi nyata"],
+  ["Pada faktorial, perlakuan adalah kombinasi semua taraf dari tiap faktor. Keunggulannya: efisien (tiap pengamatan memberi informasi tentang semua faktor) dan memungkinkan mendeteksi interaksi, yaitu bila efek satu faktor bergantung pada taraf faktor lain.",
+   "Rancangan dasar bisa berupa RAL atau RAK. Kalkulator mendukung dua sampai empat faktor dengan semua interaksi, dan opsi kelompok."],
+  [("Model dua faktor", "Yᵢⱼₖ = μ + αᵢ + βⱼ + (αβ)ᵢⱼ + εᵢⱼₖ"), ("db", "A a − 1; B b − 1; A×B (a − 1)(b − 1)")],
+  ["Tentukan faktor dan tarafnya.", "Pastikan semua kombinasi mempunyai ulangan.", "Masukkan data: respon dan kolom faktor (serta kelompok bila ada).", "Periksa interaksi lebih dulu."],
+  ["Bila interaksi nyata, tafsirkan rata-rata kombinasi; efek utama bisa menyesatkan.", "Bila interaksi tidak nyata, tafsirkan efek utama masing-masing.", "Plot interaksi: garis sejajar berarti tidak ada interaksi, garis menyilang berarti interaksi kuat."],
+  ["Hanya melihat efek utama ketika interaksi nyata.", "Kombinasi tanpa ulangan sehingga interaksi tak teruji.", "Menambah terlalu banyak faktor sehingga jumlah perlakuan membengkak."],
+  "Jalankan data contoh, lihat interaksi pada tabel dan grafik, lalu jelaskan dengan kalimat sendiri apakah efek satu faktor bergantung pada faktor lainnya.",
+  pra=["rancangan-acak-kelompok", "dasar-anova"])
+
+D("faktorial-pecahan-fractional-factorial", "Faktorial Pecahan",
+  "Menyaring banyak faktor dengan hanya sebagian kombinasi, dengan konsekuensi alias.",
+  ["Memahami notasi 2^(k−p) dan generator", "Membaca resolusi dan struktur alias", "Mengenal metode Lenth"],
+  ["Faktorial penuh 2^k cepat membengkak. Faktorial pecahan 2^(k−p) hanya menjalankan 1/2^p dari seluruh kombinasi, dengan syarat sebagian efek 'bergabung' (alias): tidak dapat dibedakan satu sama lain. Asumsi yang mendasari adalah prinsip sparsity: interaksi tingkat tinggi umumnya kecil.",
+   "Resolusi menyatakan kualitas: III (efek utama beralias dengan interaksi dua faktor), IV (efek utama bebas, interaksi dua faktor beralias satu sama lain), V (efek utama dan interaksi dua faktor bebas satu sama lain)."],
+  [("Contoh", "2^(5−1) dengan E = ABCD: 16 run, relasi pendefinisi I = ABCDE, resolusi V"), ("Metode Lenth", "menaksir galat dari efek itu sendiri bila tidak ada db galat")],
+  ["Pilih generator dan lihat struktur alias.", "Jalankan dengan pembangkit rancangan, atau masukkan data hasil percobaan.", "Baca tabel efek dan plot Pareto/peluang normal.", "Lakukan percobaan konfirmasi."],
+  ["Efek yang menjauh dari garis lurus pada plot peluang normal adalah efek nyata.", "Pada rancangan tanpa ulangan, uji memakai Lenth dan bersifat eksploratif."],
+  ["Menafsirkan efek tanpa memperhatikan alias.", "Memilih resolusi III padahal interaksi diduga penting.", "Menganggap hasil Lenth sebagai pembuktian."],
+  "Buka pembangkit rancangan, buat 2^(5−1) dengan generator E=ABCD, lihat relasi pendefinisi dan alias, lalu jalankan analisis dengan data contoh.",
+  pra=["percobaan-faktorial"])
+
+D("petak-terbagi-split-plot", "Petak Terbagi (Split-Plot)",
+  "Satu faktor pada petak utama, faktor lain pada anak petak, dengan dua galat.",
+  ["Mengenali kapan split-plot dipakai", "Menentukan galat untuk tiap uji", "Membaca ANOVA dengan dua galat"],
+  ["Split-plot cocok bila satu faktor sulit dikendalikan pada satuan kecil (misalnya irigasi atau pengolahan tanah), sehingga ditempatkan pada petak besar (petak utama), sedangkan faktor lain diacak pada anak petak di dalamnya.",
+   "Karena ada dua tingkat pengacakan, ada dua galat: galat (a) untuk petak utama dan galat (b) untuk anak petak. Anak petak dan interaksinya diuji lebih teliti."],
+  [("Model", "Yᵢⱼₖ = μ + ρᵢ + αⱼ + δᵢⱼ + βₖ + (αβ)ⱼₖ + εᵢⱼₖ"), ("Uji", "A diuji terhadap galat (a) = δ; B dan A×B diuji terhadap galat (b) = ε")],
+  ["Tentukan faktor petak utama dan faktor anak petak.", "Catat kelompok/ulangan.", "Masukkan data: kelompok, petak utama, anak petak, respon.", "Baca ANOVA dengan dua galat."],
+  ["Petak utama diuji terhadap galat (a), dengan db lebih kecil sehingga kurang peka.", "Anak petak dan interaksi diuji terhadap galat (b)."],
+  ["Memakai ANOVA faktorial biasa sehingga petak utama diuji terhadap galat yang salah.", "Menukar peran faktor petak utama dan anak petak.", "Mengira semua efek diuji dengan ketelitian sama."],
+  "Jalankan data contoh, catat galat yang dipakai untuk uji petak utama dan untuk uji anak petak, lalu bandingkan derajat bebasnya.",
+  pra=["percobaan-faktorial"])
+
+D("petak-terbagi-dua-kali-split-split-plot", "Petak-Petak Terbagi (Split-Split-Plot)",
+  "Tiga faktor bertingkat dengan tiga galat.",
+  ["Memahami tiga tingkat pengacakan", "Menentukan galat (a), (b), dan (c)", "Menafsirkan interaksi tiga arah"],
+  ["Split-split-plot menambahkan tingkat ketiga: anak-anak petak di dalam anak petak. Faktor di tingkat bawah ditempatkan pada satuan terkecil.",
+   "Tiap tingkat memiliki galatnya sendiri. Semakin ke bawah, derajat bebas galat umumnya semakin banyak dan uji semakin peka."],
+  [("Uji", "A terhadap galat (a); B dan A×B terhadap galat (b); C, A×C, B×C, A×B×C terhadap galat (c)")],
+  ["Tetapkan tingkat tiap faktor dari petak utama sampai anak-anak petak.", "Masukkan data dengan kolom kelompok, tiga faktor, respon.", "Baca ANOVA tiga galat."],
+  ["Faktor di tingkat bawah biasanya diuji lebih peka.", "Interaksi tiga arah yang nyata sulit ditafsirkan; gunakan plot dan rata-rata kombinasi."],
+  ["Pembagian faktor ke tingkat salah.", "Kekurangan derajat bebas pada galat (a).", "Memperlakukan sebagai faktorial biasa."],
+  "Jalankan data contoh dan catat galat yang dipakai untuk tiap efek.",
+  pra=["petak-terbagi-split-plot"])
+
+D("petak-jalur-strip-plot", "Petak Berjalur (Strip-Plot)",
+  "Dua faktor diterapkan pada jalur yang saling memotong.",
+  ["Mengenali tata letak jalur", "Menentukan tiga galat", "Membedakannya dari split-plot"],
+  ["Pada strip-plot satu faktor diterapkan pada jalur horizontal dan faktor lain pada jalur vertikal, sehingga potongan keduanya membentuk petak interaksi. Cocok bila kedua faktor memerlukan mesin atau perlakuan skala besar, misalnya jenis olah tanah dan jenis irigasi.",
+   "Ada tiga galat: galat (a) untuk faktor baris, galat (b) untuk faktor kolom, dan galat (c) untuk interaksi. Interaksi biasanya diuji paling teliti."],
+  [("Uji", "A terhadap galat (a); B terhadap galat (b); A×B terhadap galat (c)")],
+  ["Tetapkan faktor jalur baris dan kolom.", "Masukkan data dengan kolom kelompok, faktor A, faktor B, respon.", "Baca tiga galat pada ANOVA."],
+  ["Faktor A dan B diuji pada db yang lebih kecil daripada interaksi.", "Interaksi A × B diuji terhadap galat (c)."],
+  ["Mengira struktur sama dengan split-plot.", "Memakai galat yang salah.", "Kelompok yang terlalu sedikit sehingga db kecil."],
+  "Jalankan data contoh dan bandingkan struktur galatnya dengan split-plot.",
+  pra=["petak-terbagi-split-plot"])
+
+D("rancangan-tersarang-nested", "Rancangan Tersarang (Nested)",
+  "Satu faktor bersarang di dalam faktor lain, dengan komponen ragam.",
+  ["Membedakan faktor tersarang dan faktor silang", "Menghitung komponen ragam", "Menentukan galat untuk uji"],
+  ["Faktor B dikatakan tersarang di dalam A bila tiap taraf B hanya muncul pada satu taraf A, misalnya pohon di dalam lokasi atau petak di dalam desa. Karena itu tidak ada interaksi A × B, yang ada adalah efek B(A).",
+   "Rancangan ini sering dipakai untuk mempartisi keragaman ke tiap tingkat melalui komponen ragam, dan faktor tersarang sering bersifat acak."],
+  [("Model", "Yᵢⱼₖ = μ + αᵢ + β₍ᵢ₎ⱼ + ε₍ᵢⱼ₎ₖ"), ("db", "A a − 1; B(A) a(b − 1); galat ab(n − 1)")],
+  ["Susun data berjenjang: tingkat atas, tingkat tersarang, respon.", "Tentukan faktor tetap atau acak.", "Periksa B(A) lebih dulu.", "Hitung komponen ragam untuk melihat sumber keragaman terbesar."],
+  ["B(A) nyata berarti keragaman antar unit tersarang bermakna.", "Komponen ragam besar menunjukkan tingkat tempat keragaman paling banyak."],
+  ["Memperlakukan faktor tersarang sebagai faktor silang.", "Menggunakan galat yang salah untuk menguji A.", "Salah mengartikan komponen ragam sebagai efek tetap."],
+  "Jalankan data contoh dan baca komponen ragam; tentukan tingkat yang menyumbang keragaman paling besar.",
+  pra=["dasar-anova"])
+
+D("pengukuran-berulang-repeated-measures", "Pengukuran Berulang (Repeated Measures)",
+  "Subjek yang sama diukur berulang kali, sehingga pengamatan tidak saling bebas.",
+  ["Memahami mengapa independensi dilanggar", "Memahami sphericity dan koreksinya", "Membaca efek within dan between subjek"],
+  ["Pengukuran berulang pada subjek yang sama berkorelasi, sehingga ANOVA biasa tidak cocok. Rancangan ini menguji efek waktu (within-subject) dan efek kelompok (between-subject) beserta interaksinya, dengan keunggulan variasi antar subjek dikeluarkan dari galat.",
+   "Asumsi khusus: sphericity, yaitu ragam selisih antar pasangan waktu sama. Uji Mauchly memeriksanya; bila dilanggar, derajat bebas dikoreksi dengan Greenhouse-Geisser (ε) atau Huynh-Feldt."],
+  [("Koreksi", "db terkoreksi = ε × db; ε = 1 bila sphericity terpenuhi")],
+  ["Susun data panjang: subjek, waktu, (kelompok), respon.", "Jalankan dan lihat uji Mauchly.", "Bila nyata, pakai P dengan koreksi GG atau HF.", "Lakukan uji lanjut antar waktu bila perlu."],
+  ["P terkoreksi digunakan bila Mauchly nyata.", "Interaksi waktu × kelompok nyata berarti pola perubahan berbeda antar kelompok."],
+  ["Memakai ANOVA satu arah biasa.", "Mengabaikan sphericity.", "Data hilang pada sebagian waktu mengurangi subjek yang dapat dipakai."],
+  "Jalankan data contoh dan bandingkan P tanpa koreksi dengan P terkoreksi Greenhouse-Geisser; apakah kesimpulannya berubah?",
+  pra=["rancangan-acak-kelompok"])
+
+D("rancangan-cross-over", "Rancangan Cross-Over",
+  "Tiap subjek menerima semua perlakuan secara bergantian menurut urutan tertentu.",
+  ["Memahami efek perlakuan, periode, dan urutan", "Mengenali risiko carry-over", "Menentukan wash-out"],
+  ["Pada cross-over, subjek menjadi kontrolnya sendiri: perlakuan A lalu B pada sebagian subjek, B lalu A pada sebagian lain. Ini menyingkirkan keragaman antar subjek dan menghemat jumlah subjek.",
+   "Risikonya carry-over, yaitu pengaruh perlakuan periode pertama terbawa ke periode kedua. Antar periode diberi masa jeda (wash-out). Efek urutan yang nyata mengisyaratkan carry-over."],
+  [("Model 2×2", "Yᵢⱼₖ = μ + ρᵢ(urutan) + πⱼ(periode) + τₖ(perlakuan) + subjek + ε")],
+  ["Bagi subjek ke urutan secara acak.", "Beri masa wash-out cukup panjang.", "Masukkan data: subjek, urutan, periode, perlakuan, respon.", "Baca efek perlakuan, periode, dan urutan."],
+  ["Efek perlakuan adalah target utama.", "Efek urutan/carry-over nyata mengurangi kepercayaan pada efek perlakuan."],
+  ["Wash-out terlalu pendek.", "Efek periode mengacaukan perlakuan bila urutan tidak seimbang.", "Subjek gugur di tengah percobaan."],
+  "Jalankan data contoh, periksa efek urutan, dan tulis kesimpulan tentang kemungkinan carry-over.",
+  pra=["pengukuran-berulang-repeated-measures"])
+
+D("ancova-analisis-kovarians", "ANCOVA (Analisis Kovarians)",
+  "Membandingkan kelompok setelah menyesuaikan pengaruh kovariat numerik.",
+  ["Memahami fungsi kovariat", "Menguji kehomogenan kemiringan", "Membaca rata-rata terkoreksi"],
+  ["ANCOVA menggabungkan ANOVA dan regresi. Kovariat (misalnya bobot awal) yang berhubungan dengan respon disesuaikan, sehingga galat mengecil dan perbandingan kelompok lebih adil.",
+   "Asumsi utama adalah kemiringan regresi yang sama antar kelompok (tidak ada interaksi kovariat × kelompok). Bila dilanggar, rata-rata terkoreksi tidak bermakna tunggal."],
+  [("Model", "Yᵢⱼ = μ + τᵢ + β(Xᵢⱼ − X̄) + εᵢⱼ"), ("Rata-rata terkoreksi", "Ȳᵢ(adj) = Ȳᵢ − b(X̄ᵢ − X̄)")],
+  ["Pilih kovariat yang tidak dipengaruhi perlakuan.", "Uji kehomogenan kemiringan.", "Bila terpenuhi, baca perbandingan rata-rata terkoreksi.", "Lakukan uji lanjut pada rata-rata terkoreksi."],
+  ["Interaksi kovariat × kelompok tidak nyata: asumsi terpenuhi.", "Bandingkan rata-rata mentah dan terkoreksi untuk melihat dampak penyesuaian."],
+  ["Kovariat yang sendiri dipengaruhi perlakuan.", "Mengabaikan uji kehomogenan kemiringan.", "Memakai kovariat tanpa hubungan dengan respon."],
+  "Jalankan data contoh dan bandingkan rata-rata mentah dengan rata-rata terkoreksi.",
+  pra=["regresi-linear-sederhana-berganda", "dasar-anova"])
+
+D("manova", "MANOVA",
+  "ANOVA untuk beberapa respon sekaligus dengan memperhitungkan korelasi antar respon.",
+  ["Memahami kapan MANOVA dipakai", "Membedakan statistik Pillai, Wilks, Hotelling-Lawley, Roy", "Membaca uji Box's M"],
+  ["Bila ada beberapa respon yang saling berkorelasi, menganalisisnya satu per satu mengabaikan korelasi dan menaikkan peluang galat tipe I. MANOVA menguji perbedaan vektor rata-rata antar kelompok secara serentak.",
+   "Asumsi: normalitas multivariat dan kesamaan matriks kovarians antar kelompok (diperiksa uji Box's M). Statistik Pillai paling tahan bila asumsi kovarians dilanggar."],
+  [("Wilks", "Λ = |E| / |H + E|"), ("Pillai", "V = tr[H(H + E)⁻¹]")],
+  ["Pilih respon yang secara teori berkaitan.", "Jalankan MANOVA dan lihat Box's M.", "Bila uji multivariat nyata, lihat ANOVA univariat dengan koreksi Bonferroni.", "Lakukan uji lanjut seperlunya."],
+  ["Uji multivariat nyata berarti vektor rata-rata berbeda; ANOVA univariat menunjuk respon mana.", "Bila Box's M nyata, andalkan Pillai."],
+  ["Respon yang tidak berkorelasi sehingga MANOVA tak ada manfaat.", "Ukuran sampel terlalu kecil terhadap jumlah respon.", "Mengabaikan koreksi pada uji univariat lanjutan."],
+  "Jalankan data contoh dan bandingkan hasil empat statistik uji multivariat serta Box's M.",
+  pra=["dasar-anova"])
+
+D("response-surface-methodology-rsm", "Response Surface Methodology (RSM)",
+  "Mencari kondisi optimum proses dengan model kuadratik pada beberapa faktor numerik.",
+  ["Memahami rancangan CCD dan Box-Behnken", "Membaca model kuadratik dan lack-of-fit", "Menafsirkan titik stasioner dan kontur"],
+  ["RSM memodelkan respon sebagai fungsi kuadratik dari beberapa faktor numerik yang telah dikodekan. Rancangan CCD (central composite) menambahkan titik aksial dan titik pusat ke faktorial; Box-Behnken tidak memakai sudut kubus sehingga lebih hemat dan aman.",
+   "Titik stasioner adalah titik di mana gradien nol. Jenisnya (maksimum, minimum, pelana) ditentukan oleh tanda nilai eigen matriks koefisien kuadrat."],
+  [("Model kuadratik", "Y = β₀ + Σβᵢxᵢ + Σβᵢᵢxᵢ² + Σβᵢⱼxᵢxⱼ + ε"), ("Titik stasioner", "x₀ = −½ B⁻¹ b")],
+  ["Pilih CCD atau Box-Behnken dengan pembangkit rancangan.", "Jalankan percobaan, masukkan data terkode.", "Periksa P model, R² prediksi, dan lack-of-fit.", "Tafsirkan titik stasioner dan plot kontur, lalu lakukan konfirmasi."],
+  ["Lack-of-fit tidak nyata berarti model cukup memadai.", "Titik stasioner di luar daerah percobaan tidak boleh dipercaya; gunakan optimum terbatas."],
+  ["Ekstrapolasi di luar daerah percobaan.", "Jumlah titik pusat terlalu sedikit untuk menaksir galat murni.", "Menganggap optimum sebagai kebenaran tanpa konfirmasi."],
+  "Buat rancangan CCD dengan pembangkit, lalu jalankan data contoh dan baca kontur serta titik stasioner.",
+  pra=["percobaan-faktorial", "regresi-polinomial"])
+
+D("rancangan-campuran-mixture", "Rancangan Campuran (Mixture)",
+  "Respon bergantung pada proporsi komponen yang totalnya selalu 100%.",
+  ["Memahami kendala jumlah proporsi", "Membaca model Scheffé", "Menafsirkan sinergi dan antagonisme"],
+  ["Pada campuran (formulasi pakan, adonan, pestisida), proporsi komponen berjumlah 1, sehingga komponen tidak bebas. Model regresi dibuat tanpa intersep dengan suku campuran (model Scheffé).",
+   "Koefisien linear menyatakan respon komponen murni. Koefisien interaksi positif menandakan sinergi (campuran lebih baik daripada rata-rata linear), negatif menandakan antagonisme."],
+  [("Kendala", "x₁ + x₂ + … + x_q = 1"), ("Model kuadratik", "Y = Σβᵢxᵢ + Σβᵢⱼxᵢxⱼ")],
+  ["Tentukan komponen dan batas proporsinya.", "Masukkan data proporsi dan respon.", "Baca koefisien dan diagram segitiga.", "Cari komposisi optimum dan konfirmasi."],
+  ["Diagram segitiga menampilkan permukaan respon di ruang komposisi.", "Optimum adalah komposisi dengan respon terbaik di dalam batas."],
+  ["Menambah intersep yang membuat model tak teridentifikasi.", "Proporsi yang tidak berjumlah 1.", "Menafsirkan koefisien seperti pada regresi biasa."],
+  "Jalankan data contoh dan baca koefisien campuran; tentukan pasangan komponen yang sinergis.",
+  pra=["response-surface-methodology-rsm"])
+
+D("metode-taguchi", "Metode Taguchi",
+  "Array ortogonal dan rasio sinyal-terhadap-derau untuk perancangan yang kokoh.",
+  ["Memahami array ortogonal dan rasio S/N", "Membaca peringkat delta dan ANOVA S/N", "Melakukan percobaan konfirmasi"],
+  ["Metode Taguchi memakai array ortogonal (misalnya L9) untuk menguji banyak faktor dengan sedikit percobaan, lalu menilai tiap kombinasi dengan rasio S/N (signal-to-noise) yang menyatakan ketahanan terhadap derau.",
+   "Tiga tipe S/N yang umum: lebih besar lebih baik, lebih kecil lebih baik, dan nominal terbaik. Level dengan S/N tertinggi dipilih untuk tiap faktor."],
+  [("Lebih besar lebih baik", "S/N = −10 log₁₀[(1/n) Σ 1/yᵢ²]"), ("Lebih kecil lebih baik", "S/N = −10 log₁₀[(1/n) Σ yᵢ²]")],
+  ["Pilih array ortogonal dan tipe S/N sesuai tujuan.", "Masukkan data tiap run.", "Baca tabel respon S/N dan peringkat delta.", "Jalankan percobaan konfirmasi pada kombinasi optimum."],
+  ["Delta terbesar menunjukkan faktor paling berpengaruh.", "ANOVA S/N menguji kebermaknaan; konfirmasi wajib."],
+  ["Memakai tipe S/N yang salah.", "Mengabaikan interaksi pada array jenuh.", "Tidak melakukan percobaan konfirmasi."],
+  "Jalankan data contoh, catat faktor dengan delta terbesar, dan tentukan kombinasi optimum.",
+  pra=["faktorial-pecahan-fractional-factorial"])
