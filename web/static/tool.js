@@ -156,6 +156,8 @@
       if (btn) btn.click();
       else { var first = $('result').querySelector('.tab-panel.on'); if (first) drawPlots(first); }
       initPredictors($('result'));
+      if (window.fxWatch) fxWatch($('result'));
+      if (window.toast && !rerun) toast('✅ Analisis selesai');
       if (!rerun) $('result').scrollIntoView({behavior: 'smooth', block: 'start'});
     }).catch(function () { busy = false; $('run').disabled = false; $('result').style.opacity = ''; $('result').innerHTML = notice('Koneksi ke server gagal. Coba lagi.', 'error'); });
   }
@@ -164,7 +166,7 @@
     last.opts = resultOpts();
     fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(last)})
       .then(function (r) { if (!r.ok) throw new Error(); return r.blob(); })
-      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); })
+      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast('⬇️ Berkas Excel diunduh'); })
       .catch(function () { alert('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.'); });
   }
   /* uji lanjut / kontrol Dunnett / SD-SE: hitung ulang dengan opsi baru, tab aktif dipertahankan */

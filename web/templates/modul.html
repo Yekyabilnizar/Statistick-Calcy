@@ -5,37 +5,44 @@
 
 {% if pras %}<div class="notice info"><span>📌</span><div>Disarankan dipelajari sebelumnya: {% for p in pras %}<a href="/belajar/{{ p.slug }}">{{ p.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</div></div>{% endif %}
 
-<section class="prose learn">
-  <h2>Tujuan belajar</h2>
-  <ul>{% for t in mod.tujuan %}<li>{{ t }}</li>{% endfor %}</ul>
+<div class="lc-wrap" id="lc-wrap" data-slug="{{ mod.slug }}">
+  <div class="lc-steps" id="lc-steps"><i></i></div>
+  <nav class="lc-nav" id="lc-nav" aria-label="Bagian materi"></nav>
 
-  <h2>Ide utama</h2>
-  {% for p in mod.ide %}<p>{{ p }}</p>{% endfor %}
+  <article class="lc" data-label="💡 Konsep">
+    <h2>🎯 Tujuan belajar</h2>
+    <ul class="goals">{% for t in mod.tujuan %}<li>{{ t }}</li>{% endfor %}</ul>
+    <h2>💡 Ide utama</h2>
+    {% for p in mod.ide %}<p>{{ p }}</p>{% endfor %}
+    {% if own %}<h2>📍 Kapan dipakai</h2><p>{{ own.when }}</p>{% endif %}
+  </article>
 
-  {% if own %}<h2>Kapan dipakai</h2><p>{{ own.when }}</p>{% endif %}
+  <article class="lc" data-label="🧮 Rumus">
+    <h2>🧮 Rumus dan istilah kunci</h2>
+    <div class="fchips">{% for k, v in mod.rumus %}<div class="fchip"><b>{{ k }}</b><code>{{ v }}</code></div>{% endfor %}</div>
+    {% if own %}<h2>📋 Asumsi yang perlu dipenuhi</h2><p>{{ own.assume }}</p>{% endif %}
+  </article>
 
-  <h2>Rumus dan istilah kunci</h2>
-  <div class="sc-wrap" style="max-height:none"><table class="sc-table formula"><tbody>
-  {% for k, v in mod.rumus %}<tr><td class="first wrap"><b>{{ k }}</b></td><td class="wrap fm">{{ v }}</td></tr>{% endfor %}
-  </tbody></table></div>
+  <article class="lc" data-label="🪜 Langkah">
+    <h2>🪜 Langkah analisis</h2>
+    <ol class="steps">{% for s in mod.langkah %}<li>{{ s }}</li>{% endfor %}</ol>
+  </article>
 
-  {% if own %}<h2>Asumsi yang perlu dipenuhi</h2><p>{{ own.assume }}</p>{% endif %}
+  <article class="lc" data-label="🔍 Baca hasil">
+    <h2>🔍 Cara membaca hasil</h2>
+    <ul class="tips">{% for s in mod.baca %}<li>{{ s }}</li>{% endfor %}</ul>
+    <h2>⚠️ Kesalahan yang sering terjadi</h2>
+    <ul class="traps">{% for s in mod.jebakan %}<li>{{ s }}</li>{% endfor %}</ul>
+  </article>
 
-  <h2>Langkah analisis</h2>
-  <ol>{% for s in mod.langkah %}<li>{{ s }}</li>{% endfor %}</ol>
-
-  <h2>Cara membaca hasil</h2>
-  <ul>{% for s in mod.baca %}<li>{{ s }}</li>{% endfor %}</ul>
-
-  <h2>Kesalahan yang sering terjadi</h2>
-  <ul>{% for s in mod.jebakan %}<li>{{ s }}</li>{% endfor %}</ul>
-</section>
-
-<section class="panel practice">
-  <h3 class="step"><i>✍</i> Latihan di kalkulator</h3>
-  <p>{{ mod.latihan }}</p>
-  {% if prac %}<div class="cta"><a class="btn pri" href="/metode/{{ prac.slug }}">Buka kalkulator: {{ prac.title }} →</a>{% if own %}<a class="btn sec" href="/alur-metode?m={{ own.slug }}">Lihat alur metode</a>{% endif %}</div>{% endif %}
-</section>
+  <article class="lc" data-label="🎯 Latihan">
+    <section class="practice">
+      <h2>🎯 Latihan di kalkulator</h2>
+      <p>{{ mod.latihan }}</p>
+      {% if prac %}<div class="cta"><a class="btn pri" href="/metode/{{ prac.slug }}">Buka kalkulator: {{ prac.title }} →</a>{% if own %}<a class="btn sec" href="/alur-metode?m={{ own.slug }}">Lihat alur metode</a>{% endif %}</div>{% endif %}
+    </section>
+  </article>
+</div>
 
 <div class="done-bar">
   <button type="button" class="btn sec" id="mod-done" data-slug="{{ mod.slug }}">✓ Tandai selesai</button>

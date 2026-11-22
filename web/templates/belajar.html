@@ -2,18 +2,34 @@
 {% block content %}
 <section class="panel learn-top" id="learn" data-order='{{ order }}'>
   <div class="learn-prog">
-    <div><b id="lp-text">0 dari {{ total }} modul selesai</b><div class="progress"><i id="lp-bar" style="width:0"></i></div></div>
+    <div><b id="lp-text">0 dari {{ total }} modul selesai</b><div class="progress"><i id="lp-bar" style="width:0"></i></div>
+      <p class="cap" style="margin:8px 0 0" id="lp-msg">Mulai dari modul pertama. Setiap modul hanya sekitar 5 menit.</p></div>
     <a class="btn pri" id="lp-next" href="/belajar/{{ stages[0].groups[0].mods[0].slug }}">▶ Mulai belajar</a>
   </div>
-  <p class="cap" style="margin:10px 0 0">Progres disimpan di peramban ini saja (tanpa akun). Mengosongkan data situs akan mengatur ulang penanda.</p>
 </section>
-<div class="notice info"><span>🧭</span><div>Alurnya: <b>pelajari modul</b> → <b>latihan di kalkulator</b> dengan data contoh → <b>tandai selesai</b>. Modul diurutkan dari dasar ke lanjutan, tetapi Anda bebas membuka yang mana saja.</div></div>
+
+<h2 class="sec-h">🏅 Lencana</h2>
+<p class="sec-s">Selesaikan modul untuk membuka lencana. Progres disimpan di peramban ini saja (tanpa akun).</p>
+<div class="badges" id="badges">
+  <div class="badge" data-b="first"><span class="ic">🌱</span><b>Langkah pertama</b><small>1 modul selesai</small></div>
+  <div class="badge" data-b="t1"><span class="ic">📘</span><b>Dasar tuntas</b><small>Semua modul Tahap 1</small></div>
+  <div class="badge" data-b="half"><span class="ic">🔥</span><b>Setengah jalan</b><small>50% modul selesai</small></div>
+  <div class="badge" data-b="t2"><span class="ic">🧪</span><b>Ahli rancangan</b><small>Semua modul Tahap 2</small></div>
+  <div class="badge" data-b="t3"><span class="ic">📈</span><b>Ahli regresi</b><small>Semua modul Tahap 3</small></div>
+  <div class="badge" data-b="all"><span class="ic">🏆</span><b>Juara StatCalc</b><small>Semua modul selesai</small></div>
+</div>
+
+<div class="notice info"><span>🧭</span><div>Alurnya: <b>pelajari modul</b> → <b>latihan di kalkulator</b> dengan data contoh → <b>tandai selesai</b>. Anda bebas membuka modul mana saja.</div></div>
 {% for st in stages %}
-<h2 class="sec-h">{{ st.tahap }}</h2>
+{% set tno = loop.index %}
+<div class="stage-card" data-t="{{ tno }}">
+  <span class="ring" style="--p:0"><span>0%</span></span>
+  <div><h2>{{ st.tahap }}</h2><p class="stage-count">0 dari {{ st.groups|map(attribute='mods')|map('length')|sum }} modul selesai</p></div>
+</div>
 {% for g in st.groups %}
 <p class="sec-s" style="margin:16px 0 8px"><b style="color:#0F2A43">{{ g.name }}</b></p>
 <div class="mod-list">
-{% for m in g.mods %}<a class="mod-row" href="/belajar/{{ m.slug }}" data-slug="{{ m.slug }}">
+{% for m in g.mods %}<a class="mod-row" href="/belajar/{{ m.slug }}" data-slug="{{ m.slug }}" data-t="{{ tno }}">
   <span class="mod-ck" aria-hidden="true">○</span><span class="mod-t"><b>{{ m.title }}</b><small>{{ m.ringkas }}</small></span><span class="go">Buka →</span></a>{% endfor %}
 </div>
 {% endfor %}
