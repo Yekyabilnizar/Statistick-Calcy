@@ -303,7 +303,7 @@
   var AX = {showgrid: true, gridcolor: '#E9EFF7', zeroline: false, showline: true, linecolor: '#B6C6DA', ticks: 'outside', tickcolor: '#B6C6DA', automargin: true};
   function theme(l) {
     var out = Object.assign({}, l);
-    out.height = l.height || 420; out.margin = {l: 56, r: 26, t: 62, b: 56};
+    out.height = l.height || 420; out.margin = l.margin || {l: 56, r: 26, t: 62, b: 56};
     out.paper_bgcolor = 'rgba(0,0,0,0)'; out.plot_bgcolor = 'rgba(255,255,255,0)';
     out.colorway = ['#2563EB', '#0D9488', '#F59E0B', '#E11D48', '#7C3AED', '#0891B2', '#65A30D', '#DB2777'];
     out.font = {family: 'Source Sans 3, sans-serif', color: '#0F2A43', size: 13};
@@ -321,6 +321,9 @@
         var el = b.querySelector('.plot');
         if (el.getAttribute('data-done')) { Plotly.Plots.resize(el); return; }
         var d = JSON.parse(b.querySelector('.plot-data').textContent);
+        var hh = (d.layout && d.layout.height) || 420;
+        el.style.height = hh + 'px';
+        if (hh > 500) b.classList.add('wide');
         Plotly.newPlot(el, d.data, theme(d.layout), {responsive: true, displaylogo: false});
         el.setAttribute('data-done', '1');
       });

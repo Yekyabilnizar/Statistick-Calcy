@@ -283,3 +283,5 @@ td.fm{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.92rem;white-s
 .mod-row.done{background:linear-gradient(120deg,#fff,#F3FBF6)}
 .mod-ck{transition:all .3s}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
+
+.plot-box.wide{grid-column:1/-1}

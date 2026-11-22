@@ -171,11 +171,20 @@ def plot_json(spec):
             data.append({"type": "box", "y": _arr(np.asarray(v, float)), "name": str(name), "boxpoints": "all", "jitter": 0.4, "pointpos": 0,
                          "showlegend": False, "marker": {"size": 6, "opacity": 0.8}})
     elif k == "splom":
-        dims = [{"label": str(n), "values": _arr(np.asarray(v, float))} for n, v in spec["dims"].items()]
-        data.append({"type": "splom", "dimensions": dims, "diagonal": {"visible": False}, "showupperhalf": True,
+        def _lab(n):
+            n = str(n).replace("_", " ")
+            return n if len(n) <= 16 else n[:15] + "…"
+        dims = [{"label": _lab(n), "values": _arr(np.asarray(v, float))} for n, v in spec["dims"].items()]
+        data.append({"type": "splom", "dimensions": dims, "diagonal": {"visible": False}, "showupperhalf": False,
                      "marker": {"size": 4, "color": "#2563EB", "opacity": 0.8}, "showlegend": False})
         layout["height"] = 650
         layout.pop("xaxis"), layout.pop("yaxis")
+        layout["margin"] = {"l": 80, "r": 20, "t": 60, "b": 80}
+        for i in range(1, len(dims) + 1):
+            sfx = "" if i == 1 else str(i)
+            ax = {"title": {"font": {"size": 11}}, "tickfont": {"size": 10}, "automargin": False}
+            layout["xaxis" + sfx] = dict(ax)
+            layout["yaxis" + sfx] = dict(ax)
     elif k == "heat":
         z = _arr(np.asarray(spec["z"], float))
         t = {"type": "heatmap", "z": z, "x": [str(v) for v in spec["x"]], "y": [str(v) for v in spec["y"]], "xgap": 2, "ygap": 2,
