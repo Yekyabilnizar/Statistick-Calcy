@@ -548,7 +548,7 @@ routes = [
     Route("/api/parse", api_parse, methods=["POST"]), Route("/api/inspect", api_inspect, methods=["POST"]),
     Route("/api/{slug}/sample", api_sample), Route("/api/{slug}/run", api_run, methods=["POST"]),
     Route("/api/{slug}/xlsx", api_xlsx, methods=["POST"]),
-    Route("/favicon.ico", lambda r: FileResponse(os.path.join(HERE, "static", "favicon-32.png"), media_type="image/png")),
+    Route("/favicon.ico", lambda r: FileResponse(os.path.join(HERE, "static", "favicon-48.png"), media_type="image/png")),
     Mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static"),
 ]
 app = Starlette(routes=routes, middleware=[Middleware(Guard), Middleware(GZipMiddleware, minimum_size=1000)],
