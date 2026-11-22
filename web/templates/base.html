@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
 {% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}
 {% block head %}{% endblock %}
+{% if adsense %}<meta name="google-adsense-account" content="{{ adsense }}">{% endif %}
 </head>
 <body>
 <div class="wrap">
@@ -41,13 +42,27 @@
 <div class="legal"><span>⚖️</span><div>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Verifikasi hasil penting (misalnya untuk publikasi) dengan software lain atau ahli statistika.</div></div>
 <footer class="foot">
   GetComput · Belajar statistika dengan alat hitung<br>
-  <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a>
+  <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a><a href="#" onclick="bukaCookie();return false">Pengaturan cookie</a>
 </footer>
 </div>
 <script id="search-index" type="application/json">{{ search_index|safe }}</script>
 <script src="/static/site.js?v={{ asset_v }}" defer></script>
 <script src="/static/fx.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
+<div id="cookie-bar" class="cookie-bar" hidden role="dialog" aria-label="Persetujuan cookie">
+<p>GetComput memakai cookie untuk menyimpan kemajuan belajar Anda{% if adsense %} dan, bila Anda setuju, untuk menayangkan iklan (Google AdSense){% endif %}. <a href="/privasi">Pelajari selengkapnya</a>.</p>
+<div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Hanya yang perlu</button><button type="button" id="ck-yes" class="btn pri">Setuju</button></div>
+</div>
+<script>
+(function(){var K="getcomput-cookie",c=null;try{c=localStorage.getItem(K)}catch(e){}
+var bar=document.getElementById("cookie-bar");
+function ads(){ {% if adsense %}if(window.__adsLoaded)return;window.__adsLoaded=1;var s=document.createElement("script");s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense }}";document.head.appendChild(s);{% endif %} }
+function set(v){try{localStorage.setItem(K,v)}catch(e){}bar.hidden=true;if(v==="yes")ads()}
+if(c==="yes")ads();else if(c!=="no")bar.hidden=false;
+document.getElementById("ck-yes").onclick=function(){set("yes")};
+document.getElementById("ck-no").onclick=function(){set("no")};
+window.bukaCookie=function(){bar.hidden=false};})();
+</script>
 {% if goatcounter %}<script data-goatcounter="https://{{ goatcounter }}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>{% endif %}
 </body>
 </html>

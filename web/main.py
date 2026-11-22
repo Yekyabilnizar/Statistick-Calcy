@@ -2,7 +2,7 @@
 import asyncio
 import json
 import logging
-import os
+import os, re
 import sys
 import time
 import traceback
@@ -37,6 +37,9 @@ CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "").strip()
 GOATCOUNTER = os.environ.get("GOATCOUNTER_CODE", "").strip().lower()
 if not GOATCOUNTER.replace("-", "").isalnum():
     GOATCOUNTER = ""
+ADSENSE = os.environ.get("ADSENSE_CLIENT", "").strip().lower()  # contoh: ca-pub-1234567890123456
+if not re.fullmatch(r"ca-pub-\d{10,20}", ADSENSE):
+    ADSENSE = ""
 ASSET_V = os.environ.get("ASSET_V") or str(int(max((os.path.getmtime(os.path.join(os.path.dirname(__file__), "static", f)) for f in os.listdir(os.path.join(os.path.dirname(__file__), "static"))), default=1)))
 MAX_BODY = 4_500_000
 ALPHAS = (0.01, 0.05, 0.10)
@@ -76,7 +79,7 @@ def search_index():
 def page(request, name, *, title, description, path, hero_title, hero_lead, hero_tags=None, active=None, status=200, **ctx):
     ctx.update(title=title, description=description, canonical=base_url(request) + path, hero_title=hero_title, hero_lead=hero_lead,
                hero_tags=hero_tags, nav_items=NAV, active=active if active is not None else path, search_index=search_index(),
-               asset_v=ASSET_V, goatcounter=GOATCOUNTER, jsonld=ctx.get("jsonld"))
+               asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, jsonld=ctx.get("jsonld"))
     return templates.TemplateResponse(request, name, ctx, status_code=status)
 
 
@@ -324,6 +327,13 @@ async def not_found(request, exc):
                 hero_title="Halaman tidak ditemukan", hero_lead="Alamat yang Anda buka tidak tersedia.", active="", status=404)
 
 
+async def ads_txt(request):
+    if not ADSENSE:
+        return PlainTextResponse("", status_code=404)
+    pub = ADSENSE.replace("ca-", "", 1)
+    return PlainTextResponse(f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n")
+
+
 async def robots(request):
     return PlainTextResponse(f"User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: {base_url(request)}/sitemap.xml\n")
 
@@ -534,7 +544,7 @@ routes = [
     Route("/", home), Route("/rancangan-percobaan", family_page), Route("/regresi", family_page),
     Route("/metode/{slug}", method_page), Route("/belajar", learn_index), Route("/belajar/{slug}", learn_module), Route("/panduan", guide), Route("/alur-metode", flow_page), Route("/masukan", feedback_page),
     Route("/api/feedback", api_feedback, methods=["POST"]), Route("/api/{slug}/gen", api_gen, methods=["POST"]), Route("/tentang", about), Route("/privasi", privacy),
-    Route("/robots.txt", robots), Route("/sitemap.xml", sitemap), Route("/healthz", healthz),
+    Route("/robots.txt", robots), Route("/ads.txt", ads_txt), Route("/sitemap.xml", sitemap), Route("/healthz", healthz),
     Route("/api/parse", api_parse, methods=["POST"]), Route("/api/inspect", api_inspect, methods=["POST"]),
     Route("/api/{slug}/sample", api_sample), Route("/api/{slug}/run", api_run, methods=["POST"]),
     Route("/api/{slug}/xlsx", api_xlsx, methods=["POST"]),
