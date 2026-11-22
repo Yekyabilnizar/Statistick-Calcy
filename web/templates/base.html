@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+<link rel="canonical" href="{{ canonical }}">
+<meta property="og:type" content="website"><meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
+<meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="id_ID"><meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
+{% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="hero-top">
+    <a href="/" class="hero-chip" style="text-decoration:none">STATCALC · KALKULATOR STATISTIKA</a>
+    <div class="search" id="search">
+      <input id="q" type="search" placeholder="Cari metode… (mis. logistik, RAK, panel)" autocomplete="off" aria-label="Cari metode">
+      <div class="sres" id="sres"></div>
+    </div>
+  </div>
+  <h1>{{ hero_title }}</h1>
+  <p class="lead">{{ hero_lead }}</p>
+  {% if hero_tags %}<div class="hero-tags">{% for t in hero_tags %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
+  <nav class="hero-nav" aria-label="Menu utama">
+    {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label }}</a>{% endfor %}
+  </nav>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<div class="legal"><span>⚖️</span><div>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Verifikasi hasil penting (misalnya untuk publikasi) dengan software lain atau ahli statistika.</div></div>
+<footer class="foot">
+  StatCalc · Kalkulator analisis statistika<br>
+  <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a>
+</footer>
+</div>
+<script id="search-index" type="application/json">{{ search_index|safe }}</script>
+<script src="/static/site.js?v={{ asset_v }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

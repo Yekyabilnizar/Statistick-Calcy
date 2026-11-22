@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="/">Beranda</a> › <a href="/{{ fam_path }}">{{ fam_name }}</a> › {{ m.group }} › {{ m.title }}</p>
+
+<section class="panel" id="alat" aria-label="Alat analisis">
+  <h3 class="step"><i>1</i> Masukkan data</h3>
+  <div class="src-tabs" role="tablist">
+    <button type="button" class="on" data-src="sample">📚 Data contoh</button>
+    <button type="button" data-src="paste">📋 Tempel dari Excel/CSV</button>
+    <button type="button" data-src="file">📂 Unggah berkas</button>
+    <button type="button" data-src="manual">✍️ Ketik di tabel</button>
+  </div>
+  <div id="src-sample" class="src-pane"><p class="cap" style="margin:0">Data contoh sudah dimuat supaya Anda bisa langsung mencoba. Pilih tab lain untuk memakai data Anda sendiri.</p></div>
+  <div id="src-file" class="src-pane" hidden><div class="drop"><input type="file" id="file" accept=".csv,.tsv,.txt,.xlsx,.xlsm"><p class="cap">CSV, TSV, TXT, atau Excel (.xlsx). Baris pertama berisi nama kolom.</p></div></div>
+  <div id="src-paste" class="src-pane" hidden></div>
+  <div id="src-manual" class="src-pane" hidden><div id="manual-gen"></div><div class="grid-bar"><button type="button" class="btn sec mini" id="g-addrow">+ Baris</button><button type="button" class="btn sec mini" id="g-addcol">+ Kolom</button><button type="button" class="btn sec mini" id="g-delrow">− Baris terakhir</button><button type="button" class="btn sec mini" id="g-delcol">− Kolom terakhir</button><button type="button" class="btn sec mini" id="g-clear">Kosongkan</button></div>
+    <div class="sc-wrap grid-ed" id="grid"></div><p class="cap">Klik sel lalu ketik. Anda juga bisa menempel (Ctrl+V) blok data dari Excel ke sel mana pun. Nama kolom ada di baris judul dan dapat diubah.</p></div>
+  <textarea id="data" class="data" spellcheck="false" placeholder="Tempel data di sini (baris pertama = nama kolom; kolom dipisah tab, koma, atau titik koma)"></textarea>
+  <div id="data-msg" class="msg"></div>
+  <div id="preview" class="preview"></div>
+</section>
+
+<section class="panel" id="form-panel" hidden>
+  <h3 class="step"><i>2</i> Pilih kolom dan pengaturan</h3>
+  <div id="fields" class="fields"></div>
+  <div class="fields" style="margin-top:16px"><div class="fld"><label class="l" for="alpha">Taraf nyata (α)</label>
+    <select id="alpha"><option value="0.01">α = 0,01</option><option value="0.05" selected>α = 0,05</option><option value="0.10">α = 0,10</option></select></div></div>
+  <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <button type="button" class="btn pri" id="run">▶ Hitung</button>
+    <button type="button" class="btn sec" id="xlsx" hidden>⬇️ Unduh Excel</button>
+  </div>
+</section>
+
+{% if m.gen %}<details class="more" id="gen-box"><summary>🧮 Pembangkit matriks rancangan</summary><div class="fields" id="gen-fields"></div><div style="margin-top:12px"><button type="button" class="btn sec" id="gen-run">Bangkitkan rancangan</button></div><div id="gen-out"></div></details>{% endif %}
+
+<div id="result" aria-live="polite"></div>
+
+<section class="prose">
+  <h2>Tentang metode ini</h2><p>{{ m.desc }}</p>
+  <h2>Kapan dipakai?</h2><p>{{ m.when }}</p>
+  <h2>Asumsi yang perlu dipenuhi</h2><p>{{ m.assume }}</p>
+  <h2>Cara membaca hasil</h2><p>{{ m.read }}</p>
+</section>
+
+<h2 class="sec-h">Alur metode</h2><p class="sec-s">Langkah analisis yang dijalankan, dari data sampai kesimpulan.</p>
+{{ flow|safe }}
+
+{% if related %}<h2 class="sec-h">Metode terkait</h2>
+<div class="grid g3">{% for r in related %}<div class="mcard"><h4>{{ r.title }}</h4><p>{{ r.desc }}</p><a class="go" href="/metode/{{ r.slug }}">Buka →</a></div>{% endfor %}</div>{% endif %}
+<script id="spec" type="application/json">{{ spec|safe }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/tool.js?v={{ asset_v }}" defer></script>{% endblock %}

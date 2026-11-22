@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not enabled %}
+<div class="notice info"><span>ℹ️</span><div>Fitur masukan belum diaktifkan oleh pengelola situs. Silakan coba lagi nanti.</div></div>
+{% else %}
+<section class="panel" id="fb-panel">
+  <form id="fb-form" novalidate>
+    <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+      <div class="fld"><label class="l" for="fb-kat">Jenis masukan</label><select id="fb-kat">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select></div>
+      <div class="fld"><label class="l" for="fb-met">Metode terkait (opsional)</label><select id="fb-met"><option value="">(umum / tidak spesifik)</option>{% for m in methods %}<option>{{ m }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="fld" style="margin-top:14px"><label class="l" for="fb-msg">Pesan Anda</label>
+      <textarea id="fb-msg" class="data" style="min-height:150px" maxlength="{{ max_msg }}" placeholder="Ceritakan sejelas mungkin. Untuk laporan masalah: apa yang Anda lakukan, apa yang terjadi, dan apa yang diharapkan."></textarea></div>
+    <div class="fld" style="margin-top:14px"><label class="l">Penilaian aplikasi (opsional)</label>
+      <div class="stars" id="fb-stars" role="radiogroup" aria-label="Penilaian">{% for i in range(1,6) %}<button type="button" data-v="{{ i }}" aria-label="{{ i }} bintang">☆</button>{% endfor %}<button type="button" class="clr" data-v="0">hapus</button></div></div>
+    <div class="fld" style="margin-top:14px"><label class="l" for="fb-contact">Email/kontak bila ingin dibalas (opsional)</label><input id="fb-contact" type="text" maxlength="{{ max_contact }}" autocomplete="off"></div>
+    <p class="cap">Jangan menuliskan data pribadi sensitif atau data penelitian mentah pada pesan. Data analisis yang Anda unggah <b>tidak</b> ikut terkirim.</p>
+    <label class="chk"><input id="fb-ok" type="checkbox"><span>Saya setuju masukan ini disimpan oleh pengembang untuk perbaikan aplikasi.</span></label>
+    <div style="position:absolute;left:-9999px;height:0;overflow:hidden" aria-hidden="true"><label>Situs web<input id="fb-hp" type="text" tabindex="-1" autocomplete="off"></label></div>
+    <div style="margin-top:16px"><button type="submit" class="btn pri" id="fb-send">Kirim masukan</button></div>
+    <div id="fb-msgbox" class="msg" aria-live="polite"></div>
+  </form>
+  <div id="fb-done" hidden><div class="notice success"><span>✅</span><div>Terima kasih! Masukan Anda sudah terkirim.</div></div>
+    <button type="button" class="btn sec" id="fb-again">Kirim masukan lain</button></div>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if enabled %}<script src="/static/feedback.js?v={{ asset_v }}" defer></script>{% endif %}{% endblock %}

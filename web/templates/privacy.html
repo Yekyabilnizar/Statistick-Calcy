@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="prose">
+<h2>Kebijakan Privasi</h2>
+<p>Terakhir diperbarui: {{ updated }}.</p>
+<h2>Data analisis Anda</h2>
+<p>Data yang Anda tempel atau unggah dikirim ke server hanya untuk dihitung. Data diproses di memori dan tidak disimpan ke basis data atau berkas, serta dibuang setelah hasil dikirim kembali. Kami tidak membaca atau membagikan data Anda.</p>
+<h2>Formulir Masukan</h2>
+<p>Bila Anda mengirim masukan, isi pesan, jenis masukan, metode terkait, penilaian, dan kontak (jika Anda isi) disimpan di repositori privat milik pengembang yang hanya dapat diakses pengembang, semata-mata untuk memperbaiki aplikasi. Data analisis yang Anda unggah tidak ikut tersimpan. Untuk meminta penghapusan masukan Anda, hubungi pengembang.</p>
+<h2>Berkas hasil unduhan</h2>
+<p>Berkas Excel hasil unduhan dibuat sesuai permintaan Anda dan menjadi tanggung jawab Anda sepenuhnya setelah diunduh. Jangan mengunggah data pribadi sensitif (identitas, data kesehatan individual, dan sejenisnya) tanpa persetujuan dan anonimisasi yang layak; gunakan kode atau ID samaran untuk subjek penelitian.</p>
+<h2>Data teknis</h2>
+<p>Server dapat mencatat informasi teknis standar (alamat IP, waktu akses, halaman, jenis peramban) untuk keamanan dan pemeliharaan. Catatan ini tidak berisi isi data analisis Anda.</p>
+<h2>Cookie dan iklan</h2>
+<p>Situs ini dapat menampilkan iklan pihak ketiga (misalnya Google AdSense) di masa mendatang. Pihak ketiga dapat memakai cookie untuk menayangkan iklan berdasarkan kunjungan Anda. Anda dapat mengatur preferensi iklan melalui pengaturan iklan Google atau mematikan cookie di peramban Anda.</p>
+<h2>Layanan pihak ketiga</h2>
+<p>Halaman memuat font dari Google Fonts dan pustaka grafik Plotly dari jaringan pengiriman konten (CDN); permintaan tersebut dapat memperlihatkan alamat IP Anda kepada penyedianya.</p>
+<h2>Penafian</h2>
+<p>Hasil perhitungan bersifat alat bantu, bukan pengganti konsultasi statistika. Pengguna bertanggung jawab memeriksa kesesuaian metode dan asumsi terhadap datanya, dan memverifikasi hasil penting dengan software lain atau ahli statistika. Layanan diberikan apa adanya tanpa jaminan.</p>
+<h2>Kontak</h2>
+<p>{{ contact|safe }}</p>
+</section>
+{% endblock %}

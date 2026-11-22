@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="cta"><a class="btn pri" href="#katalog">🚀 Mulai analisis</a><a class="btn sec" href="/panduan">🧭 Bingung memilih metode?</a></div>
+<div class="stats">
+  <div class="stat"><b>{{ n_all }}</b><span>metode analisis</span></div>
+  <div class="stat"><b>{{ n_des }}</b><span>rancangan percobaan</span></div>
+  <div class="stat"><b>{{ n_reg }}</b><span>metode regresi</span></div>
+  <div class="stat"><b>5</b><span>uji lanjut (BNT, DMRT, Tukey, Scheffé, Dunnett)</span></div>
+</div>
+<h2 class="sec-h">Cara menggunakan</h2><p class="sec-s">Tiga langkah dari data mentah sampai laporan yang siap dipakai.</p>
+<div class="steps">
+  <div class="stepc"><div class="n">1</div><h4>Pilih metode</h4><p>Cari lewat kotak pencarian, pilih dari katalog, atau buka Panduan Metode dan pilih situasi data Anda.</p></div>
+  <div class="stepc"><div class="n">2</div><h4>Masukkan data</h4><p>Pakai data contoh, tempel dari Excel, atau unggah CSV/Excel. Lalu pilih kolom untuk Y, X, perlakuan, atau kelompok.</p></div>
+  <div class="stepc"><div class="n">3</div><h4>Baca hasil</h4><p>Tabel ANOVA/koefisien, grafik, uji asumsi, dan interpretasi otomatis tampil seketika. Unduh semuanya ke Excel.</p></div>
+</div>
+<h2 class="sec-h">Dua keluarga analisis</h2>
+<div class="grid g2">
+  <div class="fam"><h3>🧪 Rancangan Percobaan</h3><p>Analisis ragam untuk percobaan terkontrol, dari RAL dan RAK sampai rancangan lanjutan.</p>
+    <ul><li>RAL, RAK, RBSL, Graeco-Latin, BIB/Lattice</li><li>Faktorial, split-plot, strip-plot, nested</li><li>Repeated measures, cross-over, ANCOVA, MANOVA</li><li>RSM, mixture, Taguchi, faktorial pecahan</li></ul>
+    <a class="btn pri" href="/rancangan-percobaan">Jelajahi rancangan percobaan →</a></div>
+  <div class="fam"><h3>📈 Regresi</h3><p>Dari regresi linear berganda sampai model untuk data biner, cacahan, dan respon positif.</p>
+    <ul><li>Linear, dummy, polinomial, nonlinear, diagnostik lengkap</li><li>Logistik, Poisson, binomial negatif, gamma, probit</li><li>Ridge, LASSO, robust, LOESS, spline, kuantil, GAM</li><li>Panel, ARIMAX, SAR/SEM/GWR, mixed effect, Cox, Tobit</li></ul>
+    <a class="btn pri" href="/regresi">Jelajahi metode regresi →</a></div>
+</div>
+<h2 class="sec-h" id="katalog">Katalog metode</h2><p class="sec-s">Pilih metode untuk langsung membuka halaman analisisnya.</p>
+{% for fam, label in [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')] %}
+  {% for g, items in groups[fam].items() %}
+  <p class="sec-s" style="margin:18px 0 8px"><b style="color:#0F2A43">{{ label }} · {{ g }}</b> · {{ items|length }} metode</p>
+  <div class="grid g3">{% for m in items %}
+    <div class="mcard"><h4>{{ m.title }}</h4><p>{{ m.desc }}</p><div>{% for t in m.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+      <a class="go" href="/metode/{{ m.slug }}">Buka →</a></div>{% endfor %}</div>
+  {% endfor %}
+{% endfor %}
+<h2 class="sec-h">Yang Anda dapatkan di setiap analisis</h2>
+<div class="grid g3">
+<div class="mcard"><h4>📋 Tabel siap kutip</h4><p>ANOVA, koefisien, hazard ratio, uji lanjut bernotasi huruf, lengkap dengan P-value dan tanda signifikansi.</p></div>
+<div class="mcard"><h4>🧪 Uji asumsi</h4><p>Normalitas, homogenitas ragam, autokorelasi, multikolinearitas, dan pengamatan berpengaruh diperiksa otomatis.</p></div>
+<div class="mcard"><h4>📈 Grafik interaktif</h4><p>Plot residual, interaksi, kontur permukaan respon, peta spasial, kurva survival, dan lainnya.</p></div>
+<div class="mcard"><h4>📝 Interpretasi otomatis</h4><p>Kesimpulan ditulis dalam bahasa Indonesia, termasuk peringatan jika asumsi atau data bermasalah.</p></div>
+<div class="mcard"><h4>📂 Data fleksibel</h4><p>Data contoh, tempel dari Excel, unggah CSV/Excel, atau ketik langsung di tabel.</p></div>
+<div class="mcard"><h4>⬇️ Unduh ke Excel</h4><p>Semua tabel hasil dikemas dalam satu berkas Excel; grafik dapat disimpan sebagai gambar.</p></div>
+</div>
+<h2 class="sec-h">Pertanyaan umum</h2>
+<details class="faq"><summary>Apakah data saya disimpan?</summary><p>Tidak. Data hanya diproses di memori selama perhitungan berlangsung untuk menghasilkan hasil, lalu dibuang. Lihat <a href="/privasi">Kebijakan Privasi</a>.</p></details>
+<details class="faq"><summary>Format data seperti apa yang dibutuhkan?</summary><p>Satu baris = satu pengamatan, satu kolom = satu variabel, dan baris pertama berisi nama kolom. Gunakan titik atau koma sebagai desimal. Setiap metode menyediakan data contoh untuk melihat formatnya.</p></details>
+<details class="faq"><summary>Bagaimana membaca tanda **, *, dan tn?</summary><p>** = sangat nyata (P &lt; 0,01), * = nyata (P &lt; 0,05), tn = tidak nyata. Taraf nyata α dapat dipilih pada tiap analisis.</p></details>
+<details class="faq"><summary>Hasil saya berbeda dengan software lain</summary><p>Periksa jenis jumlah kuadrat (di sini Tipe I sekuensial pada data seimbang), kategori referensi pada variabel dummy, dan metode penaksiran. Pada data seimbang hasil ANOVA umumnya sama; verifikasi tetap dianjurkan untuk publikasi.</p></details>
+{% endblock %}

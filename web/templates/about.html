@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="sec-h">Cara membaca hasil</h2>
+<div class="sc-wrap" style="max-height:none"><table class="sc-table read"><thead><tr><th>Istilah</th><th>Arti</th></tr></thead><tbody>
+<tr><td class="first"><b>** / * / tn</b></td><td class="wrap">Sangat nyata (P&lt;0,01) / nyata (P&lt;0,05) / tidak nyata.</td></tr>
+<tr><td class="first"><b>KK</b></td><td class="wrap">Koefisien keragaman = akar KT galat ÷ rata-rata umum × 100%. Makin kecil makin teliti percobaannya.</td></tr>
+<tr><td class="first"><b>Notasi huruf</b></td><td class="wrap">Rata-rata yang diikuti huruf sama tidak berbeda nyata pada uji lanjut yang dipilih.</td></tr>
+<tr><td class="first"><b>R², R² adj</b></td><td class="wrap">Proporsi keragaman Y yang dijelaskan model (adj = disesuaikan jumlah variabel).</td></tr>
+<tr><td class="first"><b>VIF</b></td><td class="wrap">Ukuran multikolinearitas; &gt; 10 menandakan masalah serius.</td></tr>
+<tr><td class="first"><b>AIC / BIC</b></td><td class="wrap">Kriteria pemilihan model; nilai lebih kecil lebih baik.</td></tr>
+<tr><td class="first"><b>Odds ratio / IRR / HR</b></td><td class="wrap">Pengali peluang (logistik), laju kejadian (Poisson), dan risiko (Cox) untuk kenaikan 1 satuan X.</td></tr>
+</tbody></table></div>
+<h2 class="sec-h">Catatan metodologi</h2>
+<section class="prose">
+<ul>
+<li>Analisis ragam memakai jumlah kuadrat <b>sekuensial (Tipe I)</b>; pada data seimbang sama dengan Tipe II/III.</li>
+<li>Uji asumsi bersifat pendukung; ukuran sampel kecil membuat uji kurang bertenaga, jadi lihat juga grafik residual.</li>
+<li>Uji lanjut sebaiknya dipakai hanya bila uji F nyata. <b>BNT</b> tidak mengendalikan galat tipe I pada banyak perbandingan; <b>Tukey</b> dan <b>Scheffé</b> lebih konservatif; <b>Dunnett</b> khusus perbandingan terhadap kontrol.</li>
+<li>Model lanjutan (panel, spasial, mixed, Cox, Tobit) bersifat <b>alat bantu analisis</b>; periksa asumsi model dan konsultasikan dengan ahli statistika untuk publikasi.</li>
+</ul>
+<h2>Apa itu StatCalc?</h2>
+<p>StatCalc adalah kalkulator analisis statistika berbahasa Indonesia untuk penelitian dan percobaan. Anda memilih metode, memasukkan data, lalu mendapatkan tabel hasil, grafik, uji asumsi, dan interpretasi otomatis yang bisa diunduh ke Excel.</p>
+<h2>Untuk siapa?</h2>
+<p>Mahasiswa, peneliti, dan praktisi yang menganalisis data percobaan (pertanian, peternakan, perikanan, kehutanan, kesehatan, industri) maupun data observasi, tanpa harus menulis kode.</p>
+<h2>Bagaimana perhitungannya?</h2>
+<p>Perhitungan memakai pustaka ilmiah Python (NumPy dan SciPy). Analisis ragam rancangan percobaan memakai jumlah kuadrat sekuensial (Tipe I) dengan konvensi penulisan Indonesia: tanda **, *, dan tn, koefisien keragaman (KK), serta notasi huruf pada uji lanjut. Jenis jumlah kuadrat, kategori referensi, dan metode penaksiran dapat berbeda dengan software lain; verifikasi tetap dianjurkan untuk keperluan publikasi.</p>
+<h2>Penafian</h2>
+<p>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Pengembang tidak bertanggung jawab atas keputusan yang diambil berdasarkan hasil perhitungan.</p>
+<h2>Kontak dan masukan</h2>
+<p>Punya saran atau menemukan masalah? Gunakan halaman <a href="/masukan">Masukan</a>. {{ contact|safe }}</p>
+</section>
+{% endblock %}

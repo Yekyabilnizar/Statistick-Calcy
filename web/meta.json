@@ -1,0 +1,751 @@
+{
+ "reg": {
+  "Dasar": [
+   {
+    "key": "dummy",
+    "label": "Regresi dengan Variabel Dummy",
+    "sample": "dummy",
+    "desc": "Regresi dengan prediktor numerik dan kategorik; kategori diubah menjadi variabel dummy dengan kategori pertama sebagai referensi.",
+    "tags": [
+     "Dummy",
+     "Referensi",
+     "Koefisien per kategori"
+    ]
+   },
+   {
+    "key": "poly",
+    "label": "Regresi Polinomial",
+    "sample": "poly",
+    "desc": "Model kurva berderajat tinggi dengan uji kenaikan derajat, pita kepercayaan, dan pemilihan derajat berdasarkan AIC/BIC.",
+    "tags": [
+     "Derajat 1–6",
+     "AIC · BIC",
+     "Pita kepercayaan"
+    ]
+   },
+   {
+    "key": "diag",
+    "label": "Diagnostik & Regresi Tanpa Intersep",
+    "sample": "diag",
+    "desc": "Uji asumsi lengkap: normalitas, heteroskedastisitas, autokorelasi, multikolinearitas (VIF), serta pengamatan berpengaruh (Cook's D, leverage). Mendukung regresi melalui titik asal.",
+    "tags": [
+     "Shapiro · JB · AD",
+     "BP · White · Glejser",
+     "DW · BG",
+     "VIF · Cook's D"
+    ]
+   }
+  ],
+  "Nonlinear": [
+   {
+    "key": "nonlin",
+    "label": "Regresi Nonlinear",
+    "sample": "nonlin",
+    "desc": "Eksponensial, logaritmik, pangkat, logistik (pertumbuhan), Michaelis-Menten, dan Gompertz dengan perbandingan seluruh model.",
+    "tags": [
+     "6 model",
+     "Nonlinear least squares",
+     "Perbandingan AIC"
+    ]
+   }
+  ],
+  "GLM": [
+   {
+    "key": "logit",
+    "label": "Regresi Logistik Biner",
+    "sample": "logit",
+    "desc": "Model peluang kejadian biner: odds ratio, uji Wald dan LR, Hosmer-Lemeshow, tabel klasifikasi, serta kurva ROC/AUC.",
+    "tags": [
+     "Odds ratio",
+     "ROC · AUC",
+     "Hosmer-Lemeshow"
+    ]
+   },
+   {
+    "key": "probit",
+    "label": "Regresi Probit",
+    "sample": "probit",
+    "desc": "Model biner dengan fungsi hubung normal baku; hasil klasifikasi dan kecocokan model.",
+    "tags": [
+     "Probit",
+     "ROC · AUC"
+    ]
+   },
+   {
+    "key": "multinom",
+    "label": "Regresi Logistik Multinomial",
+    "sample": "multinom",
+    "desc": "Variabel respon nominal dengan tiga kelas atau lebih; kelas pertama sebagai referensi.",
+    "tags": [
+     "Nominal ≥ 3 kelas",
+     "Odds ratio relatif"
+    ]
+   },
+   {
+    "key": "ordinal",
+    "label": "Regresi Logistik Ordinal",
+    "sample": "ordinal",
+    "desc": "Respon berskala berurutan (proportional odds): koefisien, ambang (threshold), odds ratio, dan uji kecocokan.",
+    "tags": [
+     "Proportional odds",
+     "Threshold"
+    ]
+   },
+   {
+    "key": "poisson",
+    "label": "Regresi Poisson",
+    "sample": "poisson",
+    "desc": "Data cacahan (count): incidence rate ratio, uji overdispersi, dan kecocokan deviance.",
+    "tags": [
+     "IRR",
+     "Overdispersi"
+    ]
+   },
+   {
+    "key": "negbin",
+    "label": "Regresi Binomial Negatif",
+    "sample": "negbin",
+    "desc": "Data cacahan dengan overdispersi; parameter dispersi diduga bersama koefisien.",
+    "tags": [
+     "IRR",
+     "Dispersi α"
+    ]
+   },
+   {
+    "key": "gamma",
+    "label": "Regresi Gamma",
+    "sample": "gamma",
+    "desc": "Respon kontinu positif dan condong ke kanan (biaya, lama waktu) dengan fungsi hubung log.",
+    "tags": [
+     "Link log",
+     "Respon positif"
+    ]
+   }
+  ],
+  "Seleksi & Regularisasi": [
+   {
+    "key": "select",
+    "label": "Seleksi Variabel",
+    "sample": "select",
+    "desc": "Forward, backward, stepwise, dan best subset berdasarkan AIC atau BIC, lengkap dengan jejak langkah dan perbandingan model.",
+    "tags": [
+     "Forward · Backward",
+     "Stepwise",
+     "Best subset"
+    ]
+   },
+   {
+    "key": "ridge",
+    "label": "Regresi Ridge",
+    "sample": "penal",
+    "desc": "Penyusutan koefisien L2 untuk multikolinearitas; λ dipilih lewat validasi silang.",
+    "tags": [
+     "L2",
+     "Validasi silang"
+    ]
+   },
+   {
+    "key": "lasso",
+    "label": "Regresi LASSO",
+    "sample": "penal",
+    "desc": "Penyusutan L1 yang sekaligus menyeleksi variabel (koefisien menjadi tepat nol).",
+    "tags": [
+     "L1",
+     "Seleksi variabel"
+    ]
+   },
+   {
+    "key": "enet",
+    "label": "Elastic Net",
+    "sample": "penal",
+    "desc": "Kombinasi penalti L1 dan L2 untuk prediktor yang saling berkorelasi.",
+    "tags": [
+     "L1 + L2"
+    ]
+   },
+   {
+    "key": "pcr",
+    "label": "Principal Component Regression (PCR)",
+    "sample": "penal",
+    "desc": "Regresi pada komponen utama untuk mengatasi multikolinearitas.",
+    "tags": [
+     "PCA",
+     "Komponen utama"
+    ]
+   },
+   {
+    "key": "pls",
+    "label": "Partial Least Squares (PLS)",
+    "sample": "penal",
+    "desc": "Regresi pada komponen yang memaksimalkan kovarians dengan Y (algoritma NIPALS).",
+    "tags": [
+     "NIPALS",
+     "Komponen laten"
+    ]
+   }
+  ],
+  "Robust & Nonparametrik": [
+   {
+    "key": "huber",
+    "label": "Regresi Robust – M-estimator Huber",
+    "sample": "outlier",
+    "desc": "Mengurangi pengaruh pencilan dengan pembobotan Huber (IRLS) dan galat baku sandwich.",
+    "tags": [
+     "Huber",
+     "Tahan pencilan"
+    ]
+   },
+   {
+    "key": "bisquare",
+    "label": "Regresi Robust – Tukey Bisquare",
+    "sample": "outlier",
+    "desc": "M-estimator redescending yang membuang pengaruh pencilan ekstrem.",
+    "tags": [
+     "Bisquare"
+    ]
+   },
+   {
+    "key": "lts",
+    "label": "Regresi Robust – Least Trimmed Squares (LTS)",
+    "sample": "outlier",
+    "desc": "Estimator dengan titik runtuh tinggi (≈ 50%) lewat pemangkasan residu terbesar.",
+    "tags": [
+     "Breakdown 50%",
+     "Deteksi pencilan"
+    ]
+   },
+   {
+    "key": "kernel",
+    "label": "Regresi Kernel",
+    "sample": "curve",
+    "desc": "Regresi nonparametrik berbobot kernel dengan pemilihan bandwidth otomatis.",
+    "tags": [
+     "Nadaraya-Watson",
+     "Linear lokal"
+    ]
+   },
+   {
+    "key": "loess",
+    "label": "LOESS / LOWESS",
+    "sample": "curve",
+    "desc": "Regresi polinomial lokal dengan span optimal dan opsi iterasi robust.",
+    "tags": [
+     "Span CV",
+     "LOWESS"
+    ]
+   },
+   {
+    "key": "spline",
+    "label": "Regresi Spline",
+    "sample": "curve",
+    "desc": "Natural cubic spline atau truncated power spline dengan knot otomatis.",
+    "tags": [
+     "Spline",
+     "Knot"
+    ]
+   },
+   {
+    "key": "quantile",
+    "label": "Regresi Kuantil",
+    "sample": "quantile",
+    "desc": "Hubungan X–Y pada berbagai kuantil, bukan hanya rata-rata; galat baku lewat bootstrap.",
+    "tags": [
+     "Kuantil",
+     "Bootstrap"
+    ]
+   },
+   {
+    "key": "gam",
+    "label": "Generalized Additive Model (GAM)",
+    "sample": "gam",
+    "desc": "Efek mulus tiap variabel (penalized spline, GCV) digabung dengan efek linear.",
+    "tags": [
+     "s(X)",
+     "Derajat bebas efektif"
+    ]
+   }
+  ],
+  "Data Terstruktur": [
+   {
+    "key": "panel",
+    "label": "Regresi Data Panel",
+    "sample": "panel",
+    "desc": "Common, Fixed, dan Random Effect dengan uji Chow, Breusch-Pagan LM, dan Hausman untuk memilih model terbaik.",
+    "tags": [
+     "CEM · FEM · REM",
+     "Chow · BP-LM · Hausman"
+    ]
+   },
+   {
+    "key": "ts",
+    "label": "Regresi Deret Waktu (ARIMAX)",
+    "sample": "ts",
+    "desc": "Regresi dengan galat ARIMA(p,d,q): koreksi autokorelasi, uji Ljung-Box, dan ACF galat.",
+    "tags": [
+     "ARIMAX",
+     "Ljung-Box",
+     "ACF"
+    ]
+   },
+   {
+    "key": "sar",
+    "label": "Regresi Spasial – SAR (Lag)",
+    "sample": "spatial",
+    "desc": "Ketergantungan spasial pada variabel respon: ρ, efek langsung/tidak langsung, dan Moran's I.",
+    "tags": [
+     "SAR",
+     "Moran's I",
+     "Spillover"
+    ]
+   },
+   {
+    "key": "sem",
+    "label": "Regresi Spasial – SEM (Error)",
+    "sample": "spatial",
+    "desc": "Ketergantungan spasial pada galat: λ, uji LM, dan Moran's I galat.",
+    "tags": [
+     "SEM",
+     "Moran's I"
+    ]
+   },
+   {
+    "key": "gwr",
+    "label": "Geographically Weighted Regression (GWR)",
+    "sample": "spatial",
+    "desc": "Koefisien yang berbeda tiap lokasi (nonstasioneritas spasial), peta koefisien, dan perbandingan dengan OLS.",
+    "tags": [
+     "GWR",
+     "Peta koefisien",
+     "AICc"
+    ]
+   },
+   {
+    "key": "mixed",
+    "label": "Mixed Effect Model",
+    "sample": "mixed",
+    "desc": "Efek tetap + efek acak (intersep dan slope) dengan REML; ICC dan R² marginal/kondisional.",
+    "tags": [
+     "REML",
+     "ICC",
+     "Random slope"
+    ]
+   },
+   {
+    "key": "cox",
+    "label": "Regresi Cox (Survival)",
+    "sample": "cox",
+    "desc": "Cox proportional hazards: hazard ratio, concordance, kurva Kaplan-Meier, dan uji asumsi PH.",
+    "tags": [
+     "Hazard ratio",
+     "Kaplan-Meier",
+     "C-index"
+    ]
+   },
+   {
+    "key": "tobit",
+    "label": "Regresi Tobit",
+    "sample": "tobit",
+    "desc": "Regresi untuk data tersensor (kiri/kanan); koefisien laten, efek marjinal, dan pembanding OLS.",
+    "tags": [
+     "Sensor",
+     "Efek marjinal"
+    ]
+   }
+  ]
+ },
+ "des": {
+  "Rancangan Lingkungan": [
+   {
+    "key": "rbsl",
+    "label": "Rancangan Bujur Sangkar Latin (RBSL)",
+    "sample": "rbsl",
+    "desc": "Pengendalian dua sumber keragaman sekaligus (baris dan kolom) dengan perlakuan muncul sekali pada tiap baris dan kolom.",
+    "tags": [
+     "Dua arah pengelompokan",
+     "ANOVA Latin"
+    ]
+   },
+   {
+    "key": "graeco",
+    "label": "Rancangan Graeco-Latin",
+    "sample": "graeco",
+    "desc": "Perluasan RBSL dengan tiga sumber pengelompokan (baris, kolom, huruf Yunani) untuk perlakuan.",
+    "tags": [
+     "Tiga pengelompokan"
+    ]
+   },
+   {
+    "key": "bib",
+    "label": "Blok Tidak Lengkap (BIB / Lattice)",
+    "sample": "bib",
+    "desc": "Balanced Incomplete Block dan Lattice: rata-rata perlakuan terkoreksi blok dan uji berpasangan.",
+    "tags": [
+     "BIB",
+     "Lattice",
+     "Terkoreksi blok"
+    ]
+   }
+  ],
+  "Rancangan Perlakuan": [
+   {
+    "key": "factorial",
+    "label": "Percobaan Faktorial",
+    "sample": "factorial",
+    "desc": "Dua hingga empat faktor dengan interaksi (RAL atau RAK faktorial), plot interaksi, dan uji lanjut.",
+    "tags": [
+     "2–4 faktor",
+     "Interaksi"
+    ]
+   },
+   {
+    "key": "fracfact",
+    "label": "Faktorial Pecahan (Fractional Factorial)",
+    "sample": "fracfact",
+    "desc": "Faktorial 2^(k−p) dengan struktur alias, resolusi, efek utama/interaksi, dan metode Lenth.",
+    "tags": [
+     "2^(k−p)",
+     "Alias",
+     "Lenth"
+    ]
+   },
+   {
+    "key": "split",
+    "label": "Petak Terbagi (Split-Plot)",
+    "sample": "split",
+    "desc": "Dua faktor dengan ukuran satuan percobaan berbeda; galat (a) untuk petak utama dan galat (b) untuk anak petak.",
+    "tags": [
+     "Galat a & b"
+    ]
+   },
+   {
+    "key": "splitsplit",
+    "label": "Petak-Petak Terbagi (Split-Split-Plot)",
+    "sample": "splitsplit",
+    "desc": "Tiga faktor bertingkat dengan tiga galat percobaan.",
+    "tags": [
+     "Galat a, b, c"
+    ]
+   },
+   {
+    "key": "strip",
+    "label": "Petak Berjalur (Strip-Plot)",
+    "sample": "strip",
+    "desc": "Dua faktor ditempatkan pada jalur horizontal dan vertikal yang bersilangan.",
+    "tags": [
+     "Galat a, b, c"
+    ]
+   },
+   {
+    "key": "nested",
+    "label": "Rancangan Tersarang (Nested)",
+    "sample": "nested",
+    "desc": "Faktor B tersarang dalam A (mis. pohon dalam lokasi) dengan komponen ragam.",
+    "tags": [
+     "Komponen ragam",
+     "Acak / tetap"
+    ]
+   }
+  ],
+  "Pengukuran Berulang": [
+   {
+    "key": "repeated",
+    "label": "Pengukuran Berulang (Repeated Measures)",
+    "sample": "repeated",
+    "desc": "ANOVA within-subject dengan uji Mauchly dan koreksi Greenhouse-Geisser / Huynh-Feldt.",
+    "tags": [
+     "Mauchly",
+     "GG · HF"
+    ]
+   },
+   {
+    "key": "crossover",
+    "label": "Rancangan Cross-Over",
+    "sample": "crossover",
+    "desc": "Dua perlakuan bergantian antar periode pada subjek yang sama: efek perlakuan, periode, dan urutan.",
+    "tags": [
+     "2×2",
+     "Periode · Urutan"
+    ]
+   }
+  ],
+  "Peubah Pendamping & Multivariat": [
+   {
+    "key": "ancova",
+    "label": "ANCOVA (Analisis Kovarians)",
+    "sample": "ancova",
+    "desc": "Membandingkan kelompok setelah mengendalikan kovariat numerik, dengan uji kehomogenan kemiringan.",
+    "tags": [
+     "Kovariat",
+     "Rata-rata terkoreksi"
+    ]
+   },
+   {
+    "key": "manova",
+    "label": "MANOVA",
+    "sample": "manova",
+    "desc": "Beberapa respon sekaligus: Pillai, Wilks, Hotelling-Lawley, Roy, uji Box's M, dan ANOVA univariat.",
+    "tags": [
+     "Pillai · Wilks",
+     "Box's M"
+    ]
+   }
+  ],
+  "Optimasi Proses": [
+   {
+    "key": "rsm",
+    "label": "Response Surface Methodology (RSM)",
+    "sample": "rsm",
+    "desc": "Model kuadratik (CCD atau Box-Behnken), titik stasioner, kontur permukaan respon, dan optimum.",
+    "tags": [
+     "CCD · Box-Behnken",
+     "Kontur",
+     "Optimasi"
+    ]
+   },
+   {
+    "key": "mixture",
+    "label": "Rancangan Campuran (Mixture)",
+    "sample": "mixture",
+    "desc": "Komponen dengan total proporsi tetap: model Scheffé, diagram segitiga, dan komposisi optimum.",
+    "tags": [
+     "Scheffé",
+     "Diagram segitiga"
+    ]
+   },
+   {
+    "key": "taguchi",
+    "label": "Metode Taguchi",
+    "sample": "taguchi",
+    "desc": "Array ortogonal dengan rasio S/N, peringkat faktor, ANOVA S/N, dan kombinasi optimum.",
+    "tags": [
+     "S/N ratio",
+     "Array ortogonal"
+    ]
+   }
+  ]
+ },
+ "GUIDE_REG": [
+  [
+   "Y angka kontinu, hubungan lurus dan data biasa",
+   "Regresi Linear (sederhana & berganda)",
+   "Dasar"
+  ],
+  [
+   "Y angka kontinu, ada variabel kategori (jenis, lokasi)",
+   "Regresi dengan Variabel Dummy",
+   "Dasar"
+  ],
+  [
+   "Y angka kontinu, hubungan melengkung sederhana",
+   "Regresi Polinomial",
+   "Dasar"
+  ],
+  [
+   "Ingin memeriksa asumsi / pencilan model linear",
+   "Diagnostik & Regresi Tanpa Intersep",
+   "Dasar"
+  ],
+  [
+   "Hubungan berpola tertentu (pertumbuhan, saturasi, peluruhan)",
+   "Regresi Nonlinear",
+   "Nonlinear"
+  ],
+  [
+   "Y ya/tidak (0/1)",
+   "Regresi Logistik Biner",
+   "GLM"
+  ],
+  [
+   "Y kategori tanpa urutan (≥ 3 kelas)",
+   "Regresi Logistik Multinomial",
+   "GLM"
+  ],
+  [
+   "Y kategori berurutan (skala 1–5, rendah–tinggi)",
+   "Regresi Logistik Ordinal",
+   "GLM"
+  ],
+  [
+   "Y cacahan / jumlah kejadian (0, 1, 2, …)",
+   "Regresi Poisson (atau Binomial Negatif bila ragam ≫ rata-rata)",
+   "GLM"
+  ],
+  [
+   "Y positif dan condong ke kanan (biaya, durasi)",
+   "Regresi Gamma",
+   "GLM"
+  ],
+  [
+   "Banyak variabel X, ingin memilih yang penting",
+   "Seleksi Variabel (atau LASSO)",
+   "Seleksi & Regularisasi"
+  ],
+  [
+   "Variabel X saling berkorelasi kuat (multikolinearitas)",
+   "Regresi Ridge / Elastic Net / PLS",
+   "Seleksi & Regularisasi"
+  ],
+  [
+   "Ada pencilan (outlier) yang mengganggu",
+   "Regresi Robust (Huber / Bisquare / LTS)",
+   "Robust & Nonparametrik"
+  ],
+  [
+   "Bentuk hubungan tidak diketahui, ingin kurva mulus",
+   "LOESS / Regresi Kernel / Spline / GAM",
+   "Robust & Nonparametrik"
+  ],
+  [
+   "Ingin efek X pada kuantil (mis. kasus terbaik/terburuk)",
+   "Regresi Kuantil",
+   "Robust & Nonparametrik"
+  ],
+  [
+   "Individu/provinsi diamati berulang tiap periode",
+   "Regresi Data Panel",
+   "Data Terstruktur"
+  ],
+  [
+   "Data berurutan waktu dan galat berautokorelasi",
+   "Regresi Deret Waktu (ARIMAX)",
+   "Data Terstruktur"
+  ],
+  [
+   "Data punya koordinat lokasi",
+   "Regresi Spasial (SAR/SEM) atau GWR",
+   "Data Terstruktur"
+  ],
+  [
+   "Data bersarang/berkelompok (siswa dalam kelas, plot dalam lokasi)",
+   "Mixed Effect Model",
+   "Data Terstruktur"
+  ],
+  [
+   "Waktu hingga kejadian dengan data tersensor",
+   "Regresi Cox (Survival)",
+   "Data Terstruktur"
+  ],
+  [
+   "Y menumpuk di batas (mis. banyak bernilai 0)",
+   "Regresi Tobit",
+   "Data Terstruktur"
+  ]
+ ],
+ "GUIDE_DES": [
+  [
+   "Satu faktor, satuan percobaan homogen",
+   "Rancangan Acak Lengkap (RAL)",
+   "Rancangan Dasar"
+  ],
+  [
+   "Satu faktor, ada kelompok/blok (lokasi, waktu, ulangan)",
+   "Rancangan Acak Kelompok (RAK)",
+   "Rancangan Dasar"
+  ],
+  [
+   "Dua sumber keragaman sekaligus (baris dan kolom)",
+   "Rancangan Bujur Sangkar Latin (RBSL)",
+   "Rancangan Lingkungan"
+  ],
+  [
+   "Blok tidak cukup memuat semua perlakuan",
+   "Blok Tidak Lengkap (BIB / Lattice)",
+   "Rancangan Lingkungan"
+  ],
+  [
+   "Dua faktor atau lebih, ingin melihat interaksi",
+   "Percobaan Faktorial",
+   "Rancangan Perlakuan"
+  ],
+  [
+   "Faktor banyak tetapi unit percobaan terbatas",
+   "Faktorial Pecahan",
+   "Rancangan Perlakuan"
+  ],
+  [
+   "Satu faktor sulit diubah (petak besar) dan faktor lain pada petak kecil",
+   "Petak Terbagi (Split-Plot)",
+   "Rancangan Perlakuan"
+  ],
+  [
+   "Faktor B bersarang dalam A (pohon dalam lokasi)",
+   "Rancangan Tersarang (Nested)",
+   "Rancangan Perlakuan"
+  ],
+  [
+   "Subjek yang sama diukur berulang kali",
+   "Pengukuran Berulang (Repeated Measures)",
+   "Pengukuran Berulang"
+  ],
+  [
+   "Tiap subjek menerima semua perlakuan bergantian",
+   "Rancangan Cross-Over",
+   "Pengukuran Berulang"
+  ],
+  [
+   "Ada kovariat numerik (mis. bobot awal)",
+   "ANCOVA",
+   "Peubah Pendamping & Multivariat"
+  ],
+  [
+   "Beberapa respon diukur bersamaan",
+   "MANOVA",
+   "Peubah Pendamping & Multivariat"
+  ],
+  [
+   "Mencari kondisi optimum proses (suhu, waktu, dll.)",
+   "Response Surface Methodology (RSM)",
+   "Optimasi Proses"
+  ],
+  [
+   "Komponen campuran dengan total 100%",
+   "Rancangan Campuran (Mixture)",
+   "Optimasi Proses"
+  ],
+  [
+   "Rancangan kokoh dengan array ortogonal",
+   "Metode Taguchi",
+   "Optimasi Proses"
+  ]
+ ],
+ "TARGET_REG": [
+  "Regresi Linear (sederhana & berganda)",
+  "Regresi dengan Variabel Dummy",
+  "Regresi Polinomial",
+  "Diagnostik & Regresi Tanpa Intersep",
+  "Regresi Nonlinear",
+  "Regresi Logistik Biner",
+  "Regresi Logistik Multinomial",
+  "Regresi Logistik Ordinal",
+  "Regresi Poisson",
+  "Regresi Gamma",
+  "Seleksi Variabel",
+  "Regresi Ridge",
+  "Regresi Robust – M-estimator Huber",
+  "LOESS / LOWESS",
+  "Regresi Kuantil",
+  "Regresi Data Panel",
+  "Regresi Deret Waktu (ARIMAX)",
+  "Regresi Spasial – SAR (Lag)",
+  "Mixed Effect Model",
+  "Regresi Cox (Survival)",
+  "Regresi Tobit"
+ ],
+ "TARGET_DES": [
+  "Rancangan Acak Lengkap (RAL)",
+  "Rancangan Acak Kelompok (RAK)",
+  "Rancangan Bujur Sangkar Latin (RBSL)",
+  "Blok Tidak Lengkap (BIB / Lattice)",
+  "Percobaan Faktorial",
+  "Faktorial Pecahan (Fractional Factorial)",
+  "Petak Terbagi (Split-Plot)",
+  "Rancangan Tersarang (Nested)",
+  "Pengukuran Berulang (Repeated Measures)",
+  "Rancangan Cross-Over",
+  "ANCOVA (Analisis Kovarians)",
+  "MANOVA",
+  "Response Surface Methodology (RSM)",
+  "Rancangan Campuran (Mixture)",
+  "Metode Taguchi"
+ ]
+}

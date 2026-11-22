@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="sec-s">Cari baris yang paling mirip dengan kondisi data atau percobaan Anda.</p>
+{% for fam, label in [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')] %}
+<h2 class="sec-h">{{ label }}</h2>
+<div class="sc-wrap" style="max-height:none"><table class="sc-table guide"><thead><tr><th>Situasi data/percobaan</th><th>Metode yang disarankan</th><th></th></tr></thead><tbody>
+{% for r in rows[fam] %}<tr><td class="wrap"><b>{{ r.sit }}</b></td><td class="wrap">➜ {{ r.rec }}<br><small class="cap">{{ r.grp }}</small></td>
+<td>{% if r.slug %}<a class="btn sec" style="padding:6px 16px" href="/metode/{{ r.slug }}">Buka</a>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endfor %}
+<h2 class="sec-h">Kapan setiap metode dipakai</h2>
+{% for fam, label in [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')] %}
+<p class="sec-s" style="margin:14px 0 8px"><b style="color:#0F2A43">{{ label }}</b></p>
+<div class="grid g2">{% for g, items in groups[fam].items() %}{% for m in items %}
+  <div class="mcard"><h4>{{ m.title }}</h4><p><b>Kapan dipakai:</b> {{ m.when }}</p><a class="go" href="/metode/{{ m.slug }}">Buka →</a></div>
+{% endfor %}{% endfor %}</div>
+{% endfor %}
+{% endblock %}
