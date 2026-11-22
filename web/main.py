@@ -21,6 +21,7 @@ from starlette.requests import Request  # noqa: E402
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse, Response  # noqa: E402
 from starlette.routing import Mount, Route  # noqa: E402
 from starlette.staticfiles import StaticFiles  # noqa: E402
+from starlette.responses import FileResponse  # noqa: E402
 from starlette.templating import Jinja2Templates  # noqa: E402
 
 import flows  # noqa: E402
@@ -537,6 +538,7 @@ routes = [
     Route("/api/parse", api_parse, methods=["POST"]), Route("/api/inspect", api_inspect, methods=["POST"]),
     Route("/api/{slug}/sample", api_sample), Route("/api/{slug}/run", api_run, methods=["POST"]),
     Route("/api/{slug}/xlsx", api_xlsx, methods=["POST"]),
+    Route("/favicon.ico", lambda r: FileResponse(os.path.join(HERE, "static", "favicon-32.png"), media_type="image/png")),
     Mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static"),
 ]
 app = Starlette(routes=routes, middleware=[Middleware(Guard), Middleware(GZipMiddleware, minimum_size=1000)],
