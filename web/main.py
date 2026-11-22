@@ -25,11 +25,14 @@ from starlette.responses import FileResponse  # noqa: E402
 from starlette.templating import Jinja2Templates  # noqa: E402
 
 import flows  # noqa: E402
-from web import belajar, core, feedback_web, guide_data, registry, render  # noqa: E402
+from web import belajar, core, feedback_web, guide_data, i18n, registry, render  # noqa: E402
+from web.i18n import lang_of  # noqa: E402
+from starlette.responses import HTMLResponse  # noqa: E402
 
 log = logging.getLogger("getcomput")
 HERE = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(HERE, "templates"))
+templates.env.filters["en"] = i18n.tr
 
 SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")          # mis. https://namadomain.com
 PRIMARY_HOST = os.environ.get("PRIMARY_HOST", "").strip().lower()  # bila diisi, host lain dialihkan permanen ke sini
@@ -57,36 +60,61 @@ def base_url(request):
     return f"{proto}://{request.headers.get('host', request.url.netloc)}"
 
 
-def search_index():
+def search_index(lang="id"):
+    en = lang == "en"
+    pre = "/en" if en else ""
     items = []
     for m in registry.METHODS:
-        items.append({"t": m["title"], "u": f"/metode/{m['slug']}", "d": m["desc"], "k": " ".join(m["tags"]) + f" {m['key']} {m['slug']}",
-                      "g": f"{registry.FAM_NAME[m['family']]} › {m['group']}"})
+        items.append({"t": m["title"], "u": f"{pre}/metode/{m['slug']}", "d": m["desc"], "k": " ".join(m["tags"]) + f" {m['key']} {m['slug']}",
+                      "g": f"{(i18n.FAM_NAME_EN if en else registry.FAM_NAME)[m['family']]} › {m['group']}"})
     for slug in belajar.ORDER:
         mod = belajar.MODULES[slug]
-        items.append({"t": "Belajar: " + mod["title"], "u": f"/belajar/{slug}", "d": mod["ringkas"], "k": "materi modul belajar belajar statistika",
-                      "g": "Materi belajar › " + mod["tahap"]})
-    for t, u, d in [("Jalur Belajar Statistika", "/belajar", "belajar materi modul statistika dasar rancangan percobaan regresi latihan"),
+        items.append({"t": ("Learn: " if en else "Belajar: ") + mod["title"], "u": f"{pre}/belajar/{slug}", "d": mod["ringkas"], "k": "materi modul belajar belajar statistika lesson module learn",
+                      "g": ("Lessons › " if en else "Materi belajar › ") + mod["tahap"]})
+    extra = i18n.SEARCH_EXTRA_EN if en else [("Jalur Belajar Statistika", "/belajar", "belajar materi modul statistika dasar rancangan percobaan regresi latihan"),
                     ("Panduan Memilih Metode", "/panduan", "pilih situasi data kapan dipakai bingung memilih"),
                     ("Alur Metode (flowchart)", "/alur-metode", "flowchart alur langkah analisis tiap metode"),
                     ("Kirim Masukan", "/masukan", "masukan saran bug laporan pertanyaan kesan"),
                     ("Tentang GetComput", "/tentang", "tentang cara membaca hasil catatan metodologi"),
-                    ("Kebijakan Privasi & Penafian", "/privasi", "privasi cookie penafian iklan")]:
-        items.append({"t": t, "u": u, "d": d, "k": "", "g": "Halaman informasi"})
+                    ("Kebijakan Privasi & Penafian", "/privasi", "privasi cookie penafian iklan")]
+    for t, u, d in extra:
+        items.append({"t": t, "u": pre + u, "d": d, "k": "", "g": "Information pages" if en else "Halaman informasi"})
     return json.dumps(items, ensure_ascii=False).replace("<", "\\u003c")
 
 
-def page(request, name, *, title, description, path, hero_title, hero_lead, hero_tags=None, active=None, status=200, **ctx):
-    ctx.update(title=title, description=description, canonical=base_url(request) + path, hero_title=hero_title, hero_lead=hero_lead,
-               hero_tags=hero_tags, nav_items=NAV, active=active if active is not None else path, search_index=search_index(),
-               asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, jsonld=ctx.get("jsonld"))
-    return templates.TemplateResponse(request, name, ctx, status_code=status)
+def page(request, name, *, title="", description="", path, hero_title="", hero_lead="", hero_tags=None, active=None, status=200,
+         key=None, meta_vars=None, ready=None, **ctx):
+    lang = lang_of(request)
+    en = lang == "en"
+    if en and key in i18n.META_EN:           # metadata berbahasa Inggris menggantikan teks Indonesia
+        me = i18n.META_EN[key]
+        mv = meta_vars or {}
+        title = me.get("title", title).format(**mv) if mv else me.get("title", title)
+        description = me.get("description", description).format(**mv) if mv else me.get("description", description)
+        hero_title = me.get("hero_title", hero_title).format(**mv) if mv and "hero_title" in me else me.get("hero_title", hero_title)
+        hero_lead = me.get("hero_lead", hero_lead).format(**mv) if mv and "hero_lead" in me else me.get("hero_lead", hero_lead)
+        hero_tags = me.get("hero_tags", hero_tags)
+    if ready is None:
+        ready = path in i18n.READY_PATHS
+    b = base_url(request)
+    p_en = "/en" + ("" if path != "/" else "/") + (path if path != "/" else "")
+    ctx.update(title=title, description=description, canonical=b + (p_en if en else path), hero_title=hero_title, hero_lead=hero_lead,
+               hero_tags=hero_tags, nav_items=i18n.NAV[lang], active=active if active is not None else path, search_index=search_index(lang),
+               asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, jsonld=ctx.get("jsonld"), request=request,
+               lang=lang, ready_en=ready, noindex=(en and not ready), alt_id=b + path,
+               alt_en=b + ("/en/" if path == "/" else "/en" + path), qs=("?" + request.url.query) if request.url.query else "")
+    tpl = f"en/{name}" if en and os.path.exists(os.path.join(HERE, "templates", "en", name)) else name
+    html = templates.env.get_template(tpl).render(**ctx)
+    if en:
+        html = i18n.localize_links(html)
+    return HTMLResponse(html, status_code=status)
 
 
-def contact_html():
+def contact_html(en=False):
     if CONTACT_EMAIL:
-        return f'Hubungi kami melalui <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>.'
-    return "Kontak pengembang akan ditambahkan di sini."
+        pre = "Contact us at" if en else "Hubungi kami melalui"
+        return f'{pre} <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>.'
+    return "The developer's contact details will be added here." if en else "Kontak pengembang akan ditambahkan di sini."
 
 
 def client_ip(request):
@@ -130,7 +158,7 @@ async def home(request):
     g = {f: registry.groups(f) for f in (registry.FAM_DES, registry.FAM_REG)}
     n_des = sum(len(v) for v in g["des"].values())
     n_reg = sum(len(v) for v in g["reg"].values())
-    return page(request, "home.html", title="GetComput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
+    return page(request, "home.html", key="home", ready=False, title="GetComput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
                 description="Belajar statistika berbahasa Indonesia: 62 modul dengan persamaan, contoh hitung, dan latihan, dari dasar, rancangan percobaan, sampai regresi lanjutan. "
                             "Dilengkapi alat hitung ANOVA, uji lanjut, dan regresi untuk berlatih.",
                 path="/", hero_title="Belajar statistika, lalu praktikkan",
@@ -139,17 +167,17 @@ async def home(request):
                 hero_tags=["62 modul belajar", "Persamaan & contoh hitung", "Alat hitung untuk latihan", "Gratis"],
                 groups=g, n_des=n_des, n_reg=n_reg, n_all=n_des + n_reg,
                 jsonld=json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": "GetComput", "applicationCategory": "EducationalApplication",
-                                   "inLanguage": "id", "operatingSystem": "Web", "url": base_url(request) + "/",
+                                   "inLanguage": lang_of(request), "operatingSystem": "Web", "url": base_url(request) + "/",
                                    "description": "Web pembelajaran statistika dengan alat hitung untuk berlatih."}, ensure_ascii=False))
 
 
 async def family_page(request):
     path = request.url.path.rstrip("/")
     fam = registry.FAM_DES if path == "/rancangan-percobaan" else registry.FAM_REG
-    name = registry.FAM_NAME[fam]
+    name = (i18n.FAM_NAME_EN if lang_of(request) == "en" else registry.FAM_NAME)[fam]
     lead = ("Analisis ragam untuk percobaan terkontrol: dari RAL dan RAK sampai rancangan lanjutan." if fam == registry.FAM_DES
             else "Dari regresi linear berganda sampai model untuk data biner, cacahan, dan respon positif.")
-    return page(request, "catalog.html", title=f"{name} – GetComput", description=lead, path=path, hero_title=name, hero_lead=lead,
+    return page(request, "catalog.html", key=f"family_{fam}", ready=False, title=f"{name} – GetComput", description=lead, path=path, hero_title=name, hero_lead=lead,
                 groups=registry.groups(fam), fam_name=name)
 
 
@@ -163,16 +191,16 @@ async def method_page(request):
     spec = json.dumps({"slug": m["slug"], "fields": fields, "key": m["key"], "family": m["family"], "gen": m.get("gen")}, ensure_ascii=False).replace("<", "\\u003c")
     flow = flows.flow_html(flows.nodes_for(m["key"], m["family"]))
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": m["title"], "applicationCategory": "EducationalApplication",
-                     "inLanguage": "id", "url": base_url(request) + path, "description": m["desc"]}, ensure_ascii=False)
+                     "inLanguage": lang_of(request), "url": base_url(request) + path, "description": m["desc"]}, ensure_ascii=False)
     gen = json.dumps(m["gen"], ensure_ascii=False).replace("<", "\\u003c") if m.get("gen") else "null"
-    return page(request, "method.html", title=f"{m['title']} – Kalkulator Online | GetComput",
+    return page(request, "method.html", key="method", meta_vars={"t": m["title"], "d": m["desc"]}, ready=m["slug"] in i18n.EN_METHODS, title=f"{m['title']} – Kalkulator Online | GetComput",
                 description=f"{m['desc']} Hitung online: tabel hasil, uji asumsi, grafik, dan interpretasi otomatis.", path=path, active="/" + registry.FAM_PATH[m["family"]],
-                hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=registry.FAM_NAME[m["family"]],
+                hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=(i18n.FAM_NAME_EN if lang_of(request) == "en" else registry.FAM_NAME)[m["family"]],
                 fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=belajar.MODULES.get(m["slug"]))
 
 
 async def guide(request):
-    return page(request, "guide.html", title="Panduan Memilih Metode Analisis Statistika – GetComput",
+    return page(request, "guide.html", key="guide", ready=False, title="Panduan Memilih Metode Analisis Statistika – GetComput",
                 description="Bingung memilih metode? Lihat kapan tiap rancangan percobaan dan metode regresi dipakai.", path="/panduan",
                 hero_title="Panduan Memilih Metode", hero_lead="Pilih situasi data atau percobaan Anda; kami tunjukkan metode yang cocok dan membukanya langsung.",
                 hero_tags=["Rancangan percobaan", "Regresi"], rows=guide_data.rows(),
@@ -196,7 +224,7 @@ def _learn_stages():
 
 
 async def learn_index(request):
-    return page(request, "belajar.html", title="Belajar Statistika: Jalur Materi dan Latihan – GetComput",
+    return page(request, "belajar.html", key="learn", ready=False, title="Belajar Statistika: Jalur Materi dan Latihan – GetComput",
                 description="Jalur belajar statistika berbahasa Indonesia dari dasar sampai rancangan percobaan dan regresi, dengan latihan langsung di kalkulator.",
                 path="/belajar", hero_title="Belajar Statistika",
                 hero_lead="Pelajari konsepnya dulu, lalu praktikkan langsung di kalkulator. Ikuti jalur berurutan dari dasar sampai metode lanjutan.",
@@ -213,9 +241,9 @@ async def learn_module(request):
     nxt = belajar.MODULES[belajar.ORDER[i + 1]] if i + 1 < len(belajar.ORDER) else None
     own = registry.BY_SLUG.get(mod["slug"])
     prac = registry.BY_SLUG.get(mod["method"]) if mod["method"] else None
-    ld = json.dumps({"@context": "https://schema.org", "@type": "LearningResource", "name": mod["title"], "inLanguage": "id", "description": mod["ringkas"],
+    ld = json.dumps({"@context": "https://schema.org", "@type": "LearningResource", "name": mod["title"], "inLanguage": lang_of(request), "description": mod["ringkas"],
                      "learningResourceType": "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
-    return page(request, "modul.html", title=f"Materi: {mod['title']} – Belajar Statistika | GetComput", description=mod["ringkas"],
+    return page(request, "modul.html", key="module", meta_vars={"t": mod["title"], "d": mod["ringkas"]}, ready=mod["slug"] in i18n.EN_MODULES, title=f"Materi: {mod['title']} – Belajar Statistika | GetComput", description=mod["ringkas"],
                 path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
                 mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
                 pras=[belajar.MODULES[p] for p in mod["pra"]], ext=belajar.TEORI.get(mod["slug"]), jsonld=ld)
@@ -230,7 +258,7 @@ async def flow_page(request):
     ms = [m for m in registry.METHODS if m["family"] == fam]
     cur = cur if cur and cur["family"] == fam else ms[0]
     flow = flows.flow_html(flows.nodes_for(cur["key"], cur["family"]))
-    return page(request, "flow.html", title="Alur Analisis Setiap Metode (Flowchart) – GetComput",
+    return page(request, "flow.html", key="flow", ready=False, title="Alur Analisis Setiap Metode (Flowchart) – GetComput",
                 description="Lihat urutan langkah analisis tiap metode statistika: data masuk, pemeriksaan asumsi, keputusan, sampai hasil.",
                 path="/alur-metode", hero_title="Alur Analisis Setiap Metode",
                 hero_lead="Lihat urutan langkah dari data masuk, pemeriksaan asumsi, sampai hasil. Pilih metodenya di bawah.",
@@ -240,10 +268,10 @@ async def flow_page(request):
 
 async def feedback_page(request):
     ok = feedback_web.get_config() is not None
-    return page(request, "feedback.html", title="Kirim Masukan – GetComput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang GetComput.",
+    return page(request, "feedback.html", key="feedback", ready=False, title="Kirim Masukan – GetComput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang GetComput.",
                 path="/masukan", hero_title="Kirim Masukan",
                 hero_lead="Temukan kekurangan, butuh metode baru, atau punya pertanyaan? Tulis di sini; masukan Anda dibaca langsung oleh pengembang.",
-                hero_tags=["Saran fitur", "Laporan masalah", "Pertanyaan"], enabled=ok, categories=feedback_web.CATEGORIES,
+                hero_tags=["Saran fitur", "Laporan masalah", "Pertanyaan"], enabled=ok, categories=feedback_web.CATEGORIES, cat_en=i18n.FEEDBACK_CAT_EN,
                 methods=[m["title"] for m in registry.METHODS], max_msg=feedback_web.MAX_MSG, max_contact=feedback_web.MAX_CONTACT)
 
 
@@ -311,19 +339,19 @@ async def api_gen(request):
 
 
 async def about(request):
-    return page(request, "about.html", title="Tentang GetComput", description="Tentang GetComput: kalkulator analisis statistika berbahasa Indonesia.",
+    return page(request, "about.html", key="about", title="Tentang GetComput", description="Tentang GetComput: kalkulator analisis statistika berbahasa Indonesia.",
                 path="/tentang", hero_title="Tentang GetComput", hero_lead="Cara membaca hasil, asumsi perhitungan, dan batasan yang perlu diketahui.",
-                hero_tags=["Panduan membaca hasil"], contact=contact_html())
+                hero_tags=["Panduan membaca hasil"], contact=contact_html(lang_of(request) == "en"))
 
 
 async def privacy(request):
-    return page(request, "privacy.html", title="Kebijakan Privasi & Penafian – GetComput", description="Kebijakan privasi dan penafian GetComput.",
+    return page(request, "privacy.html", key="privacy", title="Kebijakan Privasi & Penafian – GetComput", description="Kebijakan privasi dan penafian GetComput.",
                 path="/privasi", hero_title="Kebijakan Privasi & Penafian", hero_lead="Bagaimana data Anda diperlakukan dan batas tanggung jawab layanan.",
-                contact=contact_html(), updated=date.today().strftime("%d-%m-%Y"))
+                contact=contact_html(lang_of(request) == "en"), updated=date.today().strftime("%d-%m-%Y"))
 
 
 async def not_found(request, exc):
-    return page(request, "notfound.html", title="Halaman tidak ditemukan – GetComput", description="Halaman tidak ditemukan.", path=request.url.path,
+    return page(request, "notfound.html", key="notfound", ready=False, no_note=True, title="Halaman tidak ditemukan – GetComput", description="Halaman tidak ditemukan.", path=request.url.path,
                 hero_title="Halaman tidak ditemukan", hero_lead="Alamat yang Anda buka tidak tersedia.", active="", status=404)
 
 
@@ -340,9 +368,28 @@ async def robots(request):
 
 async def sitemap(request):
     b = base_url(request)
-    urls = ["/", "/belajar", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"] + [f"/metode/{m['slug']}" for m in registry.METHODS] + [f"/belajar/{s}" for s in belajar.ORDER]
-    body = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + \
-           "".join(f"<url><loc>{b}{u}</loc></url>" for u in urls) + "</urlset>"
+    urls = (["/", "/belajar", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"]
+            + [f"/metode/{m['slug']}" for m in registry.METHODS] + [f"/belajar/{s}" for s in belajar.ORDER])
+
+    def en_ready(u):
+        if u.startswith("/metode/"):
+            return u.split("/")[-1] in i18n.EN_METHODS
+        if u.startswith("/belajar/"):
+            return u.split("/")[-1] in i18n.EN_MODULES
+        return u in i18n.READY_PATHS
+
+    out = []
+    for u in urls:
+        if en_ready(u):
+            ue = "/en/" if u == "/" else "/en" + u
+            alt = (f'<xhtml:link rel="alternate" hreflang="id" href="{b}{u}"/><xhtml:link rel="alternate" hreflang="en" href="{b}{ue}"/>'
+                   f'<xhtml:link rel="alternate" hreflang="x-default" href="{b}{u}"/>')
+            out.append(f"<url><loc>{b}{u}</loc>{alt}</url>")
+            out.append(f"<url><loc>{b}{ue}</loc>{alt}</url>")
+        else:
+            out.append(f"<url><loc>{b}{u}</loc></url>")
+    body = ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + "".join(out) + "</urlset>")
     return Response(body, media_type="application/xml")
 
 
@@ -551,5 +598,5 @@ routes = [
     Route("/favicon.ico", lambda r: FileResponse(os.path.join(HERE, "static", "favicon-48.png"), media_type="image/png")),
     Mount("/static", StaticFiles(directory=os.path.join(HERE, "static")), name="static"),
 ]
-app = Starlette(routes=routes, middleware=[Middleware(Guard), Middleware(GZipMiddleware, minimum_size=1000)],
+app = Starlette(routes=routes, middleware=[Middleware(Guard), Middleware(i18n.LangMiddleware), Middleware(GZipMiddleware, minimum_size=1000)],
                 exception_handlers={404: not_found})

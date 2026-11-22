@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="id">
+<html lang="{{ lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ title }}</title>
 <meta name="description" content="{{ description }}">
 <link rel="canonical" href="{{ canonical }}">
+{% if ready_en %}<link rel="alternate" hreflang="id" href="{{ alt_id }}"><link rel="alternate" hreflang="en" href="{{ alt_en }}"><link rel="alternate" hreflang="x-default" href="{{ alt_id }}">{% endif %}
+{% if noindex %}<meta name="robots" content="noindex,follow">{% endif %}
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v={{ asset_v }}">
 <link rel="icon" type="image/png" sizes="48x48" href="/static/favicon-48.png?v={{ asset_v }}">
 <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png?v={{ asset_v }}">
@@ -13,7 +15,7 @@
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v={{ asset_v }}">
 <meta name="theme-color" content="#1E3A8A">
 <meta property="og:type" content="website"><meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
-<meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="id_ID"><meta name="twitter:card" content="summary">
+<meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="{{ 'en_US' if lang=='en' else 'id_ID' }}"><meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
@@ -25,35 +27,43 @@
 <div class="wrap">
 <header class="hero">
   <div class="hero-top">
-    <a href="/" class="hero-chip" style="text-decoration:none">GETCOMPUT · BELAJAR STATISTIKA</a>
+    <a href="/" class="hero-chip" style="text-decoration:none">{% if lang=='en' %}GETCOMPUT · LEARN STATISTICS{% else %}GETCOMPUT · BELAJAR STATISTIKA{% endif %}</a>
     <div class="search" id="search">
-      <input id="q" type="search" placeholder="Cari metode… (mis. logistik, RAK, panel)" autocomplete="off" aria-label="Cari metode">
+      <input id="q" type="search" placeholder="{% if lang=='en' %}Search methods… (e.g. logistic, RCBD, panel){% else %}Cari metode… (mis. logistik, RAK, panel){% endif %}" autocomplete="off" aria-label="{% if lang=='en' %}Search methods{% else %}Cari metode{% endif %}">
       <div class="sres" id="sres"></div>
     </div>
+    <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if lang=='id' %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if lang=='en' %}class="on" aria-current="true"{% endif %}>EN</a></div>
   </div>
   <h1>{{ hero_title }}</h1>
   <p class="lead">{{ hero_lead }}</p>
   {% if hero_tags %}<div class="hero-tags">{% for t in hero_tags %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
-  <nav class="hero-nav" aria-label="Menu utama">
+  <nav class="hero-nav" aria-label="{{ 'Main menu' if lang=='en' else 'Menu utama' }}">
     {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label }}</a>{% endfor %}
   </nav>
 </header>
 <main>
+{% if lang=='en' and not ready_en and not no_note %}<div class="en-note" role="note">🌐 <b>English translation in progress.</b> This page is still shown in Indonesian; the interface is already in English. <a href="{{ alt_id }}">Open the original Indonesian page</a>.</div>{% endif %}
 {% block content %}{% endblock %}
 </main>
-<div class="legal"><span>⚖️</span><div>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Verifikasi hasil penting (misalnya untuk publikasi) dengan software lain atau ahli statistika.</div></div>
+{% if lang=='en' %}<div class="legal"><span>⚖️</span><div>Results are a study aid, not a substitute for statistical consultation. Verify important results (e.g. for publication) with other software or a statistician.</div></div>
+{% else %}<div class="legal"><span>⚖️</span><div>Hasil bersifat alat bantu, bukan pengganti konsultasi statistika. Verifikasi hasil penting (misalnya untuk publikasi) dengan software lain atau ahli statistika.</div></div>{% endif %}
 <footer class="foot">
-  GetComput · Belajar statistika dengan alat hitung<br>
-  <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a><a href="#" onclick="bukaCookie();return false">Pengaturan cookie</a>
+  {% if lang=='en' %}GetComput · Learn statistics with built-in calculators<br>
+  <a href="/tentang">About</a><a href="/privasi">Privacy Policy &amp; Disclaimer</a><a href="/panduan">Method guide</a><a href="#" onclick="bukaCookie();return false">Cookie settings</a>
+  {% else %}GetComput · Belajar statistika dengan alat hitung<br>
+  <a href="/tentang">Tentang</a><a href="/privasi">Kebijakan Privasi &amp; Penafian</a><a href="/panduan">Panduan metode</a><a href="#" onclick="bukaCookie();return false">Pengaturan cookie</a>{% endif %}
 </footer>
 </div>
+<script>window.LANG="{{ lang }}";window.LP="{{ '/en' if lang=='en' else '' }}";</script>
 <script id="search-index" type="application/json">{{ search_index|safe }}</script>
 <script src="/static/site.js?v={{ asset_v }}" defer></script>
 <script src="/static/fx.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
-<div id="cookie-bar" class="cookie-bar" hidden role="dialog" aria-label="Persetujuan cookie">
-<p>GetComput memakai cookie untuk menyimpan kemajuan belajar Anda{% if adsense %} dan, bila Anda setuju, untuk menayangkan iklan (Google AdSense){% endif %}. <a href="/privasi">Pelajari selengkapnya</a>.</p>
-<div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Hanya yang perlu</button><button type="button" id="ck-yes" class="btn pri">Setuju</button></div>
+<div id="cookie-bar" class="cookie-bar" hidden role="dialog" aria-label="{{ 'Cookie consent' if lang=='en' else 'Persetujuan cookie' }}">
+{% if lang=='en' %}<p>GetComput uses cookies to save your learning progress{% if adsense %} and, if you agree, to show ads (Google AdSense){% endif %}. <a href="/privasi">Learn more</a>.</p>
+<div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Necessary only</button><button type="button" id="ck-yes" class="btn pri">Agree</button></div>
+{% else %}<p>GetComput memakai cookie untuk menyimpan kemajuan belajar Anda{% if adsense %} dan, bila Anda setuju, untuk menayangkan iklan (Google AdSense){% endif %}. <a href="/privasi">Pelajari selengkapnya</a>.</p>
+<div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Hanya yang perlu</button><button type="button" id="ck-yes" class="btn pri">Setuju</button></div>{% endif %}
 </div>
 <script>
 (function(){var K="getcomput-cookie",c=null;try{c=localStorage.getItem(K)}catch(e){}

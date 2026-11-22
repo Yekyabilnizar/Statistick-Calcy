@@ -26,7 +26,7 @@
     var r = search(q.value); act = -1;
     if (!q.value.trim()) { box.className = 'sres'; box.innerHTML = ''; return; }
     box.innerHTML = r.length ? r.map(function (it) { return '<a href="' + it.u + '"><b>' + esc(it.t) + '</b><small>' + esc(it.g) + '</small></a>'; }).join('')
-      : '<div class="none">Tidak ada metode yang cocok. Coba kata lain, mis. “regresi”, “faktorial”, atau “logistik”.</div>';
+      : '<div class="none">' + (window.LANG === 'en' ? 'No matching method. Try another word, e.g. “regression”, “factorial”, or “logistic”.' : 'Tidak ada metode yang cocok. Coba kata lain, mis. “regresi”, “faktorial”, atau “logistik”.') + '</div>';
     box.className = 'sres open';
   }
   if (q) {

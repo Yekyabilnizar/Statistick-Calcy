@@ -5,7 +5,7 @@
 
   /* bilah progres gulir */
   var bar = document.createElement('div'); bar.className = 'scrollbar'; document.body.appendChild(bar);
-  var top = document.createElement('button'); top.className = 'totop'; top.type = 'button'; top.setAttribute('aria-label', 'Kembali ke atas'); top.textContent = '↑'; document.body.appendChild(top);
+  var top = document.createElement('button'); top.className = 'totop'; top.type = 'button'; top.setAttribute('aria-label', (window.LANG === 'en' ? 'Back to top' : 'Kembali ke atas')); top.textContent = '↑'; document.body.appendChild(top);
   function onScroll() {
     var h = document.documentElement, max = h.scrollHeight - h.clientHeight, y = h.scrollTop || document.body.scrollTop;
     bar.style.width = (max > 0 ? Math.min(100, 100 * y / max) : 0) + '%';

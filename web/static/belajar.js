@@ -18,17 +18,18 @@
     });
     for (var i = 0; i < order.length; i++) { if (done.indexOf(order[i]) < 0) { firstTodo = order[i]; break; } }
     var total = order.length, pct = total ? Math.round(100 * n / total) : 0;
-    document.getElementById('lp-text').textContent = n + ' dari ' + total + ' modul selesai (' + pct + '%)';
+    document.getElementById('lp-text').textContent = window.LANG === 'en' ? n + ' of ' + total + ' modules completed (' + pct + '%)' : n + ' dari ' + total + ' modul selesai (' + pct + '%)';
     document.getElementById('lp-bar').style.width = pct + '%';
-    var msg = n === 0 ? 'Mulai dari modul pertama. Setiap modul hanya sekitar 5 menit.' : n === total ? 'Luar biasa, semua modul selesai! Lanjutkan berlatih di kalkulator.' : pct >= 50 ? 'Sudah lebih dari separuh jalan. Terus lanjut!' : 'Bagus, teruskan modul berikutnya.';
+    var E = window.LANG === 'en';
+    var msg = E ? (n === 0 ? 'Start with the first module. Each takes about 5 minutes.' : n === total ? 'Great, all modules done! Keep practising in the calculators.' : pct >= 50 ? 'Over halfway there. Keep going!' : 'Nice, continue with the next module.') : (n === 0 ? 'Mulai dari modul pertama. Setiap modul hanya sekitar 5 menit.' : n === total ? 'Luar biasa, semua modul selesai! Lanjutkan berlatih di kalkulator.' : pct >= 50 ? 'Sudah lebih dari separuh jalan. Terus lanjut!' : 'Bagus, teruskan modul berikutnya.');
     document.getElementById('lp-msg').textContent = msg;
     var nx = document.getElementById('lp-next');
-    if (firstTodo) { nx.href = '/belajar/' + firstTodo; nx.textContent = n ? '▶ Lanjutkan belajar' : '▶ Mulai belajar'; }
-    else { nx.textContent = '🏆 Buka kalkulator'; nx.href = '/rancangan-percobaan'; }
+    if (firstTodo) { nx.href = (window.LP || '') + '/belajar/' + firstTodo; nx.textContent = E ? (n ? '▶ Continue learning' : '▶ Start learning') : (n ? '▶ Lanjutkan belajar' : '▶ Mulai belajar'); }
+    else { nx.textContent = E ? '🏆 Open calculators' : '🏆 Buka kalkulator'; nx.href = (window.LP || '') + '/rancangan-percobaan'; }
     document.querySelectorAll('.stage-card').forEach(function (c) {
       var t = c.getAttribute('data-t'), a = perT[t] || [0, 0], p = a[1] ? Math.round(100 * a[0] / a[1]) : 0;
       c.querySelector('.ring').style.setProperty('--p', p); c.querySelector('.ring span').textContent = p + '%';
-      c.querySelector('.stage-count').textContent = a[0] + ' dari ' + a[1] + ' modul selesai';
+      c.querySelector('.stage-count').textContent = window.LANG === 'en' ? a[0] + ' of ' + a[1] + ' modules completed' : a[0] + ' dari ' + a[1] + ' modul selesai';
     });
     var on = {first: n >= 1, t1: perT[1][1] && perT[1][0] === perT[1][1], half: pct >= 50, t2: perT[2][1] && perT[2][0] === perT[2][1], t3: perT[3][1] && perT[3][0] === perT[3][1], all: n === total};
     document.querySelectorAll('.badge').forEach(function (b) { b.classList.toggle('on', !!on[b.getAttribute('data-b')]); });
@@ -49,8 +50,8 @@
         d.appendChild(nb); c.appendChild(d);
       }
     });
-    var all = document.createElement('button'); all.type = 'button'; all.className = 'all'; all.textContent = '☰ Tampilkan semua';
-    all.addEventListener('click', function () { showAll = !showAll; wrap.classList.toggle('tabbed', !showAll); all.textContent = showAll ? '▤ Tampilkan per bagian' : '☰ Tampilkan semua'; });
+    var all = document.createElement('button'); all.type = 'button'; all.className = 'all'; all.textContent = (window.LANG === 'en' ? '☰ Show all' : '☰ Tampilkan semua');
+    all.addEventListener('click', function () { showAll = !showAll; wrap.classList.toggle('tabbed', !showAll); all.textContent = window.LANG === 'en' ? (showAll ? '▤ Show by section' : '☰ Show all') : (showAll ? '▤ Tampilkan per bagian' : '☰ Tampilkan semua'); });
     nav.appendChild(all);
     function go(i) {
       cur = Math.max(0, Math.min(cards.length - 1, i)); seen[cur] = 1;
@@ -84,14 +85,14 @@
     var slug = btn.getAttribute('data-slug'), st = document.getElementById('mod-state');
     function paint() {
       var ok = done.indexOf(slug) >= 0;
-      btn.textContent = ok ? '✓ Selesai (klik untuk batalkan)' : '✓ Tandai selesai';
+      btn.textContent = window.LANG === 'en' ? (ok ? '✓ Done (click to undo)' : '✓ Mark as done') : (ok ? '✓ Selesai (klik untuk batalkan)' : '✓ Tandai selesai');
       btn.classList.toggle('pri', ok); btn.classList.toggle('sec', !ok);
-      if (st) st.textContent = ok ? '✓ Sudah selesai' : '';
+      if (st) st.textContent = ok ? (window.LANG === 'en' ? '✓ Completed' : '✓ Sudah selesai') : '';
     }
     btn.addEventListener('click', function (e) {
       done = load();
       var i = done.indexOf(slug);
-      if (i >= 0) done.splice(i, 1); else { done.push(slug); if (window.confetti) confetti(e.clientX, e.clientY); if (window.toast) toast('🎉 Modul selesai! Total ' + done.length + ' modul.'); }
+      if (i >= 0) done.splice(i, 1); else { done.push(slug); if (window.confetti) confetti(e.clientX, e.clientY); if (window.toast) toast(window.LANG === 'en' ? '🎉 Module completed! Total ' + done.length + ' modules.' : '🎉 Modul selesai! Total ' + done.length + ' modul.'); }
       save(done); paint();
     });
     paint();

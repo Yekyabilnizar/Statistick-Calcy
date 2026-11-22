@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="cta"><a class="btn pri" href="/belajar">🎓 Start learning</a><a class="btn sec" href="#katalog">🛠️ Open calculators</a><a class="btn sec" href="/panduan">🧭 Not sure which method?</a></div>
+<div class="stats">
+  <div class="stat"><b>62</b><span>learning modules</span></div>
+  <div class="stat"><b>{{ n_all }}</b><span>calculators for practice</span></div>
+  <div class="stat"><b>{{ n_des }}</b><span>experimental design topics</span></div>
+  <div class="stat"><b>{{ n_reg }}</b><span>regression topics</span></div>
+  </div>
+<div class="panel learn-promo"><h3 style="margin:0 0 6px">🎓 Learn first, practise next</h3><p style="margin:0 0 12px">Three ordered stages: statistics basics, experimental design, and regression. Every module has concepts, equations, worked examples, and exercises done in the calculators.</p><a class="btn pri" href="/belajar">Start the learning path →</a></div>
+<h2 class="sec-h">How learning works on GetComput</h2><p class="sec-s">Three steps from concept to practice.</p>
+<div class="steps">
+  <div class="stepc"><div class="n">1</div><h4>Study a module</h4><p>Follow the learning path: read the concept, theory with equations, and step-by-step worked examples.</p></div>
+  <div class="stepc"><div class="n">2</div><h4>Practise in the calculator</h4><p>Open the calculator from the module and use sample data or your own (paste from Excel or upload a CSV).</p></div>
+  <div class="stepc"><div class="n">3</div><h4>Check against the theory</h4><p>Compare the calculator output with the module's example, read the interpretation, and mark the module as done.</p></div>
+</div>
+<h2 class="sec-h">Companion calculators</h2>
+<div class="grid g2">
+  <div class="fam"><h3>🧪 Experimental Design</h3><p>Analysis of variance for controlled experiments, from CRD and RCBD to advanced designs.</p>
+    <ul><li>CRD, RCBD, Latin square, Graeco-Latin, BIB/Lattice</li><li>Factorial, split-plot, strip-plot, nested</li><li>Repeated measures, cross-over, ANCOVA, MANOVA</li><li>RSM, mixture, Taguchi, fractional factorial</li></ul>
+    <a class="btn pri" href="/rancangan-percobaan">Explore experimental design →</a></div>
+  <div class="fam"><h3>📈 Regression</h3><p>From multiple linear regression to models for binary, count, and positive responses.</p>
+    <ul><li>Linear, dummy, polynomial, nonlinear, full diagnostics</li><li>Logistic, Poisson, negative binomial, gamma, probit</li><li>Ridge, LASSO, robust, LOESS, spline, quantile, GAM</li><li>Panel, ARIMAX, SAR/SEM/GWR, mixed effects, Cox, Tobit</li></ul>
+    <a class="btn pri" href="/regresi">Explore regression methods →</a></div>
+</div>
+<h2 class="sec-h" id="katalog">Calculator catalogue</h2><p class="sec-s">Already know the material? Open the calculator directly.</p>
+{% for fam, label in [('des','🧪 Experimental Design'),('reg','📈 Regression')] %}
+  {% for g, items in groups[fam].items() %}
+  <p class="sec-s" style="margin:18px 0 8px"><b style="color:#0F2A43">{{ label }} · {{ g|en }}</b> · {{ items|length }} methods</p>
+  <div class="grid g3">{% for m in items %}
+    <div class="mcard"><h4>{{ m.title }}</h4><p>{{ m.desc }}</p><div>{% for t in m.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+      <a class="go" href="/metode/{{ m.slug }}">Open →</a></div>{% endfor %}</div>
+  {% endfor %}
+{% endfor %}
+<h2 class="sec-h">What you get with every analysis</h2>
+<div class="grid g3">
+<div class="mcard"><h4>📋 Publication-ready tables</h4><p>ANOVA, coefficients, hazard ratios, post-hoc tests with letter groupings, with P-values and significance marks.</p></div>
+<div class="mcard"><h4>🧪 Assumption tests</h4><p>Normality, homogeneity of variance, autocorrelation, multicollinearity, and influential observations are checked automatically.</p></div>
+<div class="mcard"><h4>📈 Interactive charts</h4><p>Residual plots, interaction plots, response-surface contours, spatial maps, survival curves, and more.</p></div>
+<div class="mcard"><h4>📝 Automatic interpretation</h4><p>Conclusions are written in plain language (Indonesian for now), including warnings when assumptions or data are problematic.</p></div>
+<div class="mcard"><h4>📂 Flexible data input</h4><p>Sample data, paste from Excel, upload CSV/Excel, or type directly into the table.</p></div>
+<div class="mcard"><h4>⬇️ Download to Excel</h4><p>All result tables are packed into one Excel file; charts can be saved as images.</p></div>
+</div>
+<h2 class="sec-h">Frequently asked questions</h2>
+<details class="faq"><summary>Is my data stored?</summary><p>No. Data is only processed in memory while the calculation runs, then discarded. See the <a href="/privasi">Privacy Policy</a>.</p></details>
+<details class="faq"><summary>What data format is needed?</summary><p>One row = one observation, one column = one variable, and the first row holds column names. Use a dot or comma as the decimal mark. Every method provides sample data so you can see the format.</p></details>
+<details class="faq"><summary>How do I read the marks **, *, and ns?</summary><p>** = highly significant (P &lt; 0.01), * = significant (P &lt; 0.05), ns (shown as “tn”) = not significant. The significance level α can be chosen in each analysis.</p></details>
+<details class="faq"><summary>My results differ from other software</summary><p>Check the type of sum of squares (here sequential Type I on balanced data), the reference category for dummy variables, and the estimation method. On balanced data ANOVA results are usually the same; verification is still recommended for publication.</p></details>
+{% endblock %}

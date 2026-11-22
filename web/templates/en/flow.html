@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    <div class="fld"><label class="l" for="fl-fam">Analysis type</label>
+      <select id="fl-fam"><option value="des"{{ ' selected' if fam == 'des' else '' }}>🧪 Experimental Design</option><option value="reg"{{ ' selected' if fam == 'reg' else '' }}>📈 Regression</option></select></div>
+    <div class="fld"><label class="l" for="fl-grp">Group</label><select id="fl-grp"></select></div>
+    <div class="fld"><label class="l" for="fl-met">Method</label><select id="fl-met"></select></div>
+  </div>
+</section>
+<h2 class="sec-h" id="fl-title">{{ cur.title }}</h2><p class="sec-s" id="fl-desc">{{ cur.desc }}</p>
+<div id="fl-flow">{{ flow|safe }}</div>
+<div class="cta" style="margin-top:14px"><a class="btn pri" id="fl-open" href="/metode/{{ cur.slug }}">Open this method →</a><a class="btn sec" href="/panduan">Method selection guide</a></div>
+<p class="cap" style="text-align:center;margin-top:18px">The flowchart is a summary of the flow; calculation details are on each method's analysis page.</p>
+<script id="all-methods" type="application/json">{{ all_methods|safe }}</script>
+<script id="cur-slug" type="application/json">{{ cur.slug|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/flow.js?v={{ asset_v }}" defer></script>{% endblock %}

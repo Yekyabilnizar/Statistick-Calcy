@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="prose">
+<h2>Privacy Policy</h2>
+<p>Last updated: {{ updated }}.</p>
+<h2>Your analysis data</h2>
+<p>Data you paste or upload is sent to the server only to be calculated. It is processed in memory, not saved to a database or file, and discarded once the result is returned. We do not read or share your data.</p>
+<h2>Feedback form</h2>
+<p>If you send feedback, the message, feedback type, related method, rating, and contact (if you provide one) are stored in a private repository owned by the developer, accessible only to the developer, solely to improve the app. Analysis data you upload is not stored with it. To request deletion of your feedback, contact the developer.</p>
+<h2>Downloaded files</h2>
+<p>Downloaded Excel files are generated at your request and are entirely your responsibility once downloaded. Do not upload sensitive personal data (identity, individual health data, and the like) without proper consent and anonymisation; use codes or pseudonymous IDs for research subjects.</p>
+<h2>Technical data</h2>
+<p>The server may record standard technical information (IP address, access time, page, browser type) for security and maintenance. These logs do not contain the contents of your analysis data.</p>
+<h2>Visit statistics</h2>
+<p>To learn which pages are useful, this site uses GoatCounter, an analytics service that uses no cookies and does not track you across sites. Only aggregate data is recorded, such as pages opened, country of origin, browser or device type, and referring site. Data you enter into the calculators is not recorded.</p>
+<h2>Cookies and ads</h2>
+<p>This site uses your browser's local storage to remember your learning progress and your cookie choice. This data stays on your device and is not sent to our server.</p>
+<p>This site may show third-party ads through Google AdSense. Google and its advertising partners may use cookies or similar identifiers to serve and measure ads, including ads personalised based on your visits to this and other sites. Ads are loaded only after you choose <strong>Agree</strong> on the cookie banner; if you choose <strong>Necessary only</strong>, the ad script is not loaded.</p>
+<p>You can change your choice at any time through the <a href="#" onclick="bukaCookie();return false">Cookie settings</a> link at the bottom of the page. You can also manage ad personalisation at <a href="https://adssettings.google.com" rel="noopener" target="_blank">adssettings.google.com</a>, and read how Google uses data at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener" target="_blank">policies.google.com/technologies/partner-sites</a>.</p>
+<h2>Third-party services</h2>
+<p>Pages load fonts from Google Fonts and the Plotly charting library from a content delivery network (CDN); these requests may reveal your IP address to the provider.</p>
+<h2>Disclaimer</h2>
+<p>Calculation results are a study aid, not a substitute for statistical consultation. Users are responsible for checking that the method and assumptions suit their data and for verifying important results with other software or a statistician. The service is provided as is, without warranty.</p>
+<h2>Contact</h2>
+<p>{{ contact|safe }}</p>
+</section>
+{% endblock %}

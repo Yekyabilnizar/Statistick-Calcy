@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel learn-top" id="learn" data-order='{{ order }}'>
+  <div class="learn-prog">
+    <div><b id="lp-text">0 of {{ total }} modules completed</b><div class="progress"><i id="lp-bar" style="width:0"></i></div>
+      <p class="cap" style="margin:8px 0 0" id="lp-msg">Start with the first module. Each takes about 5 minutes.</p></div>
+    <a class="btn pri" id="lp-next" href="/belajar/{{ stages[0].groups[0].mods[0].slug }}">▶ Start learning</a>
+  </div>
+</section>
+
+<h2 class="sec-h">🏅 Badges</h2>
+<p class="sec-s">Complete modules to unlock badges. Progress is saved in this browser only (no account).</p>
+<div class="badges" id="badges">
+  <div class="badge" data-b="first"><span class="ic">🌱</span><b>First step</b><small>1 module completed</small></div>
+  <div class="badge" data-b="t1"><span class="ic">📘</span><b>Basics complete</b><small>All Stage 1 modules</small></div>
+  <div class="badge" data-b="half"><span class="ic">🔥</span><b>Halfway there</b><small>50% of modules completed</small></div>
+  <div class="badge" data-b="t2"><span class="ic">🧪</span><b>Design expert</b><small>All Stage 2 modules</small></div>
+  <div class="badge" data-b="t3"><span class="ic">📈</span><b>Regression expert</b><small>All Stage 3 modules</small></div>
+  <div class="badge" data-b="all"><span class="ic">🏆</span><b>GetComput champion</b><small>All modules completed</small></div>
+</div>
+
+<div class="notice info"><span>🧭</span><div>The flow: <b>study a module</b> → <b>practise in the calculator</b> with sample data → <b>mark as done</b>. You are free to open any module.</div></div>
+{% for st in stages %}
+{% set tno = loop.index %}
+<div class="stage-card" data-t="{{ tno }}">
+  <span class="ring" style="--p:0"><span>0%</span></span>
+  <div><h2>{{ st.tahap|en }}</h2><p class="stage-count">0 of {{ st.groups|map(attribute='mods')|map('length')|sum }} modules completed</p></div>
+</div>
+{% for g in st.groups %}
+<p class="sec-s" style="margin:16px 0 8px"><b style="color:#0F2A43">{{ g.name|en }}</b></p>
+<div class="mod-list">
+{% for m in g.mods %}<a class="mod-row" href="/belajar/{{ m.slug }}" data-slug="{{ m.slug }}" data-t="{{ tno }}">
+  <span class="mod-ck" aria-hidden="true">○</span><span class="mod-t"><b>{{ m.title }}</b><small>{{ m.ringkas }}</small></span><span class="go">Open →</span></a>{% endfor %}
+</div>
+{% endfor %}
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="/static/belajar.js?v={{ asset_v }}" defer></script>{% endblock %}

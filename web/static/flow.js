@@ -10,7 +10,7 @@
   function fillMethods(sel) {
     met.innerHTML = all.filter(function (m) { return m.f === fam.value && m.g === grp.value; }).map(function (m) { return '<option value="' + m.s + '"' + (m.s === sel ? ' selected' : '') + '>' + esc(m.t) + '</option>'; }).join('');
   }
-  function go() { if (met.value) location.href = '/alur-metode?m=' + encodeURIComponent(met.value); }
+  function go() { if (met.value) location.href = (window.LP || '') + '/alur-metode?m=' + encodeURIComponent(met.value); }
   var c = all.filter(function (m) { return m.s === cur; })[0];
   fillGroups(c && c.g); fillMethods(cur);
   fam.addEventListener('change', function () { fillGroups(); fillMethods(); go(); });

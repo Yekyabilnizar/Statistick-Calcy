@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="/">Home</a> › {{ fam_name }}</p>
+{% for g, items in groups.items() %}
+<h2 class="sec-h">{{ g|en }}</h2><p class="sec-s">{{ items|length }} methods</p>
+<div class="grid g3">{% for m in items %}
+  <div class="mcard"><h3 style="margin:0;border:0;padding:0;font-size:1.05rem">{{ m.title }}</h3><p>{{ m.desc }}</p><div>{% for t in m.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+    <a class="go" href="/metode/{{ m.slug }}">Open →</a></div>{% endfor %}</div>
+{% endfor %}
+{% endblock %}
