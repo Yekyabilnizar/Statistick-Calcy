@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="/">Home</a> › <a href="/{{ fam_path }}">{{ fam_name }}</a> › {{ m.group }} › {{ m.title }}</p>
+
+{% if module %}<div class="notice info learn-link"><span>🎓</span><div>Not sure about the concept yet? Read the learning module first: <a href="/belajar/{{ module.slug }}"><b>{{ module.title }}</b></a>, then come back to practise here.</div></div>{% endif %}
+<section class="panel" id="alat" aria-label="Analysis tool">
+  <h3 class="step"><i>1</i> Enter data</h3>
+  <div class="src-tabs" role="tablist">
+    <button type="button" class="on" data-src="sample">📚 Sample data</button>
+    <button type="button" data-src="paste">📋 Paste from Excel/CSV</button>
+    <button type="button" data-src="file">📂 Upload file</button>
+    <button type="button" data-src="manual">✍️ Type in a table</button>
+  </div>
+  <div id="src-sample" class="src-pane"><p class="cap" style="margin:0">Sample data is already loaded so you can try right away. Pick another tab to use your own data.</p></div>
+  <div id="src-file" class="src-pane" hidden><div class="drop"><input type="file" id="file" accept=".csv,.tsv,.txt,.xlsx,.xlsm"><p class="cap">CSV, TSV, TXT, or Excel (.xlsx). The first row holds column names.</p></div></div>
+  <div id="src-paste" class="src-pane" hidden></div>
+  <div id="src-manual" class="src-pane" hidden><div id="manual-gen"></div><div class="grid-bar"><button type="button" class="btn sec mini" id="g-addrow">+ Row</button><button type="button" class="btn sec mini" id="g-addcol">+ Column</button><button type="button" class="btn sec mini" id="g-delrow">− Last row</button><button type="button" class="btn sec mini" id="g-delcol">− Last column</button><button type="button" class="btn sec mini" id="g-clear">Clear</button></div>
+    <div class="sc-wrap grid-ed" id="grid"></div><p class="cap">Click a cell and type. You can also paste (Ctrl+V) a block of data from Excel into any cell. Column names are in the header row and can be edited.</p></div>
+  <textarea id="data" class="data" spellcheck="false" placeholder="Paste data here (first row = column names; columns separated by tab, comma, or semicolon)"></textarea>
+  <div id="data-msg" class="msg"></div>
+  <div id="preview" class="preview"></div>
+</section>
+
+<section class="panel" id="form-panel" hidden>
+  <h3 class="step"><i>2</i> Choose columns and settings</h3>
+  <div id="fields" class="fields"></div>
+  <div class="fields" style="margin-top:16px"><div class="fld"><label class="l" for="alpha">Significance level (α)</label>
+    <select id="alpha"><option value="0.01">α = 0,01</option><option value="0.05" selected>α = 0,05</option><option value="0.10">α = 0,10</option></select></div></div>
+  <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <button type="button" class="btn pri" id="run">▶ Calculate</button>
+    <button type="button" class="btn sec" id="xlsx" hidden>⬇️ Download Excel</button>
+  </div>
+</section>
+
+{% if m.gen %}<details class="more" id="gen-box"><summary>🧮 Design matrix generator</summary><div class="fields" id="gen-fields"></div><div style="margin-top:12px"><button type="button" class="btn sec" id="gen-run">Generate design</button></div><div id="gen-out"></div></details>{% endif %}
+
+<div id="result" aria-live="polite"></div>
+
+<section class="prose">
+  <h2>About this method</h2><p>{{ m.desc }}</p>
+  <h2>When to use it</h2><p>{{ m.when }}</p>
+  <h2>Assumptions to satisfy</h2><p>{{ m.assume }}</p>
+  <h2>How to read the results</h2><p>{{ m.read }}</p>
+</section>
+
+<h2 class="sec-h">Method flow</h2><p class="sec-s">The analysis steps that are run, from data to conclusion.</p>
+{{ flow|safe }}
+
+{% if related %}<h2 class="sec-h">Related methods</h2>
+<div class="grid g3">{% for r in related %}<div class="mcard"><h4>{{ r.title }}</h4><p>{{ r.desc }}</p><a class="go" href="/metode/{{ r.slug }}">Open →</a></div>{% endfor %}</div>{% endif %}
+<script id="spec" type="application/json">{{ spec|safe }}</script>
+{% endblock %}
+{% block scripts %}<script src="/static/tool.js?v={{ asset_v }}" defer></script>{% endblock %}

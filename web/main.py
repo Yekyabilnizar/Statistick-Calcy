@@ -64,7 +64,8 @@ def search_index(lang="id"):
     en = lang == "en"
     pre = "/en" if en else ""
     items = []
-    for m in registry.METHODS:
+    for m0 in registry.METHODS:
+        m = i18n.loc_method(m0, en)
         items.append({"t": m["title"], "u": f"{pre}/metode/{m['slug']}", "d": m["desc"], "k": " ".join(m["tags"]) + f" {m['key']} {m['slug']}",
                       "g": f"{(i18n.FAM_NAME_EN if en else registry.FAM_NAME)[m['family']]} › {m['group']}"})
     for slug in belajar.ORDER:
@@ -155,10 +156,10 @@ async def read_json(request):
 
 # ------------------------------------------------------------------ halaman
 async def home(request):
-    g = {f: registry.groups(f) for f in (registry.FAM_DES, registry.FAM_REG)}
+    g = {f: i18n.loc_groups(registry.groups(f), lang_of(request) == "en") for f in (registry.FAM_DES, registry.FAM_REG)}
     n_des = sum(len(v) for v in g["des"].values())
     n_reg = sum(len(v) for v in g["reg"].values())
-    return page(request, "home.html", key="home", ready=False, title="GetComput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
+    return page(request, "home.html", key="home", title="GetComput – Belajar Statistika Online dengan Alat Hitung (ANOVA, Rancangan Percobaan, Regresi)",
                 description="Belajar statistika berbahasa Indonesia: 62 modul dengan persamaan, contoh hitung, dan latihan, dari dasar, rancangan percobaan, sampai regresi lanjutan. "
                             "Dilengkapi alat hitung ANOVA, uji lanjut, dan regresi untuk berlatih.",
                 path="/", hero_title="Belajar statistika, lalu praktikkan",
@@ -177,34 +178,37 @@ async def family_page(request):
     name = (i18n.FAM_NAME_EN if lang_of(request) == "en" else registry.FAM_NAME)[fam]
     lead = ("Analisis ragam untuk percobaan terkontrol: dari RAL dan RAK sampai rancangan lanjutan." if fam == registry.FAM_DES
             else "Dari regresi linear berganda sampai model untuk data biner, cacahan, dan respon positif.")
-    return page(request, "catalog.html", key=f"family_{fam}", ready=False, title=f"{name} – GetComput", description=lead, path=path, hero_title=name, hero_lead=lead,
-                groups=registry.groups(fam), fam_name=name)
+    return page(request, "catalog.html", key=f"family_{fam}", title=f"{name} – GetComput", description=lead, path=path, hero_title=name, hero_lead=lead,
+                groups=i18n.loc_groups(registry.groups(fam), lang_of(request) == "en"), fam_name=name)
 
 
 async def method_page(request):
     m = registry.BY_SLUG.get(request.path_params["slug"])
     if not m:
         return await not_found(request, None)
+    en = lang_of(request) == "en"
     path = f"/metode/{m['slug']}"
-    related = [x for x in registry.METHODS if x["family"] == m["family"] and x["slug"] != m["slug"] and x["group"] == m["group"]][:3]
+    related = [i18n.loc_method(x, en) for x in registry.METHODS if x["family"] == m["family"] and x["slug"] != m["slug"] and x["group"] == m["group"]][:3]
+    mod_ = belajar.MODULES.get(m["slug"])
+    m = i18n.loc_method(m, en)
     fields = [{k: v for k, v in f.items()} for f in m["fields"]]
     spec = json.dumps({"slug": m["slug"], "fields": fields, "key": m["key"], "family": m["family"], "gen": m.get("gen")}, ensure_ascii=False).replace("<", "\\u003c")
-    flow = flows.flow_html(flows.nodes_for(m["key"], m["family"]))
+    flow = flows.flow_html(flows.nodes_for(m["key"], m["family"], lang_of(request)), lang_of(request))
     ld = json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": m["title"], "applicationCategory": "EducationalApplication",
                      "inLanguage": lang_of(request), "url": base_url(request) + path, "description": m["desc"]}, ensure_ascii=False)
     gen = json.dumps(m["gen"], ensure_ascii=False).replace("<", "\\u003c") if m.get("gen") else "null"
     return page(request, "method.html", key="method", meta_vars={"t": m["title"], "d": m["desc"]}, ready=m["slug"] in i18n.EN_METHODS, title=f"{m['title']} – Kalkulator Online | GetComput",
                 description=f"{m['desc']} Hitung online: tabel hasil, uji asumsi, grafik, dan interpretasi otomatis.", path=path, active="/" + registry.FAM_PATH[m["family"]],
                 hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=(i18n.FAM_NAME_EN if lang_of(request) == "en" else registry.FAM_NAME)[m["family"]],
-                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=belajar.MODULES.get(m["slug"]))
+                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=mod_)
 
 
 async def guide(request):
-    return page(request, "guide.html", key="guide", ready=False, title="Panduan Memilih Metode Analisis Statistika – GetComput",
+    return page(request, "guide.html", key="guide", title="Panduan Memilih Metode Analisis Statistika – GetComput",
                 description="Bingung memilih metode? Lihat kapan tiap rancangan percobaan dan metode regresi dipakai.", path="/panduan",
                 hero_title="Panduan Memilih Metode", hero_lead="Pilih situasi data atau percobaan Anda; kami tunjukkan metode yang cocok dan membukanya langsung.",
-                hero_tags=["Rancangan percobaan", "Regresi"], rows=guide_data.rows(),
-                groups={f: registry.groups(f) for f in (registry.FAM_DES, registry.FAM_REG)})
+                hero_tags=["Rancangan percobaan", "Regresi"], rows=guide_data.rows(lang_of(request)),
+                groups={f: i18n.loc_groups(registry.groups(f), lang_of(request) == "en") for f in (registry.FAM_DES, registry.FAM_REG)})
 
 
 def _learn_stages():
@@ -257,18 +261,20 @@ async def flow_page(request):
         fam = cur["family"]
     ms = [m for m in registry.METHODS if m["family"] == fam]
     cur = cur if cur and cur["family"] == fam else ms[0]
-    flow = flows.flow_html(flows.nodes_for(cur["key"], cur["family"]))
-    return page(request, "flow.html", key="flow", ready=False, title="Alur Analisis Setiap Metode (Flowchart) – GetComput",
+    flow = flows.flow_html(flows.nodes_for(cur["key"], cur["family"], lang_of(request)), lang_of(request))
+    en = lang_of(request) == "en"
+    cur = i18n.loc_method(cur, en)
+    return page(request, "flow.html", key="flow", title="Alur Analisis Setiap Metode (Flowchart) – GetComput",
                 description="Lihat urutan langkah analisis tiap metode statistika: data masuk, pemeriksaan asumsi, keputusan, sampai hasil.",
                 path="/alur-metode", hero_title="Alur Analisis Setiap Metode",
                 hero_lead="Lihat urutan langkah dari data masuk, pemeriksaan asumsi, sampai hasil. Pilih metodenya di bawah.",
                 hero_tags=["Flowchart", "Asumsi & keputusan", "Hasil"], fam=fam, cur=cur, flow=flow, groups=registry.groups(fam),
-                all_methods=json.dumps([{"s": m["slug"], "t": m["title"], "g": m["group"], "f": m["family"]} for m in registry.METHODS], ensure_ascii=False).replace("<", "\\u003c"))
+                all_methods=json.dumps([{"s": m["slug"], "t": m_["title"], "g": m_["group"], "f": m["family"]} for m in registry.METHODS for m_ in [i18n.loc_method(m, en)]], ensure_ascii=False).replace("<", "\\u003c"))
 
 
 async def feedback_page(request):
     ok = feedback_web.get_config() is not None
-    return page(request, "feedback.html", key="feedback", ready=False, title="Kirim Masukan – GetComput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang GetComput.",
+    return page(request, "feedback.html", key="feedback", title="Kirim Masukan – GetComput", description="Kirim saran fitur, laporan masalah, atau pertanyaan untuk pengembang GetComput.",
                 path="/masukan", hero_title="Kirim Masukan",
                 hero_lead="Temukan kekurangan, butuh metode baru, atau punya pertanyaan? Tulis di sini; masukan Anda dibaca langsung oleh pengembang.",
                 hero_tags=["Saran fitur", "Laporan masalah", "Pertanyaan"], enabled=ok, categories=feedback_web.CATEGORIES, cat_en=i18n.FEEDBACK_CAT_EN,

@@ -9,7 +9,7 @@ Cara kerja:
 import re
 
 # halaman statis yang isinya sudah sepenuhnya Inggris (tanpa data dari registry/modul)
-READY_PATHS = {"/tentang", "/privasi"}
+READY_PATHS = {"/", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"}
 EN_METHODS = set()     # slug metode yang sudah punya terjemahan lengkap
 EN_MODULES = set()     # slug modul belajar yang sudah punya terjemahan lengkap
 
@@ -155,3 +155,25 @@ def tr(s):
     return TR_EN.get(s, s)
 
 FEEDBACK_CAT_EN = ["💡 Feature / new method suggestion", "🐞 Problem report (bug)", "❓ Question", "👍 Impressions & comments", "📝 Other"]
+
+
+def loc_method(m, en=True):
+    """Salinan metode dengan teks Inggris (judul, deskripsi, tag, dll.) bila tersedia."""
+    if not en:
+        return m
+    from .i18n_data import METHODS_EN
+    from .i18n_data.fields import FIELDS_EN, HELP_EN
+    t = METHODS_EN.get(m["slug"])
+    o = dict(m)
+    o["group"] = tr(m["group"])
+    if t:
+        o.update(title=t[0], desc=t[1], tags=list(t[2]), when=t[3], assume=t[4], read=t[5])
+        o["label"] = t[0]
+    o["fields"] = [dict(f, label=FIELDS_EN.get(f["label"], f["label"]), **({"help": HELP_EN.get(f["help"], f["help"])} if f.get("help") else {})) for f in m["fields"]]
+    return o
+
+
+def loc_groups(groups, en=True):
+    if not en:
+        return groups
+    return {tr(g): [loc_method(m) for m in items] for g, items in groups.items()}
