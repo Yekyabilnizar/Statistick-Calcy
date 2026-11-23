@@ -326,8 +326,19 @@ def mod_en():
     return MOD_EN
 
 
-_ABBR = {"JKT": "SSTO", "JKP": "SSTR", "JKG": "SSE", "KTP": "MSTR", "KTG": "MSE", "JK": "SS", "KT": "MS", "KK": "CV", "BNT": "LSD", "BNJ": "HSD", "JKR": "SSR", "JKS": "SSL", "JKK": "SSB"}
+_ABBR = {"JKT": "SSTO", "JKP": "SSTR", "JKG": "SSE", "KTP": "MSTR", "KTG": "MSE", "JK": "SS", "KT": "MS", "KK": "CV", "BNT": "LSD", "BNJ": "HSD", "JKR": "SSR", "JKS": "SSL", "JKK": "SSB", "KTK": "MSB"}
 _ABBR_RE = re.compile(r"(?<![A-Za-z\\])(" + "|".join(sorted(_ABBR, key=len, reverse=True)) + r")(?![A-Za-z])")
+
+
+def _eqt(t):
+    from .i18n_data.eqtext import EQTEXT
+    if t in EQTEXT:
+        return EQTEXT[t]
+    core = t.strip()
+    for k in (core, core + " ", " " + core):
+        if k in EQTEXT:
+            return t[:len(t) - len(t.lstrip())] + EQTEXT[k].strip() + t[len(t.rstrip()):]
+    return t
 
 
 def tr_eq(e):
@@ -335,7 +346,8 @@ def tr_eq(e):
     from .i18n_data.eqtext import EQTEXT
     e = e.replace("{,}", ".")
     e = _ABBR_RE.sub(lambda m: _ABBR[m.group(1)], e)
-    return re.sub(r"(\\(?:text|mathrm|mathit|operatorname)\{)([^}]*)(\})", lambda m: m.group(1) + EQTEXT.get(m.group(2), m.group(2)) + m.group(3), e)
+    e = re.sub(r"(?<![A-Za-z\\])(JK|KT)([A-Z]{1,2})(?![A-Za-z])", lambda m: ("SS" if m.group(1) == "JK" else "MS") + m.group(2), e)
+    return re.sub(r"(\\(?:text|mathrm|mathit|operatorname)\{)([^}]*)(\})", lambda m: m.group(1) + _eqt(m.group(2)) + m.group(3), e)
 
 
 def loc_module(mod, ext, en=True):
@@ -408,6 +420,9 @@ def check_module(slug):
 
 def _fill_en_modules():
     EN_MODULES.update(mod_en().keys())
+    from . import belajar
+    if set(belajar.ORDER) <= EN_MODULES:  # seluruh modul sudah diterjemahkan -> indeks belajar siap
+        READY_PATHS.add("/belajar")
 
 
 _fill_en_modules()

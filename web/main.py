@@ -231,7 +231,7 @@ def _learn_stages(en=False):
 
 
 async def learn_index(request):
-    return page(request, "belajar.html", key="learn", ready=False, title="Belajar Statistika: Jalur Materi dan Latihan – GetComput",
+    return page(request, "belajar.html", key="learn", title="Belajar Statistika: Jalur Materi dan Latihan – GetComput",
                 description="Jalur belajar statistika berbahasa Indonesia dari dasar sampai rancangan percobaan dan regresi, dengan latihan langsung di kalkulator.",
                 path="/belajar", hero_title="Belajar Statistika",
                 hero_lead="Pelajari konsepnya dulu, lalu praktikkan langsung di kalkulator. Ikuti jalur berurutan dari dasar sampai metode lanjutan.",
