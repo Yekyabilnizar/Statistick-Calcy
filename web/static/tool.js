@@ -4,6 +4,7 @@
   var slug = spec.slug, fields = spec.fields;
   var $ = function (id) { return document.getElementById(id); };
   var info = null, timer = null;
+  function L(a, b) { return window.LANG === 'en' ? b : a; }
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
   function notice(msg, kind) {
@@ -11,8 +12,8 @@
     return '<div class="notice ' + (kind || 'info') + '"><span>' + ic + '</span><div>' + esc(msg) + '</div></div>';
   }
   function post(url, body) {
-    return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
-      .then(function (r) { return r.json().catch(function () { return {ok: false, error: 'Server tidak merespons dengan benar (kode ' + r.status + ').'}; }); });
+    return fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(Object.assign({lang: window.LANG || 'id'}, body))})
+      .then(function (r) { return r.json().catch(function () { return {ok: false, error: L('Server tidak merespons dengan benar (kode ', 'The server did not respond correctly (code ') + r.status + ').'}; }); });
   }
 
   /* ---------- sumber data ---------- */
@@ -22,29 +23,29 @@
     $('data').hidden = name === 'manual';
     if (name === 'manual') { openManual(); return; }
     if (name === 'sample') loadSample();
-    if (name === 'paste') { $('data').value = ''; $('data').focus(); resetForm(); $('data-msg').innerHTML = notice('Tempel data (baris pertama berisi nama kolom), formulir kolom akan muncul otomatis.', 'info'); }
+    if (name === 'paste') { $('data').value = ''; $('data').focus(); resetForm(); $('data-msg').innerHTML = notice(L('Tempel data (baris pertama berisi nama kolom), formulir kolom akan muncul otomatis.', 'Paste your data (first row = column names); the column form will appear automatically.'), 'info'); }
   }
   function loadSample() {
     fetch('/api/' + slug + '/sample').then(function (r) { return r.json(); }).then(function (j) {
       $('data').value = j.csv || ''; inspect();
-    }).catch(function () { $('data-msg').innerHTML = notice('Data contoh gagal dimuat. Muat ulang halaman.', 'error'); });
+    }).catch(function () { $('data-msg').innerHTML = notice(L('Data contoh gagal dimuat. Muat ulang halaman.', 'Sample data failed to load. Reload the page.'), 'error'); });
   }
   function resetForm() { info = null; $('form-panel').hidden = true; $('preview').innerHTML = ''; }
 
   function inspect() {
     var text = $('data').value;
     if (!text.trim()) { resetForm(); return; }
-    $('data-msg').innerHTML = '<span class="spin"></span>Membaca data…';
+    $('data-msg').innerHTML = '<span class="spin"></span>' + L('Membaca data…', 'Reading data…');
     post('/api/inspect', {csv: text}).then(function (j) {
       if (!j.ok) { resetForm(); $('data-msg').innerHTML = notice(j.error, 'error'); return; }
       info = j.info;
       var nm = info.columns.filter(function (c) { return c.missing; }).length;
-      $('data-msg').innerHTML = notice(info.rows + ' baris dan ' + info.columns.length + ' kolom terbaca.' + (nm ? ' Ada ' + nm + ' kolom dengan sel kosong; baris tidak lengkap dilewati saat analisis.' : ''), 'success');
+      $('data-msg').innerHTML = notice(info.rows + L(' baris dan ', ' rows and ') + info.columns.length + L(' kolom terbaca.', ' columns read.') + (nm ? L(' Ada ', ' ') + nm + L(' kolom dengan sel kosong; baris tidak lengkap dilewati saat analisis.', ' column(s) have empty cells; incomplete rows are skipped during analysis.') : ''), 'success');
       var p = info.preview;
-      $('preview').innerHTML = '<details class="more"><summary>👁️ Pratinjau data</summary><div class="sc-wrap"><table class="sc-table"><thead><tr>' +
+      $('preview').innerHTML = '<details class="more"><summary>👁️ ' + L('Pratinjau data', 'Data preview') + '</summary><div class="sc-wrap"><table class="sc-table"><thead><tr>' +
         p.header.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
         p.rows.map(function (r) { return '<tr>' + r.map(function (v) { return '<td>' + esc(v) + '</td>'; }).join('') + '</tr>'; }).join('') +
-        '</tbody></table></div><p class="cap">Menampilkan 8 baris pertama.</p></details>';
+        '</tbody></table></div><p class="cap">' + L('Menampilkan 8 baris pertama.', 'Showing the first 8 rows.') + '</p></details>';
       buildForm(); $('form-panel').hidden = false; $('result').innerHTML = ''; $('xlsx').hidden = true;
     });
   }
@@ -69,14 +70,14 @@
         var cand = pool(t).filter(function (c) { return f.reuse || used.indexOf(c) < 0; });
         var def = f.want && cand.indexOf(f.want) >= 0 ? f.want : (isOpt(t) ? '' : cand.length ? cand[(f.pos < 0 ? cand.length + f.pos : f.pos)] || cand[0] : '');
         if (isOpt(t) && f.want && cand.indexOf(f.want) >= 0) def = f.want;
-        html += '<select id="' + id + '">' + (isOpt(t) ? '<option value="">(tidak ada)</option>' : '') + cand.map(function (c) { return opt(c, c === def); }).join('') + '</select>';
+        html += '<select id="' + id + '">' + (isOpt(t) ? '<option value="">' + L('(tidak ada)', '(none)') + '</option>' : '') + cand.map(function (c) { return opt(c, c === def); }).join('') + '</select>';
         if (def && !f.reuse) used.push(def);
       } else if (COLT.indexOf(t) >= 0) {
         var cm = pool(t).filter(function (c) { return used.indexOf(c) < 0; });
         var sel = (f.want || []).filter(function (c) { return cm.indexOf(c) >= 0; });
         if (!sel.length && f.auto) sel = f.auto === true ? cm.slice(0, 4) : cm.slice(0, Number(f.auto));
         html += '<select id="' + id + '" multiple>' + cm.map(function (c) { return opt(c, sel.indexOf(c) >= 0); }).join('') + '</select>' +
-          '<div class="h">Tahan Ctrl (atau ⌘) untuk memilih lebih dari satu.</div>';
+          '<div class="h">' + L('Tahan Ctrl (atau ⌘) untuk memilih lebih dari satu.', 'Hold Ctrl (or ⌘) to select more than one.') + '</div>';
         used = used.concat(sel);
       } else if (t === 'int' || t === 'float') {
         html += '<input id="' + id + '" type="number" min="' + f.min + '" max="' + f.max + '" step="' + (f.step || 1) + '" value="' + f.default + '">';
@@ -106,7 +107,7 @@
       var cand = pool(t).filter(function (c) { return f.reuse || used.indexOf(c) < 0; });
       var keep = cur.filter(function (c) { return cand.indexOf(c) >= 0; });
       if (!multi && !keep.length && !isOpt(t)) keep = [cand[0]];
-      el.innerHTML = (isOpt(t) ? '<option value="">(tidak ada)</option>' : '') + cand.map(function (c) { return opt(c, keep.indexOf(c) >= 0); }).join('');
+      el.innerHTML = (isOpt(t) ? '<option value="">' + L('(tidak ada)', '(none)') + '</option>' : '') + cand.map(function (c) { return opt(c, keep.indexOf(c) >= 0); }).join('');
       if (!multi && keep.length) el.value = keep[0];
       if (!f.reuse) used = used.concat(keep.filter(Boolean));
     });
@@ -147,7 +148,7 @@
     last.opts = opts;
     busy = true; $('run').disabled = true;
     if (rerun) $('result').style.opacity = '.55';
-    else $('result').innerHTML = '<div class="notice info"><span><span class="spin"></span></span><div>Menghitung… analisis berat dapat memakan beberapa detik.</div></div>';
+    else $('result').innerHTML = '<div class="notice info"><span><span class="spin"></span></span><div>' + L('Menghitung… analisis berat dapat memakan beberapa detik.', 'Calculating… heavy analyses can take a few seconds.') + '</div></div>';
     post('/api/' + slug + '/run', last).then(function (j) {
       busy = false; $('run').disabled = false; $('result').style.opacity = '';
       if (!j.ok) { $('result').innerHTML = notice(j.error, 'error'); $('xlsx').hidden = true; return; }
@@ -157,17 +158,17 @@
       else { var first = $('result').querySelector('.tab-panel.on'); if (first) drawPlots(first); }
       initPredictors($('result'));
       if (window.fxWatch) fxWatch($('result'));
-      if (window.toast && !rerun) toast('✅ Analisis selesai');
+      if (window.toast && !rerun) toast(L('✅ Analisis selesai', '✅ Analysis complete'));
       if (!rerun) $('result').scrollIntoView({behavior: 'smooth', block: 'start'});
-    }).catch(function () { busy = false; $('run').disabled = false; $('result').style.opacity = ''; $('result').innerHTML = notice('Koneksi ke server gagal. Coba lagi.', 'error'); });
+    }).catch(function () { busy = false; $('run').disabled = false; $('result').style.opacity = ''; $('result').innerHTML = notice(L('Koneksi ke server gagal. Coba lagi.', 'Connection to the server failed. Please try again.'), 'error'); });
   }
   function download() {
-    if (!last) { alert('Jalankan analisis terlebih dahulu.'); return; }
+    if (!last) { alert(L('Jalankan analisis terlebih dahulu.', 'Run the analysis first.')); return; }
     last.opts = resultOpts();
-    fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(last)})
+    fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(Object.assign({lang: window.LANG || 'id'}, last))})
       .then(function (r) { if (!r.ok) throw new Error(); return r.blob(); })
-      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast('⬇️ Berkas Excel diunduh'); })
-      .catch(function () { alert('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.'); });
+      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast(L('⬇️ Berkas Excel diunduh', '⬇️ Excel file downloaded')); })
+      .catch(function () { alert(L('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.', 'Could not create the Excel file. Run the analysis first.')); });
   }
   /* uji lanjut / kontrol Dunnett / SD-SE: hitung ulang dengan opsi baru, tab aktif dipertahankan */
   $('result').addEventListener('change', function (e) {
@@ -182,22 +183,22 @@
       if (box.getAttribute('data-ready')) return;
       var c = JSON.parse(box.getAttribute('data-cfg')); box.setAttribute('data-ready', '1');
       var h = '<div class="pgrid">' + c.xs.map(function (x, i) {
-        return '<div class="fld"><label class="l">' + esc(x) + '</label><input type="number" step="any" data-i="' + i + '" value="' + c.mean[i] + '"><div class="h">rentang data: ' + fmt(c.min[i]) + ' – ' + fmt(c.max[i]) + '</div></div>';
+        return '<div class="fld"><label class="l">' + esc(x) + '</label><input type="number" step="any" data-i="' + i + '" value="' + c.mean[i] + '"><div class="h">' + L('rentang data: ', 'data range: ') + fmt(c.min[i]) + ' – ' + fmt(c.max[i]) + '</div></div>';
       }).join('') + '</div><div class="pout"></div>';
       box.innerHTML = h;
       function calc() {
         var vals = Array.prototype.map.call(box.querySelectorAll('input'), function (i) { return parseFloat(i.value); });
         var out = box.querySelector('.pout');
-        if (vals.some(function (v) { return !Number.isFinite(v); })) { out.innerHTML = '<p class="cap">Isi semua nilai X.</p>'; return; }
+        if (vals.some(function (v) { return !Number.isFinite(v); })) { out.innerHTML = '<p class="cap">' + L('Isi semua nilai X.', 'Fill in all X values.') + '</p>'; return; }
         var x = (c.intercept ? [1] : []).concat(vals), n = x.length, pred = 0, v = 0, i, j;
         for (i = 0; i < n; i++) { pred += x[i] * c.beta[i]; for (j = 0; j < n; j++) v += x[i] * c.cov[i][j] * x[j]; }
         var sm = Math.sqrt(Math.max(v, 0)), sp = Math.sqrt(Math.max(v + c.s2, 0)), cl = Math.round((1 - c.alpha) * 100);
         var extra = vals.some(function (q, k) { return q < c.min[k] || q > c.max[k]; });
-        out.innerHTML = '<div class="pbig">Ŷ = ' + fmt(pred) + '</div><p class="cap">Prediksi untuk ' + esc(c.y) + '</p>' +
-          '<div class="sc-wrap"><table class="sc-table"><thead><tr><th>Selang</th><th>Bawah</th><th>Atas</th></tr></thead><tbody>' +
-          '<tr><td>CI ' + cl + '% (rata-rata Y)</td><td>' + fmt(pred - c.tcrit * sm) + '</td><td>' + fmt(pred + c.tcrit * sm) + '</td></tr>' +
-          '<tr><td>PI ' + cl + '% (satu pengamatan baru)</td><td>' + fmt(pred - c.tcrit * sp) + '</td><td>' + fmt(pred + c.tcrit * sp) + '</td></tr></tbody></table></div>' +
-          (extra ? '<div class="notice warning"><span>⚠️</span><div>Nilai X berada di luar rentang data. Ini ekstrapolasi, jadi prediksi kurang dapat dipercaya.</div></div>' : '');
+        out.innerHTML = '<div class="pbig">Ŷ = ' + fmt(pred) + '</div><p class="cap">' + L('Prediksi untuk ', 'Prediction for ') + esc(c.y) + '</p>' +
+          '<div class="sc-wrap"><table class="sc-table"><thead><tr><th>' + L('Selang', 'Interval') + '</th><th>' + L('Bawah', 'Lower') + '</th><th>' + L('Atas', 'Upper') + '</th></tr></thead><tbody>' +
+          '<tr><td>CI ' + cl + '% ' + L('(rata-rata Y)', '(mean of Y)') + '</td><td>' + fmt(pred - c.tcrit * sm) + '</td><td>' + fmt(pred + c.tcrit * sm) + '</td></tr>' +
+          '<tr><td>PI ' + cl + '% ' + L('(satu pengamatan baru)', '(single new observation)') + '</td><td>' + fmt(pred - c.tcrit * sp) + '</td><td>' + fmt(pred + c.tcrit * sp) + '</td></tr></tbody></table></div>' +
+          (extra ? '<div class="notice warning"><span>⚠️</span><div>' + L('Nilai X berada di luar rentang data. Ini ekstrapolasi, jadi prediksi kurang dapat dipercaya.', 'The X values are outside the data range. This is extrapolation, so the prediction is less reliable.') + '</div></div>' : '');
       }
       box.addEventListener('input', calc); calc();
     });
@@ -212,7 +213,7 @@
     $('grid').innerHTML = h;
   }
   function syncGrid() {
-    var head = grid.head.map(function (x, j) { return (x || '').trim() || 'Kolom' + (j + 1); });
+    var head = grid.head.map(function (x, j) { return (x || '').trim() || L('Kolom', 'Column') + (j + 1); });
     var lines = [head.join('\t')].concat(grid.rows.filter(function (r) { return r.some(function (v) { return String(v).trim() !== ''; }); }).map(function (r) { return r.join('\t'); }));
     $('data').value = lines.join('\n');
     clearTimeout(timer); timer = setTimeout(function () { if (grid.rows.length) inspect(); else resetForm(); }, 600);
@@ -223,7 +224,7 @@
     drawGrid(); syncGrid();
   }
   function openManual() {
-    $('data-msg').innerHTML = notice('Ketik atau tempel data di tabel. Formulir kolom muncul otomatis begitu data terbaca.', 'info');
+    $('data-msg').innerHTML = notice(L('Ketik atau tempel data di tabel. Formulir kolom muncul otomatis begitu data terbaca.', 'Type or paste data into the table. The column form appears automatically once the data is read.'), 'info');
     if (!gridInit) {
       gridInit = true;
       fetch('/api/' + slug + '/sample').then(function (r) { return r.json(); }).then(function (j) { setGrid(j.csv || ''); buildManualGen(); });
@@ -244,7 +245,7 @@
       var ri = i < 0 ? di - 1 : i + di;
       if (ri >= 0) while (grid.rows.length <= ri) grid.rows.push(blankRow());
       r.forEach(function (v, dj) {
-        var cj = j + dj; while (grid.head.length <= cj) { grid.head.push('Kolom' + (grid.head.length + 1)); grid.rows.forEach(function (rr) { rr.push(''); }); }
+        var cj = j + dj; while (grid.head.length <= cj) { grid.head.push(L('Kolom', 'Column') + (grid.head.length + 1)); grid.rows.forEach(function (rr) { rr.push(''); }); }
         if (ri < 0) grid.head[cj] = v; else grid.rows[ri][cj] = v;
       });
     });
@@ -252,20 +253,20 @@
   });
   $('g-addrow').addEventListener('click', function () { grid.rows.push(blankRow()); drawGrid(); syncGrid(); });
   $('g-delrow').addEventListener('click', function () { grid.rows.pop(); drawGrid(); syncGrid(); });
-  $('g-addcol').addEventListener('click', function () { grid.head.push('Kolom' + (grid.head.length + 1)); grid.rows.forEach(function (r) { r.push(''); }); drawGrid(); syncGrid(); });
+  $('g-addcol').addEventListener('click', function () { grid.head.push(L('Kolom', 'Column') + (grid.head.length + 1)); grid.rows.forEach(function (r) { r.push(''); }); drawGrid(); syncGrid(); });
   $('g-delcol').addEventListener('click', function () { if (grid.head.length > 1) { grid.head.pop(); grid.rows.forEach(function (r) { r.pop(); }); drawGrid(); syncGrid(); } });
   $('g-clear').addEventListener('click', function () { grid.rows = []; for (var i = 0; i < 6; i++) grid.rows.push(blankRow()); drawGrid(); syncGrid(); });
   /* pembangkit kerangka tabel untuk RAL/RAK */
   function buildManualGen() {
     if (spec.key !== 'ral' && spec.key !== 'rak') return;
     var rak = spec.key === 'rak';
-    $('manual-gen').innerHTML = '<details class="more"><summary>🧱 Buat kerangka tabel otomatis</summary><div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
-      '<div class="fld"><label class="l">Jumlah perlakuan</label><input id="mg-t" type="number" min="2" max="30" value="4"></div>' +
-      '<div class="fld"><label class="l">' + (rak ? 'Jumlah kelompok' : 'Ulangan per perlakuan') + '</label><input id="mg-r" type="number" min="2" max="30" value="4"></div>' +
-      '<div class="fld"><label class="l">Nama kolom perlakuan</label><input id="mg-nt" value="Perlakuan"></div>' +
-      (rak ? '<div class="fld"><label class="l">Nama kolom kelompok</label><input id="mg-nb" value="Kelompok"></div>' : '') +
-      '<div class="fld"><label class="l">Nama kolom respon</label><input id="mg-ny" value="Respon"></div></div>' +
-      '<button type="button" class="btn sec mini" id="mg-go" style="margin-top:10px">Buat tabel</button></details>';
+    $('manual-gen').innerHTML = '<details class="more"><summary>🧱 ' + L('Buat kerangka tabel otomatis', 'Create a table skeleton automatically') + '</summary><div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
+      '<div class="fld"><label class="l">' + L('Jumlah perlakuan', 'Number of treatments') + '</label><input id="mg-t" type="number" min="2" max="30" value="4"></div>' +
+      '<div class="fld"><label class="l">' + (rak ? L('Jumlah kelompok', 'Number of groups') : L('Ulangan per perlakuan', 'Replicates per treatment')) + '</label><input id="mg-r" type="number" min="2" max="30" value="4"></div>' +
+      '<div class="fld"><label class="l">' + L('Nama kolom perlakuan', 'Treatment column name') + '</label><input id="mg-nt" value="' + L('Perlakuan', 'Treatment') + '"></div>' +
+      (rak ? '<div class="fld"><label class="l">' + L('Nama kolom kelompok', 'Group column name') + '</label><input id="mg-nb" value="' + L('Kelompok', 'Group') + '"></div>' : '') +
+      '<div class="fld"><label class="l">' + L('Nama kolom respon', 'Response column name') + '</label><input id="mg-ny" value="' + L('Respon', 'Response') + '"></div></div>' +
+      '<button type="button" class="btn sec mini" id="mg-go" style="margin-top:10px">' + L('Buat tabel', 'Create table') + '</button></details>';
     $('mg-go').addEventListener('click', function () {
       var t = Math.min(Math.max(+$('mg-t').value || 4, 2), 30), r = Math.min(Math.max(+$('mg-r').value || 4, 2), 30), rows = [], i, k;
       grid.head = [$('mg-nt').value || 'Perlakuan'].concat(rak ? [$('mg-nb').value || 'Kelompok'] : []).concat([$('mg-ny').value || 'Respon']);
@@ -285,7 +286,7 @@
     }).join('');
     $('gen-run').addEventListener('click', function () {
       var b = {}; spec.gen.fields.forEach(function (f) { var v = $('g_' + f.name).value; b[f.name] = (f.type === 'int' || f.type === 'float') ? parseFloat(v) : v; });
-      $('gen-out').innerHTML = '<span class="spin"></span>Membangkitkan…';
+      $('gen-out').innerHTML = '<span class="spin"></span>' + L('Membangkitkan…', 'Generating…');
       post('/api/' + slug + '/gen', b).then(function (j) { $('gen-out').innerHTML = j.ok ? j.html : notice(j.error, 'error'); });
     });
   }
@@ -327,7 +328,7 @@
         Plotly.newPlot(el, d.data, theme(d.layout), {responsive: true, displaylogo: false});
         el.setAttribute('data-done', '1');
       });
-    }).catch(function () { boxes.forEach(function (b) { b.querySelector('.plot').innerHTML = '<p class="cap">Grafik tidak dapat dimuat (pustaka grafik tidak terjangkau). Periksa koneksi internet Anda.</p>'; }); });
+    }).catch(function () { boxes.forEach(function (b) { b.querySelector('.plot').innerHTML = '<p class="cap">' + L('Grafik tidak dapat dimuat (pustaka grafik tidak terjangkau). Periksa koneksi internet Anda.', 'The chart could not be loaded (the charting library is unreachable). Check your internet connection.') + '</p>'; }); });
   };
 
   /* ---------- pasang kejadian ---------- */
@@ -335,13 +336,13 @@
   $('data').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(inspect, 600); });
   $('file').addEventListener('change', function () {
     var f = this.files[0]; if (!f) return;
-    if (f.size > 4 * 1024 * 1024) { $('data-msg').innerHTML = notice('Berkas terlalu besar (maksimal 4 MB).', 'error'); return; }
+    if (f.size > 4 * 1024 * 1024) { $('data-msg').innerHTML = notice(L('Berkas terlalu besar (maksimal 4 MB).', 'File too large (maximum 4 MB).'), 'error'); return; }
     var fd = new FormData(); fd.append('file', f);
-    $('data-msg').innerHTML = '<span class="spin"></span>Membaca berkas…';
+    $('data-msg').innerHTML = '<span class="spin"></span>' + L('Membaca berkas…', 'Reading file…');
     fetch('/api/parse', {method: 'POST', body: fd}).then(function (r) { return r.json(); }).then(function (j) {
       if (!j.ok) { $('data-msg').innerHTML = notice(j.error, 'error'); return; }
       $('data').value = j.csv; inspect();
-    }).catch(function () { $('data-msg').innerHTML = notice('Berkas gagal dikirim. Coba lagi.', 'error'); });
+    }).catch(function () { $('data-msg').innerHTML = notice(L('Berkas gagal dikirim. Coba lagi.', 'The file failed to upload. Please try again.'), 'error'); });
   });
   $('run').addEventListener('click', function () { run(false); });
   $('xlsx').addEventListener('click', download);

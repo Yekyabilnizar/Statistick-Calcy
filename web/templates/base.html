@@ -42,7 +42,7 @@
   </nav>
 </header>
 <main>
-{% if lang=='en' and not ready_en and not no_note %}<div class="en-note" role="note">🌐 <b>English translation in progress.</b> Parts of this page (such as lesson text or calculation results) are still in Indonesian; the interface is already in English. <a href="{{ alt_id }}">Open the original Indonesian page</a>.</div>{% endif %}
+{% if lang=='en' and not ready_en and not no_note %}<div class="en-note" role="note">🌐 <b>English translation in progress.</b> Parts of this page (such as the lesson text) are still in Indonesian; the interface is already in English. <a href="{{ alt_id }}">Open the original Indonesian page</a>.</div>{% endif %}
 {% block content %}{% endblock %}
 </main>
 {% if lang=='en' %}<div class="legal"><span>⚖️</span><div>Results are a study aid, not a substitute for statistical consultation. Verify important results (e.g. for publication) with other software or a statistician.</div></div>

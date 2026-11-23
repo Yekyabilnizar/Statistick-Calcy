@@ -149,9 +149,12 @@ async def read_json(request):
     if len(body) > MAX_BODY:
         raise core.InputError("Data terlalu besar (maksimal sekitar 4 MB).")
     try:
-        return json.loads(body or b"{}")
+        data = json.loads(body or b"{}")
     except Exception:
         raise core.InputError("Permintaan tidak valid.")
+    if isinstance(data, dict) and data.get("lang") == "en":
+        REQ_LANG.set("en")
+    return data
 
 
 # ------------------------------------------------------------------ halaman
@@ -404,7 +407,13 @@ async def healthz(request):
 
 
 # ------------------------------------------------------------------ API
+import contextvars  # noqa: E402
+REQ_LANG = contextvars.ContextVar("req_lang", default="id")
+
+
 def err(msg, status=422):
+    if REQ_LANG.get() == "en":
+        msg = i18n.tr_err(msg)
     return JSONResponse({"ok": False, "error": msg}, status_code=status)
 
 
@@ -532,7 +541,10 @@ async def _compute(request, slug):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             kind, R = m["run"](df, params, alpha)
-            return render.render(kind, R, alpha, params, opts)
+            out = render.render(kind, R, alpha, params, opts)
+            if body.get("lang") == "en":
+                out = (i18n.tr_html(out[0]), i18n.tr_sheets(out[1]) if isinstance(out[1], dict) else out[1])
+            return out
 
     async with SEM:
         return await asyncio.wait_for(run_in_threadpool(job), timeout=120)

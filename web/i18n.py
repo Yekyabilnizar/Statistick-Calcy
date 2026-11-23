@@ -10,7 +10,8 @@ import re
 
 # halaman statis yang isinya sudah sepenuhnya Inggris (tanpa data dari registry/modul)
 READY_PATHS = {"/", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"}
-EN_METHODS = set()     # slug metode yang sudah punya terjemahan lengkap
+from .i18n_data import METHODS_EN as _ME  # noqa: E402
+EN_METHODS = set(_ME)  # slug metode yang sudah punya terjemahan lengkap
 EN_MODULES = set()     # slug modul belajar yang sudah punya terjemahan lengkap
 
 NAV = {
@@ -177,3 +178,136 @@ def loc_groups(groups, en=True):
     if not en:
         return groups
     return {tr(g): [loc_method(m) for m in items] for g, items in groups.items()}
+
+
+# ---- penerjemah hasil perhitungan (HTML) untuk mode Inggris ----
+_NUM = r"(-?\d+(?:[.,]\d+)?(?:e[+-]?\d+)?)"
+_RES = None
+
+
+def _load_res():
+    global _RES
+    if _RES is not None:
+        return _RES
+    from .i18n_data import res1, res2, res3, res4, res5
+    exact, frag = {}, []
+    for m in (res1, res2, res3, res4, res5):
+        exact.update(getattr(m, "EXACT", {}))
+        frag += getattr(m, "FRAG", [])
+    comp = []
+    for ind, eng in sorted(frag, key=lambda p: -len(p[0])):
+        pat = re.escape(ind).replace(r"\#", _NUM).replace(r"\{\}", r"(.+?)")
+        if re.match(r"\w", ind):
+            pat = r"(?<![\w])" + pat
+        if re.search(r"\w$", ind):
+            pat += r"(?![\w])"
+        parts = re.split(r"(#|\{\})", eng)
+        n = 0
+        out = []
+        for p in parts:
+            if p in ("#", "{}"):
+                n += 1
+                out.append(("g", n))
+            elif p:
+                out.append(("t", p))
+        comp.append((re.compile(pat), out))
+    _RES = (exact, comp)
+    return _RES
+
+
+def _norm(t):
+    return re.sub(r"-?\d+(?:[.,]\d+)?(?:e[+-]?\d+)?", "#", t)
+
+
+def tr_text(t):
+    """Terjemahkan satu potongan teks hasil (Indonesia -> Inggris)."""
+    exact, comp = _load_res()
+    s = t.strip()
+    if not s or not re.search(r"[A-Za-z]{2,}", s):
+        return t
+    lead, trail = t[:len(t) - len(t.lstrip())], t[len(t.rstrip()):]
+    if s in exact:
+        return lead + exact[s] + trail
+    out = s
+    for rx, parts in comp:
+        def sub(m, parts=parts):
+            return "".join(p if k == "t" else m.group(p) for k, p in parts)
+        out = rx.sub(sub, out)
+    out = re.sub(r"(?<=\d),(?=\d)", ".", out) if out != s else out
+    return lead + out + trail
+
+
+def tr_html(html):
+    """Terjemahkan simpul teks HTML hasil; tag, angka, dan nama data tidak diubah. Juga string di JSON grafik."""
+    import html as _h
+    import json as _j
+
+    def node(m):
+        raw = m.group(1)
+        t = _h.unescape(raw)
+        o = tr_text(t)
+        return ">" + (raw if o == t else _h.escape(o, quote=False)) + "<"
+
+    def plot(m):
+        try:
+            d = _j.loads(_h.unescape(m.group(2)) if "&quot;" in m.group(2) else m.group(2))
+        except Exception:  # noqa: BLE001
+            return m.group(0)
+
+        def walk(x, key=""):
+            if isinstance(x, str):
+                return tr_text(x) if key in ("text", "title", "name", "label", "ticktext", "hovertemplate") or True else x
+            if isinstance(x, list):
+                return [walk(i, key) for i in x]
+            if isinstance(x, dict):
+                return {k: (v if k in ("x", "y", "z", "lat", "lon") and not isinstance(v, str) else walk(v, k)) for k, v in x.items()}
+            return x
+        return m.group(1) + _j.dumps(walk(d), ensure_ascii=False).replace("<", "\\u003c") + m.group(3)
+
+    html = re.sub(r"(<script[^>]*type=\"application/json\"[^>]*>)(.*?)(</script>)", plot, html, flags=re.S)
+    return re.sub(r">([^<>]+)<", node, html)
+
+
+_ERR = None
+
+
+def tr_err(msg):
+    global _ERR
+    if _ERR is None:
+        from .i18n_data.errors import FRAG
+        comp = []
+        for ind, eng in sorted(FRAG, key=lambda p: -len(p[0])):
+            pat = re.escape(ind).replace(r"\#", _NUM).replace(r"\{\}", r"(.+?)")
+            parts, n, out = re.split(r"(#|\{\})", eng), 0, []
+            for p in parts:
+                if p in ("#", "{}"):
+                    n += 1
+                    out.append(("g", n))
+                elif p:
+                    out.append(("t", p))
+            comp.append((re.compile(pat), out))
+        _ERR = comp
+    out = msg
+    for rx, parts in _ERR:
+        out = rx.sub(lambda m, parts=parts: "".join(p if k == "t" else m.group(p) for k, p in parts), out)
+    from .i18n_data.fields import FIELDS_EN
+    return re.sub(r"“([^”]+)”", lambda m: "“" + FIELDS_EN.get(m.group(1), m.group(1)) + "”", out)
+
+
+def tr_sheets(sheets):
+    """Terjemahkan nama lembar, judul kolom, dan sel teks umum pada ekspor Excel."""
+    import pandas as pd
+    out = {}
+    for name, df in sheets.items():
+        try:
+            d = df.copy()
+            d.columns = [tr_text(str(c)) for c in d.columns]
+            for c in d.columns:
+                if d[c].dtype == object:
+                    d[c] = d[c].map(lambda v: tr_text(v) if isinstance(v, str) else v)
+            if not isinstance(d.index, pd.RangeIndex) and d.index.dtype == object:
+                d.index = [tr_text(str(i)) for i in d.index]
+            out[tr_text(str(name))[:31]] = d
+        except Exception:  # noqa: BLE001
+            out[name] = df
+    return out
