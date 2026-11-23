@@ -214,7 +214,7 @@ async def guide(request):
                 groups={f: i18n.loc_groups(registry.groups(f), lang_of(request) == "en") for f in (registry.FAM_DES, registry.FAM_REG)})
 
 
-def _learn_stages():
+def _learn_stages(en=False):
     """Kelompokkan modul menurut tahap, lalu menurut kelompok metode (bila ada)."""
     out = []
     for slug in belajar.ORDER:
@@ -226,7 +226,7 @@ def _learn_stages():
         gs = out[-1]["groups"]
         if not gs or gs[-1]["name"] != grp:
             gs.append({"name": grp, "mods": []})
-        gs[-1]["mods"].append(mod)
+        gs[-1]["mods"].append(i18n.loc_module_brief(mod, en))
     return out
 
 
@@ -235,25 +235,27 @@ async def learn_index(request):
                 description="Jalur belajar statistika berbahasa Indonesia dari dasar sampai rancangan percobaan dan regresi, dengan latihan langsung di kalkulator.",
                 path="/belajar", hero_title="Belajar Statistika",
                 hero_lead="Pelajari konsepnya dulu, lalu praktikkan langsung di kalkulator. Ikuti jalur berurutan dari dasar sampai metode lanjutan.",
-                hero_tags=["Materi ringkas", "Jalur berurutan", "Latihan di kalkulator"], stages=_learn_stages(), total=len(belajar.ORDER),
+                hero_tags=["Materi ringkas", "Jalur berurutan", "Latihan di kalkulator"], stages=_learn_stages(lang_of(request) == "en"), total=len(belajar.ORDER),
                 order=json.dumps(belajar.ORDER))
 
 
 async def learn_module(request):
-    mod = belajar.MODULES.get(request.path_params["slug"])
-    if not mod:
+    mod0 = belajar.MODULES.get(request.path_params["slug"])
+    if not mod0:
         return await not_found(request, None)
+    en = lang_of(request) == "en"
+    mod, ext = i18n.loc_module(mod0, belajar.TEORI.get(mod0["slug"]), en)
     i = belajar.ORDER.index(mod["slug"])
-    prev = belajar.MODULES[belajar.ORDER[i - 1]] if i > 0 else None
-    nxt = belajar.MODULES[belajar.ORDER[i + 1]] if i + 1 < len(belajar.ORDER) else None
-    own = registry.BY_SLUG.get(mod["slug"])
-    prac = registry.BY_SLUG.get(mod["method"]) if mod["method"] else None
+    prev = i18n.loc_module_brief(belajar.MODULES[belajar.ORDER[i - 1]], en) if i > 0 else None
+    nxt = i18n.loc_module_brief(belajar.MODULES[belajar.ORDER[i + 1]], en) if i + 1 < len(belajar.ORDER) else None
+    own = i18n.loc_method(registry.BY_SLUG.get(mod["slug"]), en) if registry.BY_SLUG.get(mod["slug"]) else None
+    prac = i18n.loc_method(registry.BY_SLUG.get(mod["method"]), en) if mod["method"] else None
     ld = json.dumps({"@context": "https://schema.org", "@type": "LearningResource", "name": mod["title"], "inLanguage": lang_of(request), "description": mod["ringkas"],
-                     "learningResourceType": "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
+                     "learningResourceType": "Learning material" if en else "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
     return page(request, "modul.html", key="module", meta_vars={"t": mod["title"], "d": mod["ringkas"]}, ready=mod["slug"] in i18n.EN_MODULES, title=f"Materi: {mod['title']} – Belajar Statistika | GetComput", description=mod["ringkas"],
                 path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
                 mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
-                pras=[belajar.MODULES[p] for p in mod["pra"]], ext=belajar.TEORI.get(mod["slug"]), jsonld=ld)
+                pras=[i18n.loc_module_brief(belajar.MODULES[p], en) for p in mod["pra"]], ext=ext, jsonld=ld)
 
 
 async def flow_page(request):

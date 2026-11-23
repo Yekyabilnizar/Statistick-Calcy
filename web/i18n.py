@@ -12,7 +12,7 @@ import re
 READY_PATHS = {"/", "/rancangan-percobaan", "/regresi", "/panduan", "/alur-metode", "/masukan", "/tentang", "/privasi"}
 from .i18n_data import METHODS_EN as _ME  # noqa: E402
 EN_METHODS = set(_ME)  # slug metode yang sudah punya terjemahan lengkap
-EN_MODULES = set()     # slug modul belajar yang sudah punya terjemahan lengkap
+EN_MODULES = set()     # diisi otomatis dari i18n_data.mods (lihat bawah berkas)
 
 NAV = {
     "id": [("/", "🏠 Beranda"), ("/belajar", "🎓 Belajar"), ("/rancangan-percobaan", "🧪 Alat Rancangan"), ("/regresi", "📈 Alat Regresi"),
@@ -311,3 +311,103 @@ def tr_sheets(sheets):
         except Exception:  # noqa: BLE001
             out[name] = df
     return out
+
+
+# ---- modul belajar ----
+_MATH = re.compile(r"\\\(.*?\\\)", re.S)
+
+
+def _mn(x):
+    return [m.replace("{,}", ".").replace("BNT", "LSD").replace("BNJ", "HSD") for m in _MATH.findall(x)]
+
+
+def mod_en():
+    from .i18n_data.mods import MOD_EN
+    return MOD_EN
+
+
+_ABBR = {"JKT": "SSTO", "JKP": "SSTR", "JKG": "SSE", "KTP": "MSTR", "KTG": "MSE", "JK": "SS", "KT": "MS", "KK": "CV", "BNT": "LSD", "BNJ": "HSD", "JKR": "SSR", "JKS": "SSL", "JKK": "SSB"}
+_ABBR_RE = re.compile(r"(?<![A-Za-z\\])(" + "|".join(sorted(_ABBR, key=len, reverse=True)) + r")(?![A-Za-z])")
+
+
+def tr_eq(e):
+    """Persamaan LaTeX untuk mode Inggris: koma desimal {,} -> titik dan kata Indonesia di \\text{} diterjemahkan."""
+    from .i18n_data.eqtext import EQTEXT
+    e = e.replace("{,}", ".")
+    e = _ABBR_RE.sub(lambda m: _ABBR[m.group(1)], e)
+    return re.sub(r"(\\(?:text|mathrm|mathit|operatorname)\{)([^}]*)(\})", lambda m: m.group(1) + EQTEXT.get(m.group(2), m.group(2)) + m.group(3), e)
+
+
+def loc_module(mod, ext, en=True):
+    """Kembalikan (mod, ext) berbahasa Inggris bila terjemahannya ada; persamaan LaTeX diambil dari aslinya."""
+    t = mod_en().get(mod["slug"]) if en else None
+    if not t:
+        return mod, ext
+    m = dict(mod)
+    m["tahap"] = tr(mod["tahap"])
+    for k in ("title", "ringkas", "tujuan", "ide", "langkah", "baca", "jebakan", "latihan"):
+        m[k] = t[k]
+    m["rumus"] = [tuple(r) for r in t["rumus"]]
+    e = ext
+    if ext and "teori" in t:
+        e = dict(ext)
+        e["notasi"] = [(tr_eq(sym), a) for (sym, _), a in zip(ext["notasi"], t["notasi"])]
+        e["teori"] = [(h, list(p), [tr_eq(x) for x in eq]) for (_, _, eq), (h, p) in zip(ext["teori"], t["teori"])]
+        c, tc = ext["contoh"], t["contoh"]
+        e["contoh"] = dict(judul=tc["judul"], soal=tc["soal"], data=tc.get("data"),
+                           langkah=[(txt, tr_eq(eq) if eq else eq) for (_, eq), txt in zip(c["langkah"], tc["langkah"])], simpul=tc["simpul"])
+        e["faq"] = [tuple(f) for f in t["faq"]]
+    return m, e
+
+
+def loc_module_brief(mod, en=True):
+    t = mod_en().get(mod["slug"]) if en else None
+    if not t:
+        return mod
+    m = dict(mod)
+    m["title"], m["ringkas"] = t["title"], t["ringkas"]
+    return m
+
+
+def check_module(slug):
+    """Periksa terjemahan: panjang daftar sama dan segmen \\( ... \\) identik. Kembalikan daftar masalah."""
+    from . import belajar
+    mod, ext = belajar.MODULES[slug], belajar.TEORI.get(slug)
+    t = mod_en().get(slug)
+    bad = []
+    if not t:
+        return ["tidak ada"]
+
+    def same(a, b, where):
+        if len(a) != len(b):
+            bad.append(f"{where}: panjang {len(a)} != {len(b)}")
+            return
+        for i, (x, y) in enumerate(zip(a, b)):
+            if isinstance(x, (list, tuple)):
+                same(x, y, f"{where}[{i}]")
+            elif isinstance(x, str) and _mn(x) != _mn(y):
+                bad.append(f"{where}[{i}]: math berbeda")
+    for k in ("tujuan", "ide", "langkah", "baca", "jebakan"):
+        same(mod[k], t[k], k)
+    same([list(r) for r in mod["rumus"]], [list(r) for r in t["rumus"]], "rumus")
+    if ext:
+        same([a for _, a in ext["notasi"]], t.get("notasi", []), "notasi")
+        same([[h, p] for h, p, _ in ext["teori"]], [list(x) for x in t.get("teori", [])], "teori")
+        c = ext["contoh"]
+        if "contoh" not in t:
+            bad.append("contoh hilang")
+        else:
+            tc = t["contoh"]
+            same([x[0] for x in c["langkah"]], tc["langkah"], "contoh.langkah")
+            if c.get("data"):
+                same(c["data"], tc.get("data") or [], "contoh.data")
+            same([c["soal"], c["simpul"]], [tc["soal"], tc["simpul"]], "contoh.teks")
+        same([list(f) for f in ext["faq"]], [list(f) for f in t.get("faq", [])], "faq")
+    return bad
+
+
+def _fill_en_modules():
+    EN_MODULES.update(mod_en().keys())
+
+
+_fill_en_modules()
