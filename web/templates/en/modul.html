@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="/">Home</a> › <a href="/belajar">Learn</a> › {{ mod.tahap }} › {{ mod.title }}</p>
+<div class="mod-meta"><span>Module {{ idx }} of {{ total }}</span><span id="mod-state" class="mod-state"></span></div>
+
+{% if pras %}<div class="notice info"><span>📌</span><div>Recommended to study first: {% for p in pras %}<a href="/belajar/{{ p.slug }}">{{ p.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</div></div>{% endif %}
+
+<div class="lc-wrap" id="lc-wrap" data-slug="{{ mod.slug }}">
+  <div class="lc-steps" id="lc-steps"><i></i></div>
+  <nav class="lc-nav" id="lc-nav" aria-label="Lesson sections"></nav>
+
+  <article class="lc" data-label="💡 Concept">
+    <h2>🎯 Learning goals</h2>
+    <ul class="goals">{% for t in mod.tujuan %}<li>{{ t }}</li>{% endfor %}</ul>
+    <h2>💡 Main idea</h2>
+    {% for p in mod.ide %}<p>{{ p }}</p>{% endfor %}
+    {% if own %}<h2>📍 When to use it</h2><p>{{ own.when }}</p>{% endif %}
+  </article>
+
+  {% if ext %}
+  <article class="lc math" data-label="📐 Theory">
+    {% if ext.notasi %}<h2>🔣 Notation</h2>
+    <div class="notasi">{% for sym, arti in ext.notasi %}<div><span class="ns">\({{ sym }}\)</span><span>{{ arti }}</span></div>{% endfor %}</div>{% endif %}
+    {% for h, ps, eqs in ext.teori %}
+    <h2>{{ h }}</h2>
+    {% for p in ps %}<p>{{ p }}</p>{% endfor %}
+    {% for e in eqs %}<div class="eq">$${{ e }}$$</div>{% endfor %}
+    {% endfor %}
+  </article>
+  {% endif %}
+
+  <article class="lc math" data-label="🧮 Formulas">
+    <h2>🧮 Key formulas and terms</h2>
+    <div class="fchips">{% for k, v in mod.rumus %}<div class="fchip"><b>{{ k }}</b><code>{{ v }}</code></div>{% endfor %}</div>
+    {% if own %}<h2>📋 Assumptions to satisfy</h2><p>{{ own.assume }}</p>{% endif %}
+  </article>
+
+  {% if ext and ext.contoh %}
+  <article class="lc math" data-label="🧪 Worked example">
+    <h2>🧪 {{ ext.contoh.judul }}</h2>
+    <p>{{ ext.contoh.soal }}</p>
+    {% if ext.contoh.data %}<div class="sc-wrap" style="max-height:none"><table class="sc-table"><thead><tr>{% for h in ext.contoh.data[0] %}<th>{{ h }}</th>{% endfor %}</tr></thead><tbody>
+    {% for r in ext.contoh.data[1:] %}<tr>{% for v in r %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}
+    <ol class="steps worked">{% for txt, eq in ext.contoh.langkah %}<li><span>{{ txt }}</span>{% if eq %}<div class="eq">$${{ eq }}$$</div>{% endif %}</li>{% endfor %}</ol>
+    <div class="simpul"><b>Conclusion:</b> {{ ext.contoh.simpul }}</div>
+  </article>
+  {% endif %}
+
+  <article class="lc" data-label="🪜 Steps">
+    <h2>🪜 Analysis steps</h2>
+    <ol class="steps">{% for s in mod.langkah %}<li>{{ s }}</li>{% endfor %}</ol>
+  </article>
+
+  <article class="lc" data-label="🔍 Reading results">
+    <h2>🔍 How to read the results</h2>
+    <ul class="tips">{% for s in mod.baca %}<li>{{ s }}</li>{% endfor %}</ul>
+    <h2>⚠️ Common mistakes</h2>
+    <ul class="traps">{% for s in mod.jebakan %}<li>{{ s }}</li>{% endfor %}</ul>
+    {% if ext and ext.faq %}<h2>❓ Q&A</h2>
+    <div class="faq">{% for q, a in ext.faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
+  </article>
+
+  <article class="lc" data-label="🎯 Practice">
+    <section class="practice">
+      <h2>🎯 Practice in the calculator</h2>
+      <p>{{ mod.latihan }}</p>
+      {% if prac %}<div class="cta"><a class="btn pri" href="/metode/{{ prac.slug }}">Open the calculator: {{ prac.title }} →</a>{% if own %}<a class="btn sec" href="/alur-metode?m={{ own.slug }}">View the method flow</a>{% endif %}</div>{% endif %}
+    </section>
+  </article>
+</div>
+
+<div class="done-bar">
+  <button type="button" class="btn sec" id="mod-done" data-slug="{{ mod.slug }}">✓ Mark as done</button>
+</div>
+
+<nav class="mod-nav" aria-label="Module navigation">
+  {% if prev %}<a href="/belajar/{{ prev.slug }}" class="prev"><small>← Previous</small><b>{{ prev.title }}</b></a>{% else %}<span></span>{% endif %}
+  {% if nxt %}<a href="/belajar/{{ nxt.slug }}" class="next"><small>Next →</small><b>{{ nxt.title }}</b></a>{% else %}<span></span>{% endif %}
+</nav>
+<p class="cap" style="text-align:center">This material is a study summary and does not replace a textbook. Consult primary sources for publication.</p>
+{% endblock %}
+{% block scripts %}<script src="/static/belajar.js?v={{ asset_v }}" defer></script>{% endblock %}

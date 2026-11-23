@@ -1,0 +1,8 @@
+EQTEXT = {"(semuanya":"(all of them","(tanpa ":"(without ","A pada B":"A at B","Efek sederhana A":"Simple effect of A","HR konstan terhadap ":"HR constant with respect to ",
+"Interaksi":"Interaction","RAK baris":"RCBD rows","RAK: ":"RCBD: ","RAL: ":"CRD: ","alami":"natural","benar":"true","berkelok-kelok kuat":"strongly wiggly","besar lebih baik":"larger is better",
+"bila ":"if ","contoh ":"sample ","dan":"and","dari ":"of ","di bawah ":"below ","efek":"effect","galat":"error","hampir garis lurus":"nearly a straight line","harus dipenuhi":"must be satisfied",
+"kanonik":"canonical","kategori ":"category ","kecil lebih baik":"smaller is better","keluar bila ":"remove if ","kemiringan: ":"slope: ","konstan":"constant","kubik":"cubic","kumulatif":"cumulative",
+"lainnya":"other","langkah-C: ":"C-step: ","masuk bila ":"enter if ","panjang kata terpendek pada ":"shortest word length at ","pencilan":"outlier","per respon":"per response","proporsi":"proportion",
+"ragam":"variance","residual Schoenfeld tak berkorelasi dengan ":"Schoenfeld residuals uncorrelated with ","residual terkecil dari ":"smallest residuals of ","sederhana":"simple","seimbang":"balanced",
+"sekurang-kurangnya sejauh nilai teramati":"at least as far as the observed value","selisih kedua efek sederhana":"difference between the two simple effects","semua ":"all ","statistik uji":"test statistic",
+"subjek":"subject","tetapi":"but","tidak":"not","waktu":"time"}
