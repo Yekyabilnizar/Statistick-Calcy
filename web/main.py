@@ -40,6 +40,9 @@ CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "").strip()
 GOATCOUNTER = os.environ.get("GOATCOUNTER_CODE", "").strip().lower()
 if not GOATCOUNTER.replace("-", "").isalnum():
     GOATCOUNTER = ""
+GA_ID = os.environ.get("GA_MEASUREMENT_ID", "").strip().upper()  # contoh: G-ABCD123456
+if not re.fullmatch(r"G-[A-Z0-9]{6,14}", GA_ID):
+    GA_ID = ""
 ADSENSE = os.environ.get("ADSENSE_CLIENT", "").strip().lower()  # contoh: ca-pub-1234567890123456
 if not re.fullmatch(r"ca-pub-\d{10,20}", ADSENSE):
     ADSENSE = ""
@@ -101,7 +104,7 @@ def page(request, name, *, title="", description="", path, hero_title="", hero_l
     p_en = "/en" + ("" if path != "/" else "/") + (path if path != "/" else "")
     ctx.update(title=title, description=description, canonical=b + (p_en if en else path), hero_title=hero_title, hero_lead=hero_lead,
                hero_tags=hero_tags, nav_items=i18n.NAV[lang], active=active if active is not None else path, search_index=search_index(lang),
-               asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, jsonld=ctx.get("jsonld"), request=request,
+               asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, ga_id=GA_ID, jsonld=ctx.get("jsonld"), request=request,
                lang=lang, ready_en=ready, noindex=(en and not ready), alt_id=b + path,
                alt_en=b + ("/en/" if path == "/" else "/en" + path), qs=("?" + request.url.query) if request.url.query else "")
     tpl = f"en/{name}" if en and os.path.exists(os.path.join(HERE, "templates", "en", name)) else name
