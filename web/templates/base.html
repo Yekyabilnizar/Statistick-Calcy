@@ -60,15 +60,16 @@
 <script src="/static/fx.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
 <div id="cookie-bar" class="cookie-bar" hidden role="dialog" aria-label="{{ 'Cookie consent' if lang=='en' else 'Persetujuan cookie' }}">
-{% if lang=='en' %}<p>GetComput uses cookies to save your learning progress{% if adsense %} and, if you agree, to show ads (Google AdSense){% endif %}. <a href="/privasi">Learn more</a>.</p>
+{% if lang=='en' %}<p>GetComput uses cookies to save your learning progress{% if adsense or ga_id %} and, if you agree, for analytics{% if ga_id %} (Google Analytics){% endif %}{% if adsense %} and ads (Google AdSense){% endif %}{% endif %}. <a href="/privasi">Learn more</a>.</p>
 <div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Necessary only</button><button type="button" id="ck-yes" class="btn pri">Agree</button></div>
-{% else %}<p>GetComput memakai cookie untuk menyimpan kemajuan belajar Anda{% if adsense %} dan, bila Anda setuju, untuk menayangkan iklan (Google AdSense){% endif %}. <a href="/privasi">Pelajari selengkapnya</a>.</p>
+{% else %}<p>GetComput memakai cookie untuk menyimpan kemajuan belajar Anda{% if adsense or ga_id %} dan, bila Anda setuju, untuk analitik{% if ga_id %} (Google Analytics){% endif %}{% if adsense %} dan iklan (Google AdSense){% endif %}{% endif %}. <a href="/privasi">Pelajari selengkapnya</a>.</p>
 <div class="cookie-act"><button type="button" id="ck-no" class="btn sec">Hanya yang perlu</button><button type="button" id="ck-yes" class="btn pri">Setuju</button></div>{% endif %}
 </div>
 <script>
 (function(){var K="getcomput-cookie",c=null;try{c=localStorage.getItem(K)}catch(e){}
 var bar=document.getElementById("cookie-bar");
-function ads(){ {% if adsense %}if(window.__adsLoaded)return;window.__adsLoaded=1;var s=document.createElement("script");s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense }}";document.head.appendChild(s);{% endif %} }
+function ga(){ {% if ga_id %}if(window.__gaLoaded)return;window.__gaLoaded=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag("js",new Date());gtag("config","{{ ga_id }}",{anonymize_ip:true});var g=document.createElement("script");g.async=true;g.src="https://www.googletagmanager.com/gtag/js?id={{ ga_id }}";document.head.appendChild(g);{% endif %} }
+function ads(){ ga();{% if adsense %}if(window.__adsLoaded)return;window.__adsLoaded=1;var s=document.createElement("script");s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense }}";document.head.appendChild(s);{% endif %} }
 function set(v){try{localStorage.setItem(K,v)}catch(e){}bar.hidden=true;if(v==="yes")ads()}
 if(c==="yes")ads();else if(c!=="no")bar.hidden=false;
 document.getElementById("ck-yes").onclick=function(){set("yes")};
