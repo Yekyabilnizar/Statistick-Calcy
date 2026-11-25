@@ -161,6 +161,27 @@ async def read_json(request):
 
 
 # ------------------------------------------------------------------ halaman
+# Foto halaman depan: Unsplash (lisensi Unsplash, bebas dipakai). (id foto, fotografer, halaman sumber)
+HOME_PHOTOS = {
+    "hero": ("photo-1758270705290-62b6294dd044", "Vitaly Gariev", "https://unsplash.com/photos/kp7qkHTgSKc"),
+    "group": ("photo-1762512346988-045f4d5ad2b3", "Jaykumar Bherwani", "https://unsplash.com/photos/Dg8WzlOE1as"),
+    "books": ("photo-1499447155021-4907f71b9ef5", "CHUTTERSNAP", "https://unsplash.com/photos/984e1Fk4E04"),
+    "notes": ("photo-1654022963276-ef761eac346e", "Benoît Deschasaux", "https://unsplash.com/photos/O04ybN0h1C8"),
+    "field": ("photo-1788122290883-6587385ffb8c", "Bernd Dittrich", "https://unsplash.com/photos/f8Yj2_dxZJk"),
+    "charts": ("photo-1763568258367-1c52beb60be7", "Daniil Komov", "https://unsplash.com/photos/GQOylIn892U"),
+}
+
+
+def _home_stages():
+    out = []
+    for slug in belajar.ORDER:
+        t = belajar.MODULES[slug]["tahap"]
+        if not out or out[-1]["tahap"] != t:
+            out.append({"tahap": t, "n": 0, "first": slug})
+        out[-1]["n"] += 1
+    return out
+
+
 async def home(request):
     g = {f: i18n.loc_groups(registry.groups(f), lang_of(request) == "en") for f in (registry.FAM_DES, registry.FAM_REG)}
     n_des = sum(len(v) for v in g["des"].values())
@@ -172,7 +193,7 @@ async def home(request):
                 hero_lead="GetComput adalah web pembelajaran statistika berbahasa Indonesia: 62 modul dengan konsep, persamaan, contoh hitung, dan latihan. "
                           "Alat hitung di dalamnya membantu Anda mempraktikkan setiap materi dengan data sendiri.",
                 hero_tags=["62 modul belajar", "Persamaan & contoh hitung", "Alat hitung untuk latihan", "Gratis"],
-                groups=g, n_des=n_des, n_reg=n_reg, n_all=n_des + n_reg,
+                groups=g, n_des=n_des, n_reg=n_reg, n_all=n_des + n_reg, photos=HOME_PHOTOS, stages=_home_stages(), n_mod=len(belajar.ORDER),
                 jsonld=json.dumps({"@context": "https://schema.org", "@type": "WebApplication", "name": "GetComput", "applicationCategory": "EducationalApplication",
                                    "inLanguage": lang_of(request), "operatingSystem": "Web", "url": base_url(request) + "/",
                                    "description": "Web pembelajaran statistika dengan alat hitung untuk berlatih."}, ensure_ascii=False))
