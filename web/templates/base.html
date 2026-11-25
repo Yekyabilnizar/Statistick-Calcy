@@ -25,7 +25,7 @@
 </head>
 <body>
 <div class="wrap">
-<header class="hero">
+{% block header %}<header class="hero">
   <div class="hero-top">
     <a href="/" class="hero-chip" style="text-decoration:none">{% if lang=='en' %}GETCOMPUT · LEARN STATISTICS{% else %}GETCOMPUT · BELAJAR STATISTIKA{% endif %}</a>
     <div class="search" id="search">
@@ -40,7 +40,7 @@
   <nav class="hero-nav" aria-label="{{ 'Main menu' if lang=='en' else 'Menu utama' }}">
     {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label }}</a>{% endfor %}
   </nav>
-</header>
+</header>{% endblock %}
 <main>
 {% if lang=='en' and not ready_en and not no_note %}<div class="en-note" role="note">🌐 <b>English translation in progress.</b> Parts of this page (such as the lesson text) are still in Indonesian; the interface is already in English. <a href="{{ alt_id }}">Open the original Indonesian page</a>.</div>{% endif %}
 {% block content %}{% endblock %}

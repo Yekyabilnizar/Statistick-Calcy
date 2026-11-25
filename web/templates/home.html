@@ -1,49 +1,205 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="cta"><a class="btn pri" href="/belajar">🎓 Mulai belajar</a><a class="btn sec" href="#katalog">🛠️ Buka alat hitung</a><a class="btn sec" href="/panduan">🧭 Bingung memilih metode?</a></div>
-<div class="stats">
-  <div class="stat"><b>62</b><span>modul belajar</span></div>
-  <div class="stat"><b>{{ n_all }}</b><span>alat hitung untuk latihan</span></div>
-  <div class="stat"><b>{{ n_des }}</b><span>materi rancangan percobaan</span></div>
-  <div class="stat"><b>{{ n_reg }}</b><span>materi regresi</span></div>
+{% set en = lang == 'en' %}
+{% macro ph(k, w=1200) %}https://images.unsplash.com/{{ photos[k][0] }}?auto=format&fit=crop&w={{ w }}&q=70{% endmacro %}
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/home.css?v={{ asset_v }}">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="preload" as="image" href="{{ ph('hero', 1600) }}" fetchpriority="high">
+{% endblock %}
+
+{% block header %}
+<div class="hx">
+<header class="hx-hero">
+  <img class="hx-bg" src="{{ ph('hero', 1600) }}" srcset="{{ ph('hero', 800) }} 800w, {{ ph('hero', 1600) }} 1600w, {{ ph('hero', 2200) }} 2200w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async">
+  <div class="hx-top">
+    <a class="hx-brand" href="/"><img src="/static/favicon.svg?v={{ asset_v }}" alt="" width="34" height="34">GetComput</a>
+    <nav class="hx-nav" aria-label="{{ 'Main menu' if en else 'Menu utama' }}">
+      {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label.split(' ', 1)[-1] }}</a>{% endfor %}
+    </nav>
+    <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if not en %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if en %}class="on" aria-current="true"{% endif %}>EN</a></div>
   </div>
-<div class="panel learn-promo"><h3 style="margin:0 0 6px">🎓 Belajar dulu, praktik kemudian</h3><p style="margin:0 0 12px">Tiga tahap berurutan: dasar statistika, rancangan percobaan, dan regresi. Setiap modul berisi konsep, persamaan, contoh hitung, dan latihan yang dikerjakan di alat hitung.</p><a class="btn pri" href="/belajar">Mulai jalur belajar →</a></div>
-<h2 class="sec-h">Cara belajar di GetComput</h2><p class="sec-s">Tiga langkah dari konsep sampai praktik.</p>
-<div class="steps">
-  <div class="stepc"><div class="n">1</div><h4>Pelajari modul</h4><p>Ikuti jalur belajar: baca konsep, teori dengan persamaan, dan contoh hitung langkah demi langkah.</p></div>
-  <div class="stepc"><div class="n">2</div><h4>Berlatih di alat hitung</h4><p>Buka alat hitung dari modul, pakai data contoh atau data Anda sendiri (tempel dari Excel atau unggah CSV).</p></div>
-  <div class="stepc"><div class="n">3</div><h4>Cocokkan dengan teori</h4><p>Bandingkan hasil alat hitung dengan contoh di modul, lalu baca interpretasinya dan tandai modul selesai.</p></div>
+  <div class="hx-body">
+    <span class="hx-eyebrow">{{ 'Statistics learning platform' if en else 'Platform belajar statistika' }}</span>
+    {% if en %}<h1>Learn Statistics the <em>Easier</em>, More Guided Way</h1>
+    <p class="hx-lead">{{ n_mod }} lessons from the basics to advanced regression, each with equations and worked examples. Put every topic into practice with {{ n_all }} free calculators.</p>
+    {% else %}<h1>Belajar Statistika Jadi <em>Lebih Mudah</em> dan Terarah</h1>
+    <p class="hx-lead">{{ n_mod }} modul berbahasa Indonesia, dari dasar sampai regresi lanjutan, lengkap dengan persamaan dan contoh hitung. Praktikkan setiap materi dengan {{ n_all }} alat hitung gratis.</p>{% endif %}
+    <div class="hx-cta">
+      <a class="hx-btn lime" href="/belajar">🎓 {{ 'Start learning' if en else 'Mulai belajar' }} <span class="ar">→</span></a>
+      <a class="hx-btn ghost" href="#katalog">{{ 'Open the calculators' if en else 'Buka alat hitung' }}</a>
+    </div>
+    <div class="search hx-search" id="search">
+      <input id="q" type="search" placeholder="{{ 'Search methods… (e.g. logistic, RCBD, panel)' if en else 'Cari metode… (mis. logistik, RAK, panel)' }}" autocomplete="off" aria-label="{{ 'Search methods' if en else 'Cari metode' }}">
+      <div class="sres" id="sres"></div>
+    </div>
+  </div>
+  <div class="hx-float" aria-hidden="true">
+    <div class="hx-chip"><b>{{ n_mod }}</b><span>{{ 'lessons' if en else 'modul belajar' }}</span></div>
+    <div class="hx-chip"><b>{{ n_all }}</b><span>{{ 'calculators' if en else 'alat hitung' }}</span></div>
+  </div>
+</header>
+<div class="hx-trust">
+  {% for t in (['Free, no sign-up', 'Indonesian & English', 'Your data is not stored', 'Export results to Excel'] if en else ['Gratis, tanpa daftar', 'Bahasa Indonesia & Inggris', 'Data Anda tidak disimpan', 'Unduh hasil ke Excel']) %}<span><i>✓</i>{{ t }}</span>{% endfor %}
 </div>
-<h2 class="sec-h">Alat hitung pendamping</h2>
-<div class="grid g2">
-  <div class="fam"><h3>🧪 Rancangan Percobaan</h3><p>Analisis ragam untuk percobaan terkontrol, dari RAL dan RAK sampai rancangan lanjutan.</p>
-    <ul><li>RAL, RAK, RBSL, Graeco-Latin, BIB/Lattice</li><li>Faktorial, split-plot, strip-plot, nested</li><li>Repeated measures, cross-over, ANCOVA, MANOVA</li><li>RSM, mixture, Taguchi, faktorial pecahan</li></ul>
-    <a class="btn pri" href="/rancangan-percobaan">Jelajahi rancangan percobaan →</a></div>
-  <div class="fam"><h3>📈 Regresi</h3><p>Dari regresi linear berganda sampai model untuk data biner, cacahan, dan respon positif.</p>
-    <ul><li>Linear, dummy, polinomial, nonlinear, diagnostik lengkap</li><li>Logistik, Poisson, binomial negatif, gamma, probit</li><li>Ridge, LASSO, robust, LOESS, spline, kuantil, GAM</li><li>Panel, ARIMAX, SAR/SEM/GWR, mixed effect, Cox, Tobit</li></ul>
-    <a class="btn pri" href="/regresi">Jelajahi metode regresi →</a></div>
 </div>
-<h2 class="sec-h" id="katalog">Katalog alat hitung</h2><p class="sec-s">Sudah paham materinya? Buka alat hitungnya langsung.</p>
-{% for fam, label in [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')] %}
-  {% for g, items in groups[fam].items() %}
-  <p class="sec-s" style="margin:18px 0 8px"><b style="color:#0F2A43">{{ label }} · {{ g }}</b> · {{ items|length }} metode</p>
-  <div class="grid g3">{% for m in items %}
-    <div class="mcard"><h4>{{ m.title }}</h4><p>{{ m.desc }}</p><div>{% for t in m.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
-      <a class="go" href="/metode/{{ m.slug }}">Buka →</a></div>{% endfor %}</div>
+{% endblock %}
+
+{% block content %}
+<div class="hx">
+
+<section class="hx-sec" style="margin-top:44px">
+  <p class="hx-kicker">{{ 'Why GetComput' if en else 'Kenapa GetComput' }}</p>
+  <h2 class="hx-h2">{{ 'Learn with direction, practise with confidence' if en else 'Belajar lebih terarah, praktik lebih yakin' }}</h2>
+  <p class="hx-sub">{{ 'Everything you need to understand a method and apply it to your own data, in one place.' if en else 'Semua yang Anda perlukan untuk memahami satu metode dan menerapkannya pada data sendiri, di satu tempat.' }}</p>
+  <div class="hx-feats">
+    {% set feats = [
+      ('🎓', 'Structured lessons', 'A three-stage learning path with concepts, equations, and step-by-step worked examples.', 'See the path', '/belajar',
+             'Materi terstruktur', 'Jalur belajar tiga tahap dengan konsep, persamaan, dan contoh hitung langkah demi langkah.', 'Lihat jalur', '/belajar'),
+      ('🧮', 'Complete calculators', n_all ~ ' experimental design and regression methods, with sample data or your own.', 'Open catalogue', '#katalog',
+             'Alat hitung lengkap', n_all ~ ' metode rancangan percobaan dan regresi, dengan data contoh atau data Anda sendiri.', 'Buka katalog', '#katalog'),
+      ('📝', 'Automatic interpretation', 'Citable tables, assumption checks, charts, and a plain-language conclusion for every analysis.', 'Method guide', '/panduan',
+             'Interpretasi otomatis', 'Tabel siap kutip, uji asumsi, grafik, dan kesimpulan berbahasa sederhana di setiap analisis.', 'Panduan metode', '/panduan'),
+    ] %}
+    {% for ic, t_en, d_en, b_en, h_en, t_id, d_id, b_id, h_id in feats %}
+    <article class="hx-feat"><div class="ic">{{ ic }}</div><h3>{{ t_en if en else t_id }}</h3><p>{{ d_en if en else d_id }}</p>
+      <a class="hx-btn lime sm" href="{{ h_en if en else h_id }}">{{ b_en if en else b_id }} <span class="ar">→</span></a><span class="num" aria-hidden="true">0{{ loop.index }}</span></article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="hx-sec">
+  <div class="hx-center">
+    <p class="hx-kicker">{{ 'Learning path' if en else 'Jalur belajar' }}</p>
+    <h2 class="hx-h2">{{ 'From the basics to advanced analysis' if en else 'Dari dasar sampai analisis lanjutan' }}</h2>
+    <p class="hx-sub">{{ 'Follow the stages in order, or jump straight to the topic you need.' if en else 'Ikuti tahapnya berurutan, atau langsung ke materi yang Anda butuhkan.' }}</p>
+  </div>
+  <div class="hx-paths">
+    {% set pinfo = [
+      ('books', 'Statistics basics', 'Data types, descriptive statistics, the normal distribution, hypothesis tests, and ANOVA concepts.', 'All lessons', '/belajar',
+                'Dasar statistika', 'Jenis data, statistik deskriptif, distribusi normal, uji hipotesis, dan konsep ANOVA.', 'Semua modul', '/belajar'),
+      ('field', 'Experimental design', 'CRD, RCBD, factorial, split-plot, through to response surfaces and Taguchi.', 'Design tools', '/rancangan-percobaan',
+                'Rancangan percobaan', 'RAL, RAK, faktorial, split-plot, sampai permukaan respon dan Taguchi.', 'Alat rancangan', '/rancangan-percobaan'),
+      ('charts', 'Regression', 'Linear, logistic, Poisson, panel, spatial, through to survival models.', 'Regression tools', '/regresi',
+                'Regresi', 'Linear, logistik, Poisson, panel, spasial, sampai model survival.', 'Alat regresi', '/regresi'),
+    ] %}
+    {% for st in stages %}{% set p = pinfo[loop.index0] %}
+    <article class="hx-path">
+      <img src="{{ ph(p[0], 900) }}" srcset="{{ ph(p[0], 600) }} 600w, {{ ph(p[0], 900) }} 900w" sizes="(max-width:720px) 100vw, 380px" alt="" loading="lazy" decoding="async">
+      <div class="in">
+        <span class="tg">{{ 'Stage' if en else 'Tahap' }} {{ loop.index }}</span>
+        <h3>{{ p[1] if en else p[5] }}</h3>
+        <p>{{ p[2] if en else p[6] }}</p>
+        <div class="cnt">{{ st.n }} {{ 'lessons' if en else 'modul' }}</div>
+        <div class="acts">
+          <a class="hx-btn lime sm" href="/belajar/{{ st.first }}">{{ 'Start' if en else 'Mulai' }} <span class="ar">→</span></a>
+          <a class="hx-btn gray sm" href="{{ p[4] if en else p[8] }}">{{ p[3] if en else p[7] }}</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="hx-sec">
+  <div class="hx-row"><div>
+    <p class="hx-kicker">{{ 'Featured' if en else 'Unggulan' }}</p>
+    <h2 class="hx-h2">{{ 'Learn, then put it into practice' if en else 'Belajar, lalu praktikkan' }}</h2></div>
+    <a class="hx-link" href="/alur-metode">{{ 'See the method flow' if en else 'Lihat alur metode' }} →</a></div>
+  <div class="hx-hls" style="margin-top:18px">
+    <a class="hx-hl" href="/belajar">
+      <img src="{{ ph('group', 1100) }}" srcset="{{ ph('group', 700) }} 700w, {{ ph('group', 1100) }} 1100w" sizes="(max-width:720px) 100vw, 570px" alt="" loading="lazy" decoding="async">
+      <div class="in"><h3>{{ 'Study with real data' if en else 'Belajar dengan data nyata' }}</h3>
+        <p>{{ 'Paste data from Excel or upload a CSV, then compare the result with the worked example in the lesson.' if en else 'Tempel data dari Excel atau unggah CSV, lalu bandingkan hasilnya dengan contoh hitung di modul.' }}</p>
+        <span class="go">{{ 'Start now' if en else 'Mulai sekarang' }} →</span></div></a>
+    <a class="hx-hl" href="/panduan">
+      <img src="{{ ph('notes', 1100) }}" srcset="{{ ph('notes', 700) }} 700w, {{ ph('notes', 1100) }} 1100w" sizes="(max-width:720px) 100vw, 570px" alt="" loading="lazy" decoding="async">
+      <div class="in"><h3>{{ 'Not sure which method to use?' if en else 'Bingung memilih metode?' }}</h3>
+        <p>{{ 'The method guide helps you pick the analysis that fits your data or experiment.' if en else 'Panduan metode membantu memilih analisis yang sesuai dengan data atau percobaan Anda.' }}</p>
+        <span class="go">{{ 'Open the guide' if en else 'Buka panduan' }} →</span></div></a>
+  </div>
+</section>
+
+<section class="hx-sec">
+  <p class="hx-kicker">{{ 'How it works' if en else 'Cara kerja' }}</p>
+  <h2 class="hx-h2">{{ 'Three steps from concept to practice' if en else 'Tiga langkah dari konsep sampai praktik' }}</h2>
+  <div class="hx-steps" style="margin-top:18px">
+    {% if en %}
+    <div class="hx-step"><div class="n">1</div><h4>Study a lesson</h4><p>Follow the path: read the concept, the theory with equations, and a step-by-step worked example.</p></div>
+    <div class="hx-step"><div class="n">2</div><h4>Practise in a calculator</h4><p>Open the calculator from the lesson and use the sample data or your own (paste from Excel or upload a CSV).</p></div>
+    <div class="hx-step"><div class="n">3</div><h4>Check against the theory</h4><p>Compare the result with the lesson example, read the interpretation, and mark the lesson as done.</p></div>
+    {% else %}
+    <div class="hx-step"><div class="n">1</div><h4>Pelajari modul</h4><p>Ikuti jalur belajar: baca konsep, teori dengan persamaan, dan contoh hitung langkah demi langkah.</p></div>
+    <div class="hx-step"><div class="n">2</div><h4>Berlatih di alat hitung</h4><p>Buka alat hitung dari modul, pakai data contoh atau data Anda sendiri (tempel dari Excel atau unggah CSV).</p></div>
+    <div class="hx-step"><div class="n">3</div><h4>Cocokkan dengan teori</h4><p>Bandingkan hasil alat hitung dengan contoh di modul, lalu baca interpretasinya dan tandai modul selesai.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="hx-sec">
+  <p class="hx-kicker">{{ 'In every analysis' if en else 'Di setiap analisis' }}</p>
+  <h2 class="hx-h2">{{ 'What you get' if en else 'Yang Anda dapatkan' }}</h2>
+  <div class="grid g3" style="margin-top:18px">
+  {% if en %}
+  <div class="mcard"><h4>📋 Citable tables</h4><p>ANOVA, coefficients, hazard ratios, and post-hoc tests with letter notation, complete with P-values and significance marks.</p></div>
+  <div class="mcard"><h4>🧪 Assumption checks</h4><p>Normality, homogeneity of variance, autocorrelation, multicollinearity, and influential observations are checked automatically.</p></div>
+  <div class="mcard"><h4>📈 Interactive charts</h4><p>Residual plots, interaction plots, response-surface contours, spatial maps, survival curves, and more.</p></div>
+  <div class="mcard"><h4>📝 Automatic interpretation</h4><p>Conclusions written in plain language, including warnings when assumptions or the data look problematic.</p></div>
+  <div class="mcard"><h4>📂 Flexible data input</h4><p>Sample data, paste from Excel, upload CSV/Excel, or type directly into the table.</p></div>
+  <div class="mcard"><h4>⬇️ Export to Excel</h4><p>All result tables are packed into one Excel file; charts can be saved as images.</p></div>
+  {% else %}
+  <div class="mcard"><h4>📋 Tabel siap kutip</h4><p>ANOVA, koefisien, hazard ratio, uji lanjut bernotasi huruf, lengkap dengan P-value dan tanda signifikansi.</p></div>
+  <div class="mcard"><h4>🧪 Uji asumsi</h4><p>Normalitas, homogenitas ragam, autokorelasi, multikolinearitas, dan pengamatan berpengaruh diperiksa otomatis.</p></div>
+  <div class="mcard"><h4>📈 Grafik interaktif</h4><p>Plot residual, interaksi, kontur permukaan respon, peta spasial, kurva survival, dan lainnya.</p></div>
+  <div class="mcard"><h4>📝 Interpretasi otomatis</h4><p>Kesimpulan ditulis dalam bahasa Indonesia, termasuk peringatan jika asumsi atau data bermasalah.</p></div>
+  <div class="mcard"><h4>📂 Data fleksibel</h4><p>Data contoh, tempel dari Excel, unggah CSV/Excel, atau ketik langsung di tabel.</p></div>
+  <div class="mcard"><h4>⬇️ Unduh ke Excel</h4><p>Semua tabel hasil dikemas dalam satu berkas Excel; grafik dapat disimpan sebagai gambar.</p></div>
+  {% endif %}
+  </div>
+</section>
+
+<section class="hx-sec" id="katalog">
+  <p class="hx-kicker">{{ 'Catalogue' if en else 'Katalog' }}</p>
+  <h2 class="hx-h2">{{ 'Calculator catalogue' if en else 'Katalog alat hitung' }}</h2>
+  <p class="hx-sub">{{ 'Already know the material? Open the calculator directly.' if en else 'Sudah paham materinya? Buka alat hitungnya langsung.' }}</p>
+  {% for fam, label in ([('des','🧪 Experimental Design'),('reg','📈 Regression')] if en else [('des','🧪 Rancangan Percobaan'),('reg','📈 Regresi')]) %}
+    {% for g, items in groups[fam].items() %}
+    <p class="hx-catlabel"><b>{{ label }} · {{ g }}</b> · {{ items|length }} {{ 'methods' if en else 'metode' }}</p>
+    <div class="grid g3">{% for m in items %}
+      <div class="mcard"><h4>{{ m.title }}</h4><p>{{ m.desc }}</p><div>{% for t in m.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+        <a class="go" href="/metode/{{ m.slug }}">{{ 'Open' if en else 'Buka' }} →</a></div>{% endfor %}</div>
+    {% endfor %}
   {% endfor %}
-{% endfor %}
-<h2 class="sec-h">Yang Anda dapatkan di setiap analisis</h2>
-<div class="grid g3">
-<div class="mcard"><h4>📋 Tabel siap kutip</h4><p>ANOVA, koefisien, hazard ratio, uji lanjut bernotasi huruf, lengkap dengan P-value dan tanda signifikansi.</p></div>
-<div class="mcard"><h4>🧪 Uji asumsi</h4><p>Normalitas, homogenitas ragam, autokorelasi, multikolinearitas, dan pengamatan berpengaruh diperiksa otomatis.</p></div>
-<div class="mcard"><h4>📈 Grafik interaktif</h4><p>Plot residual, interaksi, kontur permukaan respon, peta spasial, kurva survival, dan lainnya.</p></div>
-<div class="mcard"><h4>📝 Interpretasi otomatis</h4><p>Kesimpulan ditulis dalam bahasa Indonesia, termasuk peringatan jika asumsi atau data bermasalah.</p></div>
-<div class="mcard"><h4>📂 Data fleksibel</h4><p>Data contoh, tempel dari Excel, unggah CSV/Excel, atau ketik langsung di tabel.</p></div>
-<div class="mcard"><h4>⬇️ Unduh ke Excel</h4><p>Semua tabel hasil dikemas dalam satu berkas Excel; grafik dapat disimpan sebagai gambar.</p></div>
+</section>
+
+<section class="hx-cta-band">
+  <div>
+    <span class="k">{{ 'Get started' if en else 'Mulai sekarang' }}</span>
+    <h2>{{ 'Ready to start learning statistics?' if en else 'Siap mulai belajar statistika?' }}</h2>
+    <p>{{ 'Free and no sign-up. Start from the first lesson or go straight to a calculator.' if en else 'Gratis dan tanpa daftar. Mulai dari modul pertama atau langsung buka alat hitung.' }}</p>
+  </div>
+  <div class="hx-cta" style="margin:0">
+    <a class="hx-btn lime" href="/belajar">🎓 {{ 'Start learning' if en else 'Mulai belajar' }} <span class="ar">→</span></a>
+    <a class="hx-btn ghost" href="/masukan">{{ 'Send feedback' if en else 'Kirim masukan' }}</a>
+  </div>
+</section>
+
+<section class="hx-sec hx-faq">
+  <p class="hx-kicker">FAQ</p>
+  <h2 class="hx-h2">{{ 'Frequently asked questions' if en else 'Pertanyaan umum' }}</h2>
+  {% if en %}
+  <details class="faq"><summary>Is my data stored?</summary><p>No. Data is processed in memory only while the calculation runs to produce the result, then discarded. See the <a href="/privasi">Privacy Policy</a>.</p></details>
+  <details class="faq"><summary>What data format is needed?</summary><p>One row = one observation, one column = one variable, and the first row holds the column names. Use a point or comma as the decimal separator. Every method provides sample data so you can see the format.</p></details>
+  <details class="faq"><summary>How do I read **, *, and ns?</summary><p>** = highly significant (P &lt; 0.01), * = significant (P &lt; 0.05), ns = not significant. The significance level α can be chosen in each analysis.</p></details>
+  <details class="faq"><summary>My result differs from other software</summary><p>Check the type of sums of squares (here sequential Type I on balanced data), the reference category for dummy variables, and the estimation method. On balanced data ANOVA results are usually the same; verification is still recommended for publication.</p></details>
+  {% else %}
+  <details class="faq"><summary>Apakah data saya disimpan?</summary><p>Tidak. Data hanya diproses di memori selama perhitungan berlangsung untuk menghasilkan hasil, lalu dibuang. Lihat <a href="/privasi">Kebijakan Privasi</a>.</p></details>
+  <details class="faq"><summary>Format data seperti apa yang dibutuhkan?</summary><p>Satu baris = satu pengamatan, satu kolom = satu variabel, dan baris pertama berisi nama kolom. Gunakan titik atau koma sebagai desimal. Setiap metode menyediakan data contoh untuk melihat formatnya.</p></details>
+  <details class="faq"><summary>Bagaimana membaca tanda **, *, dan tn?</summary><p>** = sangat nyata (P &lt; 0,01), * = nyata (P &lt; 0,05), tn = tidak nyata. Taraf nyata α dapat dipilih pada tiap analisis.</p></details>
+  <details class="faq"><summary>Hasil saya berbeda dengan software lain</summary><p>Periksa jenis jumlah kuadrat (di sini Tipe I sekuensial pada data seimbang), kategori referensi pada variabel dummy, dan metode penaksiran. Pada data seimbang hasil ANOVA umumnya sama; verifikasi tetap dianjurkan untuk publikasi.</p></details>
+  {% endif %}
+</section>
+
+<p class="hx-credit">{{ 'Photos' if en else 'Foto' }}: {% for k in ['hero','group','books','notes','field','charts'] %}<a href="{{ photos[k][2] }}" rel="noopener" target="_blank">{{ photos[k][1] }}</a>{{ ', ' if not loop.last }}{% endfor %} · Unsplash</p>
 </div>
-<h2 class="sec-h">Pertanyaan umum</h2>
-<details class="faq"><summary>Apakah data saya disimpan?</summary><p>Tidak. Data hanya diproses di memori selama perhitungan berlangsung untuk menghasilkan hasil, lalu dibuang. Lihat <a href="/privasi">Kebijakan Privasi</a>.</p></details>
-<details class="faq"><summary>Format data seperti apa yang dibutuhkan?</summary><p>Satu baris = satu pengamatan, satu kolom = satu variabel, dan baris pertama berisi nama kolom. Gunakan titik atau koma sebagai desimal. Setiap metode menyediakan data contoh untuk melihat formatnya.</p></details>
-<details class="faq"><summary>Bagaimana membaca tanda **, *, dan tn?</summary><p>** = sangat nyata (P &lt; 0,01), * = nyata (P &lt; 0,05), tn = tidak nyata. Taraf nyata α dapat dipilih pada tiap analisis.</p></details>
-<details class="faq"><summary>Hasil saya berbeda dengan software lain</summary><p>Periksa jenis jumlah kuadrat (di sini Tipe I sekuensial pada data seimbang), kategori referensi pada variabel dummy, dan metode penaksiran. Pada data seimbang hasil ANOVA umumnya sama; verifikasi tetap dianjurkan untuk publikasi.</p></details>
 {% endblock %}
