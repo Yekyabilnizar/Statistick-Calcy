@@ -30,23 +30,23 @@
 {% block header %}{% set ns = namespace(lab='GetComput') %}{% for href, label in nav_items %}{% if href == active and href != '/' %}{% set ns.lab = label.split(' ', 1)[-1] %}{% endif %}{% endfor %}
 <div class="hx">
 <header class="hx-hero hx-inner">
-  <img class="hx-bg" src="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65" srcset="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=800&q=65 800w, https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65 1600w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async">
+  <div class="hx-media"><img class="hx-bg" src="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65" srcset="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=800&q=65 800w, https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65 1600w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async"></div>
   <div class="hx-top">
     <a class="hx-brand" href="/"><img src="/static/favicon.svg?v={{ asset_v }}" alt="" width="34" height="34">GetComput</a>
     <nav class="hx-nav" aria-label="{{ 'Main menu' if lang=='en' else 'Menu utama' }}">
       {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label.split(' ', 1)[-1] }}</a>{% endfor %}
     </nav>
     <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if lang=='id' %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if lang=='en' %}class="on" aria-current="true"{% endif %}>EN</a></div>
+    <div class="hx-srow"><div class="search hx-search" id="search">
+      <input id="q" type="search" placeholder="{% if lang=='en' %}Search methods… (e.g. logistic, RCBD, panel){% else %}Cari metode… (mis. logistik, RAK, panel){% endif %}" autocomplete="off" aria-label="{% if lang=='en' %}Search methods{% else %}Cari metode{% endif %}">
+      <div class="sres" id="sres"></div>
+    </div></div>
   </div>
   <div class="hx-body">
     <span class="hx-eyebrow">{{ ns.lab }}</span>
     <h1>{{ hero_title }}</h1>
     {% if hero_lead %}<p class="hx-lead">{{ hero_lead }}</p>{% endif %}
     {% if hero_tags %}<div class="hx-tags">{% for t in hero_tags %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
-    <div class="search hx-search" id="search">
-      <input id="q" type="search" placeholder="{% if lang=='en' %}Search methods… (e.g. logistic, RCBD, panel){% else %}Cari metode… (mis. logistik, RAK, panel){% endif %}" autocomplete="off" aria-label="{% if lang=='en' %}Search methods{% else %}Cari metode{% endif %}">
-      <div class="sres" id="sres"></div>
-    </div>
   </div>
 </header>
 </div>

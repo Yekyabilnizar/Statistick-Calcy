@@ -8,13 +8,17 @@
 {% block header %}
 <div class="hx">
 <header class="hx-hero">
-  <img class="hx-bg" src="{{ ph('hero', 1600) }}" srcset="{{ ph('hero', 800) }} 800w, {{ ph('hero', 1600) }} 1600w, {{ ph('hero', 2200) }} 2200w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async">
+  <div class="hx-media"><img class="hx-bg" src="{{ ph('hero', 1600) }}" srcset="{{ ph('hero', 800) }} 800w, {{ ph('hero', 1600) }} 1600w, {{ ph('hero', 2200) }} 2200w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async"></div>
   <div class="hx-top">
     <a class="hx-brand" href="/"><img src="/static/favicon.svg?v={{ asset_v }}" alt="" width="34" height="34">GetComput</a>
     <nav class="hx-nav" aria-label="{{ 'Main menu' if en else 'Menu utama' }}">
       {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label.split(' ', 1)[-1] }}</a>{% endfor %}
     </nav>
     <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if not en %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if en %}class="on" aria-current="true"{% endif %}>EN</a></div>
+    <div class="hx-srow"><div class="search hx-search" id="search">
+      <input id="q" type="search" placeholder="{{ 'Search methods… (e.g. logistic, RCBD, panel)' if en else 'Cari metode… (mis. logistik, RAK, panel)' }}" autocomplete="off" aria-label="{{ 'Search methods' if en else 'Cari metode' }}">
+      <div class="sres" id="sres"></div>
+    </div></div>
   </div>
   <div class="hx-body">
     <span class="hx-eyebrow">{{ 'Statistics learning platform' if en else 'Platform belajar statistika' }}</span>
@@ -25,10 +29,6 @@
     <div class="hx-cta">
       <a class="hx-btn lime" href="/belajar">🎓 {{ 'Start learning' if en else 'Mulai belajar' }} <span class="ar">→</span></a>
       <a class="hx-btn ghost" href="#katalog">{{ 'Open the calculators' if en else 'Buka alat hitung' }}</a>
-    </div>
-    <div class="search hx-search" id="search">
-      <input id="q" type="search" placeholder="{{ 'Search methods… (e.g. logistic, RCBD, panel)' if en else 'Cari metode… (mis. logistik, RAK, panel)' }}" autocomplete="off" aria-label="{{ 'Search methods' if en else 'Cari metode' }}">
-      <div class="sres" id="sres"></div>
     </div>
   </div>
   <div class="hx-float" aria-hidden="true">
