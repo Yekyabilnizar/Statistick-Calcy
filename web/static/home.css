@@ -140,3 +140,20 @@ body:has(.hx-hero){background:#F6F8FB}
   .hx-sec{margin-top:46px}
 }
 @media (prefers-reduced-motion:reduce){.hx-hero .hx-bg,.hx-chip{animation:none}.hx-path img,.hx-hl img{transition:none}}
+
+/* ---------- hero halaman dalam (semua halaman selain beranda) ---------- */
+.hx-hero.hx-inner{min-height:0}
+.hx-inner .hx-bg{object-position:center 40%;animation-duration:14s}
+.hx-inner::after{background:linear-gradient(90deg,rgba(10,20,36,.94) 0%,rgba(10,20,36,.84) 45%,rgba(10,20,36,.55) 100%)}
+.hx-inner .hx-body{padding:42px 34px 34px;max-width:820px}
+.hx-inner h1{font-size:clamp(1.75rem,3.6vw,2.6rem);margin:10px 0 10px}
+.hx-inner p.hx-lead{margin-bottom:16px;max-width:720px}
+.hx-tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.hx-tags span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:600;font-size:.82rem;padding:5px 13px;border-radius:999px;backdrop-filter:blur(6px)}
+.hx-tags span:first-child{background:var(--hx-lime);border-color:var(--hx-lime);color:var(--hx-on-lime)}
+.hx-inner .hx-body>*{animation:rise .6s ease both}
+.hx-inner .hx-body>*:nth-child(2){animation-delay:.06s}.hx-inner .hx-body>*:nth-child(3){animation-delay:.12s}.hx-inner .hx-body>*:nth-child(4){animation-delay:.18s}
+@media (max-width:720px){
+  .hx-inner::after{background:linear-gradient(180deg,rgba(10,20,36,.7) 0%,rgba(10,20,36,.92) 60%,rgba(10,20,36,.96) 100%)}
+  .hx-inner .hx-body{padding:28px 20px 24px}
+}
