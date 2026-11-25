@@ -380,3 +380,6 @@ ol.refs li{margin:6px 0}
 .faq.soal summary{font-weight:700;line-height:1.5}
 .faq.soal .sn{display:inline-block;background:var(--ink);color:var(--lime);font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 10px;margin-right:6px;vertical-align:2px}
 .faq.soal details p{background:#F7F9FC;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+
+/* langkah di dalam materi selalu satu kolom (jangan ikut grid .steps beranda) */
+.lc ol.steps{grid-template-columns:1fr}
