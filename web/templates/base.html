@@ -13,34 +13,44 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png?v={{ asset_v }}">
 <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v={{ asset_v }}">
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v={{ asset_v }}">
-<meta name="theme-color" content="#1E3A8A">
+<meta name="theme-color" content="#14223A">
 <meta property="og:type" content="website"><meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
 <meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="{{ 'en_US' if lang=='en' else 'id_ID' }}"><meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
+<link rel="stylesheet" href="/static/home.css?v={{ asset_v }}">
+<link rel="preconnect" href="https://images.unsplash.com">
 {% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}
 {% block head %}{% endblock %}
 {% if adsense %}<meta name="google-adsense-account" content="{{ adsense }}">{% endif %}
 </head>
 <body>
 <div class="wrap">
-{% block header %}<header class="hero">
-  <div class="hero-top">
-    <a href="/" class="hero-chip" style="text-decoration:none">{% if lang=='en' %}GETCOMPUT · LEARN STATISTICS{% else %}GETCOMPUT · BELAJAR STATISTIKA{% endif %}</a>
-    <div class="search" id="search">
+{% block header %}{% set ns = namespace(lab='GetComput') %}{% for href, label in nav_items %}{% if href == active and href != '/' %}{% set ns.lab = label.split(' ', 1)[-1] %}{% endif %}{% endfor %}
+<div class="hx">
+<header class="hx-hero hx-inner">
+  <img class="hx-bg" src="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65" srcset="https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=800&q=65 800w, https://images.unsplash.com/{{ hero_photo }}?auto=format&fit=crop&w=1600&q=65 1600w" sizes="(max-width:1200px) 100vw, 1160px" alt="" fetchpriority="high" decoding="async">
+  <div class="hx-top">
+    <a class="hx-brand" href="/"><img src="/static/favicon.svg?v={{ asset_v }}" alt="" width="34" height="34">GetComput</a>
+    <nav class="hx-nav" aria-label="{{ 'Main menu' if lang=='en' else 'Menu utama' }}">
+      {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label.split(' ', 1)[-1] }}</a>{% endfor %}
+    </nav>
+    <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if lang=='id' %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if lang=='en' %}class="on" aria-current="true"{% endif %}>EN</a></div>
+  </div>
+  <div class="hx-body">
+    <span class="hx-eyebrow">{{ ns.lab }}</span>
+    <h1>{{ hero_title }}</h1>
+    {% if hero_lead %}<p class="hx-lead">{{ hero_lead }}</p>{% endif %}
+    {% if hero_tags %}<div class="hx-tags">{% for t in hero_tags %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
+    <div class="search hx-search" id="search">
       <input id="q" type="search" placeholder="{% if lang=='en' %}Search methods… (e.g. logistic, RCBD, panel){% else %}Cari metode… (mis. logistik, RAK, panel){% endif %}" autocomplete="off" aria-label="{% if lang=='en' %}Search methods{% else %}Cari metode{% endif %}">
       <div class="sres" id="sres"></div>
     </div>
-    <div class="langsw" aria-label="Language"><a href="{{ alt_id }}" hreflang="id" {% if lang=='id' %}class="on" aria-current="true"{% endif %}>ID</a><a href="{{ alt_en }}" hreflang="en" {% if lang=='en' %}class="on" aria-current="true"{% endif %}>EN</a></div>
   </div>
-  <h1>{{ hero_title }}</h1>
-  <p class="lead">{{ hero_lead }}</p>
-  {% if hero_tags %}<div class="hero-tags">{% for t in hero_tags %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
-  <nav class="hero-nav" aria-label="{{ 'Main menu' if lang=='en' else 'Menu utama' }}">
-    {% for href, label in nav_items %}<a href="{{ href }}" class="{{ 'on' if active == href else '' }}">{{ label }}</a>{% endfor %}
-  </nav>
-</header>{% endblock %}
+</header>
+</div>
+{% endblock %}
 <main>
 {% if lang=='en' and not ready_en and not no_note %}<div class="en-note" role="note">🌐 <b>English translation in progress.</b> Parts of this page (such as the lesson text) are still in Indonesian; the interface is already in English. <a href="{{ alt_id }}">Open the original Indonesian page</a>.</div>{% endif %}
 {% block content %}{% endblock %}
