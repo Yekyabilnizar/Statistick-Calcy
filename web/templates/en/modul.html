@@ -26,6 +26,12 @@
     {% for p in ps %}<p>{{ p }}</p>{% endfor %}
     {% for e in eqs %}<div class="eq">$${{ e }}$$</div>{% endfor %}
     {% endfor %}
+    {% if lk %}{% for h, ps, eqs in lk.teori %}
+    <h2>{{ h }}</h2>
+    {% for p in ps %}<p>{{ p }}</p>{% endfor %}
+    {% for e in eqs %}<div class="eq">$${{ e }}$$</div>{% endfor %}
+    {% endfor %}
+    {% if lk.ref %}<h2>📖 References</h2><ol class="refs">{% for r in lk.ref %}<li>{{ r }}</li>{% endfor %}</ol>{% endif %}{% endif %}
   </article>
   {% endif %}
 
@@ -43,6 +49,14 @@
     {% for r in ext.contoh.data[1:] %}<tr>{% for v in r %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}
     <ol class="steps worked">{% for txt, eq in ext.contoh.langkah %}<li><span>{{ txt }}</span>{% if eq %}<div class="eq">$${{ eq }}$$</div>{% endif %}</li>{% endfor %}</ol>
     <div class="simpul"><b>Conclusion:</b> {{ ext.contoh.simpul }}</div>
+    {% if lk and lk.contoh2 %}{% set c2 = lk.contoh2 %}
+    <h2 style="margin-top:34px">🧪 {{ c2.judul }}</h2>
+    <p>{{ c2.soal }}</p>
+    {% if c2.data %}<div class="sc-wrap" style="max-height:none"><table class="sc-table"><thead><tr>{% for h in c2.data[0] %}<th>{{ h }}</th>{% endfor %}</tr></thead><tbody>
+    {% for r in c2.data[1:] %}<tr>{% for v in r %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}
+    <ol class="steps worked">{% for txt, eq in c2.langkah %}<li><span>{{ txt }}</span>{% if eq %}<div class="eq">$${{ eq }}$$</div>{% endif %}</li>{% endfor %}</ol>
+    <div class="simpul"><b>Conclusion:</b> {{ lk.contoh2.simpul }}</div>
+    {% endif %}
   </article>
   {% endif %}
 
@@ -60,7 +74,10 @@
     <div class="faq">{% for q, a in ext.faq %}<details><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</div>{% endif %}
   </article>
 
-  <article class="lc" data-label="🎯 Practice">
+  <article class="lc math" data-label="🎯 Practice">
+    {% if lk and lk.soal %}<h2>📝 Practice questions</h2>
+    <p class="cap">Try each one first, then open the answer.</p>
+    <div class="faq soal">{% for q, a in lk.soal %}<details><summary><span class="sn">Question {{ loop.index }}</span> {{ q }}</summary><p><b>Answer:</b> {{ a }}</p></details>{% endfor %}</div>{% endif %}
     <section class="practice">
       <h2>🎯 Practice in the calculator</h2>
       <p>{{ mod.latihan }}</p>
