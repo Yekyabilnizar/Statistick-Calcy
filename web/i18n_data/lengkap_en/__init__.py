@@ -15,7 +15,7 @@ def LD(slug, teori=(), soal=()):
     t["soal"] += [tuple(x) for x in soal]
 
 
-for _n in ("dasar", "dasar2", "des", "des2", "reg", "reg2"):
+for _n in ("dasar", "dasar2", "des", "des2", "reg", "reg2", "reg3", "reg4"):
     try:
         importlib.import_module(f"{__name__}.{_n}")
     except ModuleNotFoundError as _e:
