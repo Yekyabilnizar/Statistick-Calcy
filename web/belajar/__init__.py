@@ -30,3 +30,6 @@ def _load():
 
 
 _load()
+
+from .lengkap import LENGKAP, _load as _load_lengkap  # noqa: E402
+_load_lengkap()
