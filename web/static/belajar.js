@@ -45,7 +45,7 @@
       nav.appendChild(b); btns.push(b);
       if (i < cards.length - 1) {
         var d = document.createElement('div'); d.className = 'lc-next';
-        var nb = document.createElement('button'); nb.type = 'button'; nb.textContent = 'Lanjut: ' + cards[i + 1].getAttribute('data-label').replace(/^\S+\s/, '') + ' →';
+        var nb = document.createElement('button'); nb.type = 'button'; nb.textContent = (window.LANG === 'en' ? 'Next: ' : 'Lanjut: ') + cards[i + 1].getAttribute('data-label').replace(/^\S+\s/, '') + ' →';
         nb.addEventListener('click', function () { go(i + 1); window.scrollTo({top: wrap.offsetTop - 20, behavior: 'smooth'}); });
         d.appendChild(nb); c.appendChild(d);
       }
