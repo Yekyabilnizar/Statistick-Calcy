@@ -1,0 +1,118 @@
+"""English: mathematical deepening for Stage 1."""
+from . import LD
+
+LD("dasar-jenis-data",
+   [("In depth: precision of a stratified sample",
+     [r"The variance of the stratified mean is the sum of the variances of the stratum means, weighted by the squared stratum weights. The factor \((1-f_h)\) with \(f_h=n_h/N_h\) is the finite population correction; when the sample is small relative to its stratum, it is close to 1.",
+      r"This formula shows why stratification pays off: variation between strata does not enter the variance of the estimator; only the within-stratum variation \(S_h^2\) remains. The more uniform each stratum and the more different the strata, the bigger the gain. Neyman allocation \(n_h\propto N_hS_h\) gives the smallest variance for a fixed sample size."]),
+    ("In depth: the design effect of cluster sampling",
+     [r"In a cluster sample with \(m\) members per cluster, members tend to be alike; this similarity is measured by the intracluster correlation \(\rho\). The variance of the estimator increases by the design effect (DEFF) compared with a simple random sample of the same size. As a result, the effective sample size is smaller than the number of respondents.",
+      r"The same idea returns in experimental design: many plants in one pot or many animals in one pen form a cluster, so treating them as independent observations ignores the DEFF."])],
+   [(r"A survey of 300 households is drawn from 30 villages (10 households per village) with an intracluster correlation \(\rho=0.05\). What are the DEFF and the effective sample size?",
+     r"\(\text{DEFF}=1+9(0.05)=1.45\). Effective sample size \(300/1.45\approx207\) households."),
+    (r"Two strata have weights \(W_1=0.6\) and \(W_2=0.4\) with \(S_1=2\), \(S_2=5\), and \(n_1=n_2=20\). Ignore the finite population correction. Compute the variance of the stratified mean.",
+     r"\(0.36(4/20)+0.16(25/20)=0.072+0.200=0.272\), so the standard error is \(\sqrt{0.272}=0.52\). Because stratum 2 is more variable, Neyman allocation would give it more of the sample.")])
+
+LD("dasar-statistik-deskriptif",
+   [("In depth: why the divisor is n − 1",
+     [r"Deviations are measured from \(\bar{x}\), not from the unknown \(\mu\). Because \(\bar{x}\) is the point that minimises the sum of squared deviations, the sum of squares about \(\bar{x}\) is always smaller than about \(\mu\). The derivation below shows that the shortfall is exactly one \(\sigma^2\) in expectation, so dividing by \(n-1\) gives an unbiased estimator.",
+      r"Note that \(s^2\) is unbiased for \(\sigma^2\), but \(s\) is slightly biased downward for \(\sigma\) because the square root is a concave function. In small samples this bias is small and usually ignored."]),
+    ("In depth: Chebyshev's inequality",
+     [r"The 68–95–99.7% empirical rule holds only for the normal distribution. For any distribution with finite variance, Chebyshev's inequality guarantees a lower bound on the proportion of data within \(k\) standard deviations of the mean. The bound is loose, but it needs no assumption about the shape of the distribution at all."])],
+   [(r"By Chebyshev's inequality, what is the minimum proportion of data within 2 standard deviations of the mean? Compare with the normal distribution.",
+     r"At least \(1-1/4=75\%\). For a normal distribution the proportion is about 95%; Chebyshev gives a weaker guarantee because it holds for every distribution."),
+    (r"Show that \(\sum(x_i-\bar{x})=0\) for any data.",
+     r"\(\sum(x_i-\bar{x})=\sum x_i-n\bar{x}=\sum x_i-n\cdot\frac{1}{n}\sum x_i=0\). So one deviation can always be computed from the others, and the degrees of freedom are \(n-1\).")])
+
+LD("dasar-distribusi-normal",
+   [("In depth: expectation and variance of the sample mean",
+     [r"Two basic properties of expectation and variance are enough to derive the standard error: expectation is linear, and the variance of a sum of independent variables is the sum of their variances. The derivation does not require normality; normality is needed only for the shape of the distribution."]),
+    ("In depth: moment generating functions and the central limit theorem",
+     [r"The moment generating function (MGF) \(M_X(t)=E(e^{tX})\) determines a distribution uniquely. For the normal, the MGF is \(\exp(\mu t+\sigma^2t^2/2)\). The MGF of a sum of independent variables is the product of their MGFs, so a sum of normals is normal.",
+      r"The idea of the central limit theorem: the MGF of \(Z_n=\sqrt{n}(\bar{X}-\mu)/\sigma\) can be expanded in a Taylor series; the higher-order terms vanish as \(n\to\infty\), and what remains is \(e^{t^2/2}\), the MGF of the standard normal."])],
+   [(r"\(X_1\sim N(10,\,3^2)\) and \(X_2\sim N(15,\,4^2)\) are independent. What is the distribution of \(X_1+X_2\), and what is \(P(X_1+X_2>30)\)?",
+     r"\(X_1+X_2\sim N(25,\,3^2+4^2)=N(25,\,5^2)\). \(z=(30-25)/5=1\), so \(P=0.1587\)."),
+    (r"Why is the variance of the difference of two independent variables the sum of their variances, not the difference?",
+     r"\(\operatorname{Var}(X_1-X_2)=\operatorname{Var}(X_1)+(-1)^2\operatorname{Var}(X_2)\). A multiplying constant enters squared, so the minus sign disappears; the uncertainty of two measurements always adds up.")])
+
+LD("dasar-uji-hipotesis",
+   [("In depth: deriving the power formula",
+     [r"For a two-sided z test with known \(\sigma\), \(H_0\) is rejected when \(|\bar{X}-\mu_0|>z_{1-\alpha/2}\,\sigma/\sqrt{n}\). If the true mean is \(\mu_0+\delta\), the statistic \(Z\) is normal with mean \(\delta\sqrt{n}/\sigma\). Power is the probability that \(Z\) falls in the rejection region under that distribution.",
+      r"The sample-size formula in the earlier section comes from dropping the second (very small) term and solving power \(=1-\beta\) for \(n\)."]),
+    ("In depth: the likelihood ratio test",
+     [r"Many tests are built from one principle: comparing the maximum likelihood under \(H_0\) with the unrestricted maximum likelihood. The Neyman–Pearson lemma shows that for two simple hypotheses, the test based on this ratio is the most powerful at a given level \(\alpha\).",
+      r"In large samples, \(-2\ln\Lambda\) is approximately chi-square with degrees of freedom equal to the number of restricted parameters (Wilks' theorem). The t test, the F tests in ANOVA and regression, and the deviance test in GLMs are all forms of the likelihood ratio test."])],
+   [(r"A two-sided test at \(\alpha=0.05\) with \(n=25\), \(\sigma=5\), and a true difference \(\delta=2\). What is its power?",
+     r"\(\delta\sqrt{n}/\sigma=2(5)/5=2\). Power \(=\Phi(2-1.96)+\Phi(-2-1.96)=\Phi(0.04)+\Phi(-3.96)\approx0.516\). Only about 52%; this experiment is underpowered for a difference that size."),
+    (r"A researcher writes “P = 0.03 means the probability that \(H_0\) is true is only 3%”. What is wrong?",
+     r"The P-value is the probability of data at least this extreme if \(H_0\) is true, \(P(\text{data}\mid H_0)\), not the probability that \(H_0\) is true given the data, \(P(H_0\mid\text{data})\). The latter requires a Bayesian approach and a prior probability.")])
+
+LD("dasar-selang-kepercayaan",
+   [("In depth: building an interval from a pivotal quantity",
+     [r"A pivotal quantity is a function of the data and the parameter whose distribution does not depend on any parameter. For the mean of a normal population, \(T=(\bar{X}-\mu)/(S/\sqrt{n})\) follows \(t_{n-1}\) whatever the values of \(\mu\) and \(\sigma\). A probability statement about \(T\) is then rearranged into a statement about \(\mu\).",
+      r"The same approach gives intervals for a variance (chi-square pivot), the ratio of two variances (F pivot), and many other parameters."]),
+    ("In depth: sample size for a margin of error and simultaneous intervals",
+     [r"The width of an interval shrinks in proportion to \(1/\sqrt{n}\). To reach a margin of error \(E\), the required sample size comes from solving \(z\sigma/\sqrt{n}=E\).",
+      r"When several intervals are reported together and all must be right at once, their joint confidence is lower than each one's. The Bonferroni correction builds \(m\) intervals each at level \(1-\alpha/m\), so the joint confidence is at least \(1-\alpha\)."])],
+   [(r"What sample size gives a 95% margin of error for the mean of at most 0.5, if \(\sigma\approx2\)?",
+     r"\(n=(1.96\times2/0.5)^2=61.5\). Round up: 62 observations."),
+    (r"Three confidence intervals are reported together with a joint confidence of 95%. With the Bonferroni correction, what level should each interval use?",
+     r"\(1-0.05/3=0.9833\), about 98.3% per interval, so all three are right at once with probability at least 95%.")])
+
+LD("dasar-asumsi-residual",
+   [("In depth: residuals are neither independent nor equally variable",
+     [r"Even when the errors \(\varepsilon_i\) are independent with equal variance, the residuals \(e_i\) are not. In matrix form, \(e=(I-H)y\) with the hat matrix \(H=X(X^\top X)^{-1}X^\top\). The variance of the \(i\)-th residual is \(\sigma^2(1-h_{ii})\): observations with high leverage have residuals with smaller variance.",
+      r"So raw residuals are not comparable with one another. A studentised residual divides each residual by its own estimated standard error, so it can be compared with a t distribution to detect outliers; values beyond about ±2 to ±3 deserve a look."]),
+    ("In depth: consequences of violated assumptions",
+     [r"Box (1954) showed that unequal variances have little effect on the F test when group sizes are equal, but can matter a lot when they are not: if the small groups have large variances the test becomes liberal (type I error above \(\alpha\)); if the large groups have large variances it becomes conservative.",
+      r"Lack of independence is far more damaging. With positive autocorrelation \(\rho\) between consecutive observations, the true variance of the mean is roughly \(\frac{\sigma^2}{n}\cdot\frac{1+\rho}{1-\rho}\), so standard errors that ignore it are too small and P-values too optimistic."])],
+   [(r"A residual has \(e=2.4\) with \(s=1.2\) and leverage \(h=0.2\). Compute the internally studentised residual. Does it need checking?",
+     r"\(r=2.4/(1.2\sqrt{0.8})=2.24\). The value exceeds 2, so this observation deserves a check, especially if it is also highly influential (high Cook's D)."),
+    (r"Of the three error assumptions (independence, normality, equal variance), which is most dangerous to violate, and why?",
+     r"Independence. Mild non-normality has almost no effect in reasonably large samples, and unequal variance can be handled (Welch, transformation). Lack of independence (such as pseudoreplication or autocorrelation) makes standard errors systematically wrong and cannot be fixed without changing the model.")])
+
+LD("dasar-prinsip-rancangan",
+   [("In depth: randomisation as the basis of inference",
+     [r"Randomisation ensures that, averaged over all possible randomisations, inherent differences between experimental units favour no treatment. The estimator of a treatment effect is therefore unbiased, and the experimental error becomes a valid estimate of uncontrolled variation.",
+      r"Randomisation also justifies tests without assuming normality: a permutation (randomisation) test computes the statistic for every possible assignment of treatments, and the P-value is the proportion of assignments giving a statistic at least as extreme as the one observed. Fisher showed that the ordinary F test is a good approximation to this permutation test."]),
+    ("In depth: relative efficiency of blocking",
+     [r"After an RCBD has been analysed, we can estimate whether blocking paid off, that is, how many times as many replicates a CRD would need for the same precision. A relative efficiency above 1 means blocking was effective; for example 1.5 means a CRD would need 50% more replicates."])],
+   [(r"How many ways are there to randomise 3 treatments with 2 replicates to 6 experimental units in a CRD?",
+     r"\(6!/(2!\,2!\,2!)=720/8=90\) ways. An exact permutation test computes the statistic for these 90 assignments."),
+    (r"An RCBD with \(t=5\) treatments and \(r=4\) blocks gives MSB \(=20\) and MSE \(=5\). Compute the relative efficiency compared with a CRD.",
+     r"\(ER=\frac{3(20)+4(4)(5)}{19(5)}=\frac{140}{95}=1.47\). Blocking was effective: a CRD would need about 47% more replicates for the same precision.")])
+
+LD("dasar-anova",
+   [("In depth: ANOVA as a linear model",
+     [r"The model \(y_{ij}=\mu+\tau_i+\varepsilon_{ij}\) can be written in matrix form \(y=X\beta+\varepsilon\), where \(X\) has a column of 1s for \(\mu\) and an indicator column for each treatment. This \(X\) is not of full rank (the indicator columns sum to the column of 1s), so \(\mu\) and \(\tau_i\) cannot be estimated separately without a constraint such as \(\sum\tau_i=0\).",
+      r"What is always estimable is each treatment mean \(\mu+\tau_i\) and every contrast \(\sum c_i\tau_i\) with \(\sum c_i=0\). That is why ANOVA conclusions are always stated as comparisons between treatments, not as absolute values of \(\tau_i\)."]),
+    ("In depth: fixed and random models",
+     [r"When treatments are chosen deliberately and conclusions apply only to them (for example three particular fertilisers), the model is fixed. When treatments are a random sample from a population of treatments (for example lines drawn at random from a collection), the model is random and the quantity estimated is the variance component \(\sigma^2_\tau\).",
+      r"The F test for a single factor is the same under both models, but its interpretation differs. Under the random model, the expected mean squares give estimators of the variance components, and the ratio of the treatment variance component to the total is the intraclass correlation (heritability in a breeding context)."])],
+   [(r"Ten lines are drawn at random and grown with \(r=5\) replicates. MSTR \(=50\) and MSE \(=10\). Estimate the line variance component and the intraclass correlation.",
+     r"\(\hat{\sigma}^2_\tau=(50-10)/5=8\). \(\rho_I=8/(8+10)=0.44\): about 44% of the total variation comes from differences between lines."),
+    (r"In a fixed model with \(t=3\), \(r=4\), \(\sigma^2=1\), and treatment effects \(\tau=(-2,0,2)\), what is the expected MSTR?",
+     r"\(E(MSTR)=\sigma^2+\frac{r\sum\tau_i^2}{t-1}=1+\frac{4(8)}{2}=17\). The expected ratio to MSE is about 17, so the observed F is very likely to be highly significant.")])
+
+LD("dasar-uji-lanjut",
+   [("In depth: Fisher's protected LSD and its limits",
+     [r"Fisher's protected LSD is run only when the overall F test is significant. This protection guarantees FWER \(\le\alpha\) when all means are truly equal (the complete null hypothesis). But when some means are equal and others differ, the FWER for the pairs that are truly equal can exceed \(\alpha\) once \(t\ge4\).",
+      r"So the protected LSD is safe for three treatments, but for four or more treatments a test with strong FWER control (Tukey, Holm, Dunnett) is more appropriate."]),
+    ("In depth: the false discovery rate (FDR)",
+     [r"In studies that test a very large number of hypotheses at once (for example hundreds of genes or compounds), controlling the FWER leaves almost nothing significant. An alternative controls the false discovery rate (FDR), the expected proportion of wrongly rejected hypotheses among all rejected ones.",
+      r"The Benjamini–Hochberg procedure: order the P-values from smallest, find the largest \(k\) with \(p_{(k)}\le kq/m\), then reject hypotheses 1 to \(k\). It is more powerful than Holm, with a different guarantee: it tolerates a small proportion of false discoveries."])],
+   [(r"Eight tests give ordered P-values 0.001, 0.008, 0.039, 0.041, 0.042, 0.060, 0.074, 0.205. Apply Benjamini–Hochberg with \(q=0.05\).",
+     r"Thresholds \(kq/m\): 0.00625, 0.0125, 0.01875, 0.025, 0.03125, 0.0375, 0.04375, 0.05. The largest \(k\) with \(p_{(k)}\) under its threshold is \(k=2\) (0.008 ≤ 0.0125). The first two hypotheses are rejected."),
+    (r"With 10 comparisons and a 5% FWER, what level should each comparison use under Bonferroni?",
+     r"\(0.05/10=0.005\). Each comparison is declared significant only if \(P<0.005\).")])
+
+LD("dasar-korelasi",
+   [("In depth: correlation and the regression slope",
+     [r"The slope of the regression of \(Y\) on \(X\) is the correlation scaled by the ratio of standard deviations. So the correlation and the slope always share a sign, and testing \(H_0:\rho=0\) is equivalent to testing \(H_0:\beta_1=0\) in simple linear regression; both give the identical t statistic.",
+      r"The difference: the slope depends on units and direction (regressing \(Y\) on \(X\) differs from \(X\) on \(Y\)), while the correlation is symmetric and unit-free."]),
+    ("In depth: attenuation from measurement error",
+     [r"When \(X\) and \(Y\) are measured with random error, the observed correlation is smaller than the true one. The amount of attenuation depends on the reliability of the measurements (the proportion of observed variance that is true variance). Spearman's correction estimates the true correlation, but it can exceed 1 when the reliabilities are underestimated, so use it with care."])],
+   [(r"Given \(r=0.8\), \(s_y=10\), and \(s_x=4\). What is the slope of the regression of \(Y\) on \(X\)?",
+     r"\(b_1=0.8\times10/4=2.0\): each one-unit increase in \(X\) is followed by an average increase of 2 units in \(Y\)."),
+    (r"The true correlation between two traits is 0.6, but the measurement reliabilities are 0.8 and 0.9. What correlation would you expect to observe?",
+     r"\(0.6\sqrt{0.8\times0.9}=0.6\sqrt{0.72}=0.51\). Measurement error lowers the correlation from 0.60 to about 0.51.")])
