@@ -102,6 +102,10 @@ def page(request, name, *, title="", description="", path, hero_title="", hero_l
         ready = path in i18n.READY_PATHS
     b = base_url(request)
     p_en = "/en" + ("" if path != "/" else "/") + (path if path != "/" else "")
+    act = active if active is not None else path
+    pk = ("hero" if path == "/" else "group" if path == "/belajar" else "books" if path.startswith("/belajar/") else
+          "field" if act == "/rancangan-percobaan" else "charts" if act == "/regresi" else "notes" if act in ("/panduan", "/alur-metode") else "books")
+    ctx.setdefault("hero_photo", HOME_PHOTOS[pk][0])
     ctx.update(title=title, description=description, canonical=b + (p_en if en else path), hero_title=hero_title, hero_lead=hero_lead,
                hero_tags=hero_tags, nav_items=i18n.NAV[lang], active=active if active is not None else path, search_index=search_index(lang),
                asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, ga_id=GA_ID, jsonld=ctx.get("jsonld"), request=request,
@@ -278,7 +282,7 @@ async def learn_module(request):
                      "learningResourceType": "Learning material" if en else "Materi belajar", "educationalLevel": mod["tahap"]}, ensure_ascii=False)
     return page(request, "modul.html", key="module", meta_vars={"t": mod["title"], "d": mod["ringkas"]}, ready=mod["slug"] in i18n.EN_MODULES, title=f"Materi: {mod['title']} – Belajar Statistika | GetComput", description=mod["ringkas"],
                 path=f"/belajar/{mod['slug']}", active="/belajar", hero_title=mod["title"], hero_lead=mod["ringkas"], hero_tags=[mod["tahap"]],
-                mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac,
+                mod=mod, idx=i + 1, total=len(belajar.ORDER), prev=prev, nxt=nxt, own=own, prac=prac, lk=i18n.loc_lengkap(mod0["slug"], en),
                 pras=[i18n.loc_module_brief(belajar.MODULES[p], en) for p in mod["pra"]], ext=ext, jsonld=ld)
 
 

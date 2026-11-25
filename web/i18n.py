@@ -318,7 +318,7 @@ _MATH = re.compile(r"\\\(.*?\\\)", re.S)
 
 
 def _mn(x):
-    return [m.replace("{,}", ".").replace("BNT", "LSD").replace("BNJ", "HSD") for m in _MATH.findall(x)]
+    return [_ABBR_RE.sub(lambda k: _ABBR[k.group(1)], m.replace("{,}", ".")) for m in _MATH.findall(x)]
 
 
 def mod_en():
@@ -326,7 +326,7 @@ def mod_en():
     return MOD_EN
 
 
-_ABBR = {"JKT": "SSTO", "JKP": "SSTR", "JKG": "SSE", "KTP": "MSTR", "KTG": "MSE", "JK": "SS", "KT": "MS", "KK": "CV", "BNT": "LSD", "BNJ": "HSD", "JKR": "SSR", "JKS": "SSL", "JKK": "SSB", "KTK": "MSB"}
+_ABBR = {"FK": "CF", "db": "df", "JKT": "SSTO", "JKP": "SSTR", "JKG": "SSE", "KTP": "MSTR", "KTG": "MSE", "JK": "SS", "KT": "MS", "KK": "CV", "BNT": "LSD", "BNJ": "HSD", "JKR": "SSR", "JKS": "SSL", "JKK": "SSB", "KTK": "MSB"}
 _ABBR_RE = re.compile(r"(?<![A-Za-z\\])(" + "|".join(sorted(_ABBR, key=len, reverse=True)) + r")(?![A-Za-z])")
 
 
@@ -426,3 +426,57 @@ def _fill_en_modules():
 
 
 _fill_en_modules()
+
+
+# ------------------------------------------------------------------ materi lengkap (pendalaman)
+def loc_lengkap(slug, en=False):
+    """Materi lengkap untuk satu modul. Versi Inggris hanya bila terjemahannya ada (jika tidak, None)."""
+    from . import belajar
+    lk = belajar.LENGKAP.get(slug)
+    if not lk or not en:
+        return lk
+    from .i18n_data.lengkap_en import LENGKAP_EN
+    t = LENGKAP_EN.get(slug)
+    if not t:
+        return None
+    out = dict(ref=lk["ref"], soal=t["soal"],
+               teori=[(h, list(p), [tr_eq(x) for x in eq]) for (_, _, eq), (h, p) in zip(lk["teori"], t["teori"])], contoh2=None)
+    c, tc = lk.get("contoh2"), t.get("contoh2")
+    if c and tc:
+        out["contoh2"] = dict(judul=tc["judul"], soal=tc["soal"], data=tc.get("data"),
+                              langkah=[(txt, tr_eq(eq) if eq else eq) for (_, eq), txt in zip(c["langkah"], tc["langkah"])], simpul=tc["simpul"])
+    return out
+
+
+def check_lengkap(slug):
+    """Periksa terjemahan materi lengkap: panjang daftar sama dan segmen \\( ... \\) identik."""
+    from . import belajar
+    from .i18n_data.lengkap_en import LENGKAP_EN
+    lk, t = belajar.LENGKAP.get(slug), LENGKAP_EN.get(slug)
+    if not lk:
+        return ["tidak ada (ID)"]
+    if not t:
+        return ["tidak ada (EN)"]
+    bad = []
+
+    def same(a, b, where):
+        if len(a) != len(b):
+            bad.append(f"{where}: panjang {len(a)} != {len(b)}")
+            return
+        for i, (x, y) in enumerate(zip(a, b)):
+            if isinstance(x, (list, tuple)):
+                same(x, y, f"{where}[{i}]")
+            elif isinstance(x, str) and _mn(x) != _mn(y):
+                bad.append(f"{where}[{i}]: math berbeda")
+    same([[h, p] for h, p, _ in lk["teori"]], [list(x) for x in t["teori"]], "teori")
+    same([list(s) for s in lk["soal"]], [list(s) for s in t["soal"]], "soal")
+    c, tc = lk.get("contoh2"), t.get("contoh2")
+    if c:
+        if not tc:
+            bad.append("contoh2 hilang")
+        else:
+            same([x[0] for x in c["langkah"]], tc["langkah"], "contoh2.langkah")
+            if c.get("data"):
+                same(c["data"], tc.get("data") or [], "contoh2.data")
+            same([c["soal"], c["simpul"]], [tc["soal"], tc["simpul"]], "contoh2.teks")
+    return bad
