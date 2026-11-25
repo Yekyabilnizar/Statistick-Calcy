@@ -23,7 +23,7 @@ def D(slug, teori=(), soal=()):
 
 def _load():
     import importlib
-    for name in ("lengkap_dasar", "lengkap_dasar2", "lengkap_des", "lengkap_des2", "lengkap_reg", "lengkap_reg2"):
+    for name in ("lengkap_dasar", "lengkap_dasar2", "lengkap_des", "lengkap_des2", "lengkap_reg", "lengkap_reg2", "lengkap_reg3", "lengkap_reg4"):
         try:
             importlib.import_module(f"{__package__}.{name}")
         except ModuleNotFoundError as e:
