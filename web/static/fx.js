@@ -15,7 +15,7 @@
   top.addEventListener('click', function () { window.scrollTo({top: 0, behavior: reduce ? 'auto' : 'smooth'}); });
 
   /* muncul saat tergulir ke layar */
-  var sel = '.panel,.mcard,.stat,.mod-row,.prose,.notice,.badge,.stage-card,h2.sec-h,.flow,.sc-wrap';
+  var sel = '.hx-feat,.hx-path,.hx-hl,.hx-cta-band,.panel,.mcard,.stat,.mod-row,.prose,.notice,.badge,.stage-card,h2.sec-h,.flow,.sc-wrap';
   if ('IntersectionObserver' in window && !reduce) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
