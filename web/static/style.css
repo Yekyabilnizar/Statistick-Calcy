@@ -383,3 +383,11 @@ ol.refs li{margin:6px 0}
 
 /* langkah di dalam materi selalu satu kolom (jangan ikut grid .steps beranda) */
 .lc ol.steps{grid-template-columns:1fr}
+
+/* panduan tambahan halaman kalkulator */
+.prose.mx ul{padding-left:20px;margin:6px 0 4px}.prose.mx li{margin:4px 0}
+.mx-dl{margin:6px 0}.mx-dl dt{font-weight:700;color:var(--ink);margin-top:10px}.mx-dl dd{margin:2px 0 0;color:#2B4560}
+.mx-warn li::marker{content:"⚠  "}
+.mx-q{margin:8px 0;padding:12px 16px;border-left:4px solid var(--lime-d);background:#F7FBEA;border-radius:0 12px 12px 0;color:#24361A;font-style:italic}
+.mx-faq{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;background:#FBFCFE}.mx-faq summary{cursor:pointer;font-weight:700;color:var(--ink)}.mx-faq p{margin:8px 0 2px}
+.mx-more{margin-top:18px;font-weight:600}

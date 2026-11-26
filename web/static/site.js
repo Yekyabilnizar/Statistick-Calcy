@@ -1,8 +1,12 @@
 /* site.js – pencarian metode di banner dan tab hasil (dipakai semua halaman) */
 (function () {
-  var idxEl = document.getElementById('search-index'), q = document.getElementById('q'), box = document.getElementById('sres');
-  var items = [];
-  try { items = JSON.parse(idxEl.textContent); } catch (e) {}
+  var q = document.getElementById('q'), box = document.getElementById('sres');
+  var items = [], loading = null;
+  function load() {
+    if (loading || !window.SIDX || !window.fetch) return loading;
+    loading = fetch(window.SIDX).then(function (r) { return r.json(); }).then(function (d) { items = d; if (q && q.value.trim()) show(); }).catch(function () { loading = null; });
+    return loading;
+  }
   function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
   var act = -1;
@@ -30,7 +34,8 @@
     box.className = 'sres open';
   }
   if (q) {
-    q.addEventListener('input', show);
+    q.addEventListener('focus', load);
+    q.addEventListener('input', function () { load(); show(); });
     q.addEventListener('keydown', function (e) {
       var links = box.querySelectorAll('a');
       if (e.key === 'ArrowDown' && links.length) { act = (act + 1) % links.length; }
