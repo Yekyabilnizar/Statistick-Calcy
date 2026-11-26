@@ -59,4 +59,15 @@
     var p = document.getElementById(b.getAttribute('data-t'));
     if (p) { p.classList.add('on'); if (window.drawPlots) window.drawPlots(p); }
   });
+
+  /* daftar isi otomatis di kolom samping */
+  var atoc = document.querySelector('.side-autotoc ul'), rmain = document.querySelector('.read-main');
+  if (atoc && rmain) {
+    var hs = rmain.querySelectorAll('h2');
+    if (!hs.length) atoc.parentNode.style.display = 'none';
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = 'bag-' + (i + 1);
+      var li = document.createElement('li'), a = document.createElement('a'); a.href = '#' + h.id; a.textContent = h.textContent; li.appendChild(a); atoc.appendChild(li);
+    });
+  }
 })();

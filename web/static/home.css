@@ -235,3 +235,7 @@ h1,.hx h1{font-weight:700}h2,.hx h2{font-weight:700}h3,.hx h3,h4{font-weight:600
 .totop{background:var(--navy,#14223A);color:var(--lime,#C3EE45);box-shadow:0 8px 22px rgba(14,26,43,.3)}
 @media (max-width:1080px){.read-grid{grid-template-columns:1fr}.read-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.side-toc{display:none}}
 .notasi .ns{min-width:56px}.notasi>div{padding:8px 12px}
+.read-main > .prose{margin:0 0 18px}
+.read-main > .prose:last-child{margin-bottom:0}
+.read-main .sc-wrap{margin:8px 0 4px}
+.read-main h2[id]{scroll-margin-top:16px}
