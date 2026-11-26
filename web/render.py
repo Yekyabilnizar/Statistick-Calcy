@@ -367,14 +367,21 @@ def to_xlsx(sheets, images=None, img_sheet="Grafik"):
         for j, col in enumerate(df.columns, 1):
             w = max([len(str(col))] + [len(str(v)) for v in df.iloc[:200, j - 1].tolist()]) if len(df) else len(str(col))
             ws.column_dimensions[get_column_letter(j)].width = min(max(10, w + 2), 48)
-    if images:
+    try:
         from openpyxl.drawing.image import Image as XLImage
+        import PIL  # noqa: F401  (openpyxl butuh Pillow untuk menyisipkan gambar)
+    except Exception:
+        images = None
+    if images:
         ws = wb.create_sheet(img_sheet[:31])
         ws.column_dimensions["A"].width = 3
         row = 1
         for title, png in images:
             ws.cell(row=row, column=2, value=title or img_sheet).font = Font(bold=True, size=12, color="14223A")
-            img = XLImage(io.BytesIO(png))
+            try:
+                img = XLImage(io.BytesIO(png))
+            except Exception:
+                continue
             h = img.height or 420
             if img.width and img.width > 900:
                 img.height = int(h * 900 / img.width)
