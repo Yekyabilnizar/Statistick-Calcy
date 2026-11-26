@@ -57,8 +57,11 @@
       cur = Math.max(0, Math.min(cards.length - 1, i)); seen[cur] = 1;
       cards.forEach(function (c, k) { c.classList.toggle('on', k === cur); btns[k].classList.toggle('on', k === cur); btns[k].classList.toggle('seen', !!seen[k]); });
       fill.style.width = (100 * (cur + 1) / cards.length) + '%';
+      sideB.forEach(function (b, k) { b.classList.toggle('on', k === cur); b.classList.toggle('seen', !!seen[k]); });
       try { history.replaceState(null, '', '#' + (cur + 1)); } catch (e) {}
     }
+    var sideB = Array.prototype.slice.call(document.querySelectorAll('.side-toc button[data-tab]'));
+    sideB.forEach(function (b) { b.addEventListener('click', function () { var k = +b.getAttribute('data-tab'); if (showAll) all.click(); go(k); window.scrollTo({top: wrap.offsetTop - 20, behavior: 'smooth'}); }); });
     wrap.classList.add('tabbed');
     var h = parseInt((location.hash || '').slice(1), 10); go(h >= 1 && h <= cards.length ? h - 1 : 0);
     document.addEventListener('keydown', function (e) {
