@@ -425,16 +425,18 @@ async def sitemap(request):
             return u.split("/")[-1] in i18n.EN_MODULES
         return u in i18n.READY_PATHS
 
+    import datetime as _dt
+    lm = "<lastmod>" + _dt.datetime.fromtimestamp(int(ASSET_V), _dt.timezone.utc).strftime("%Y-%m-%d") + "</lastmod>" if ASSET_V.isdigit() else ""
     out = []
     for u in urls:
         if en_ready(u):
             ue = "/en/" if u == "/" else "/en" + u
             alt = (f'<xhtml:link rel="alternate" hreflang="id" href="{b}{u}"/><xhtml:link rel="alternate" hreflang="en" href="{b}{ue}"/>'
                    f'<xhtml:link rel="alternate" hreflang="x-default" href="{b}{u}"/>')
-            out.append(f"<url><loc>{b}{u}</loc>{alt}</url>")
-            out.append(f"<url><loc>{b}{ue}</loc>{alt}</url>")
+            out.append(f"<url><loc>{b}{u}</loc>{lm}{alt}</url>")
+            out.append(f"<url><loc>{b}{ue}</loc>{lm}{alt}</url>")
         else:
-            out.append(f"<url><loc>{b}{u}</loc></url>")
+            out.append(f"<url><loc>{b}{u}</loc>{lm}</url>")
     body = ('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
             'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + "".join(out) + "</urlset>")
     return Response(body, media_type="application/xml")
