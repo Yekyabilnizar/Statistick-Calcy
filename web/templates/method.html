@@ -36,6 +36,7 @@
 
 <div id="result" aria-live="polite"></div>
 
+<div class="read-grid"><div class="read-main">
 <section class="prose">
   <h2>Tentang metode ini</h2><p>{{ m.desc }}</p>
   <h2>Kapan dipakai?</h2><p>{{ m.when }}</p>
@@ -55,7 +56,14 @@
 {% endif %}
 
 
-<h2 class="sec-h">Alur metode</h2><p class="sec-s">Langkah analisis yang dijalankan, dari data sampai kesimpulan.</p>
+</div>
+<aside class="read-side">
+  {% if module %}<div class="side-card"><div class="side-h">Pelajari teorinya</div><p class="side-p">Konsep, penurunan rumus, dua contoh hitung, dan soal latihan berkunci.</p><a class="btn pri side-btn" href="/belajar/{{ module.slug }}">🎓 Buka modul</a></div>{% endif %}
+  <div class="side-card side-toc"><div class="side-h">Kalkulator ini</div><ul><li><a href="#alat">1. Masukkan data</a></li><li><a href="#panduan-metode">Panduan & contoh pelaporan</a></li><li><a href="#alur">Alur metode</a></li></ul></div>
+  {% if related %}<div class="side-card"><div class="side-h">Metode terkait</div><ul>{% for r in related %}<li><a href="/metode/{{ r.slug }}">{{ r.title }}</a></li>{% endfor %}</ul><a class="side-next" href="/{{ fam_path }}">Semua metode →</a></div>{% endif %}
+</aside>
+</div>
+<h2 class="sec-h" id="alur">Alur metode</h2><p class="sec-s">Langkah analisis yang dijalankan, dari data sampai kesimpulan.</p>
 {{ flow|safe }}
 
 {% if related %}<h2 class="sec-h">Metode terkait</h2>

@@ -5,6 +5,7 @@
 
 {% if pras %}<div class="notice info"><span>📌</span><div>Disarankan dipelajari sebelumnya: {% for p in pras %}<a href="/belajar/{{ p.slug }}">{{ p.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</div></div>{% endif %}
 
+<div class="read-grid"><div class="read-main">
 <div class="lc-wrap" id="lc-wrap" data-slug="{{ mod.slug }}">
   <div class="lc-steps" id="lc-steps"><i></i></div>
   <nav class="lc-nav" id="lc-nav" aria-label="Bagian materi"></nav>
@@ -95,5 +96,21 @@
   {% if nxt %}<a href="/belajar/{{ nxt.slug }}" class="next"><small>Berikutnya →</small><b>{{ nxt.title }}</b></a>{% else %}<span></span>{% endif %}
 </nav>
 <p class="cap" style="text-align:center">Materi ini ringkasan untuk belajar dan tidak menggantikan buku teks. Rujuk sumber utama untuk keperluan publikasi.</p>
+</div>
+<aside class="read-side" aria-label="Di modul ini">
+  <div class="side-card">
+    <div class="side-k">Modul {{ idx }} dari {{ total }}</div>
+    <div class="side-t">{{ mod.tahap }}</div>
+    <div class="side-bar" title="Kemajuan jalur belajar"><i style="width:{{ (idx * 100 / total)|round(1) }}%"></i></div>
+    {% if prac %}<a class="btn pri side-btn" href="/metode/{{ prac.slug }}">🧮 Praktikkan di kalkulator</a>{% endif %}
+  </div>
+  <div class="side-card side-toc"><div class="side-h">Di modul ini</div>
+    <ol><li><button type="button" data-tab="0">Konsep</button></li><li><button type="button" data-tab="1">Teori</button></li><li><button type="button" data-tab="2">Rumus</button></li><li><button type="button" data-tab="3">Contoh hitung</button></li><li><button type="button" data-tab="4">Langkah</button></li><li><button type="button" data-tab="5">Baca hasil</button></li><li><button type="button" data-tab="6">Latihan</button></li></ol></div>
+  {% if pras %}<div class="side-card"><div class="side-h">Prasyarat</div><ul>{% for p in pras %}<li><a href="/belajar/{{ p.slug }}">{{ p.title }}</a></li>{% endfor %}</ul></div>{% endif %}
+  {% if nxt %}<div class="side-card"><div class="side-h">Modul berikutnya</div><a class="side-next" href="/belajar/{{ nxt.slug }}">{{ nxt.title }} →</a></div>{% endif %}
+  {% if lk and lk.ref %}<div class="side-card side-ref"><div class="side-h">Referensi utama</div><ul>{% for r in lk.ref[:3] %}<li>{{ r }}</li>{% endfor %}</ul></div>{% endif %}
+</aside>
+</div>
+
 {% endblock %}
 {% block scripts %}<script src="/static/belajar.js?v={{ asset_v }}" defer></script>{% endblock %}
