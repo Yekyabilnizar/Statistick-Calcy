@@ -162,13 +162,33 @@
       if (!rerun) $('result').scrollIntoView({behavior: 'smooth', block: 'start'});
     }).catch(function () { busy = false; $('run').disabled = false; $('result').style.opacity = ''; $('result').innerHTML = notice(L('Koneksi ke server gagal. Coba lagi.', 'Connection to the server failed. Please try again.'), 'error'); });
   }
+  function chartImages() {
+    var boxes = Array.prototype.slice.call($('result').querySelectorAll('.plot-box'));
+    if (!boxes.length) return Promise.resolve([]);
+    return loadPlotly().then(function () {
+      return Promise.all(boxes.map(function (b) {
+        try {
+          var d = JSON.parse(b.querySelector('.plot-data').textContent), lay = theme(d.layout), w = 900, h = lay.height || 420;
+          lay.width = w; lay.paper_bgcolor = '#FFFFFF'; lay.plot_bgcolor = '#FFFFFF';
+          var t = d.layout && d.layout.title ? (d.layout.title.text || d.layout.title) : '';
+          return Plotly.toImage({data: d.data, layout: lay}, {format: 'png', width: w, height: h, scale: 1})
+            .then(function (png) { return {title: String(t).replace(/<[^>]+>/g, ''), png: png}; }).catch(function () { return null; });
+        } catch (e) { return Promise.resolve(null); }
+      }));
+    }).then(function (a) { return a.filter(Boolean); }).catch(function () { return []; });
+  }
   function download() {
     if (!last) { alert(L('Jalankan analisis terlebih dahulu.', 'Run the analysis first.')); return; }
     last.opts = resultOpts();
-    fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(Object.assign({lang: window.LANG || 'id'}, last))})
+    var btn = $('xlsx'), lbl = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + L('Menyiapkan Excel…', 'Preparing Excel…');
+    chartImages().then(function (imgs) {
+      return fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(Object.assign({lang: window.LANG || 'id', images: imgs}, last))});
+    })
       .then(function (r) { if (!r.ok) throw new Error(); return r.blob(); })
-      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast(L('⬇️ Berkas Excel diunduh', '⬇️ Excel file downloaded')); })
-      .catch(function () { alert(L('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.', 'Could not create the Excel file. Run the analysis first.')); });
+      .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast(L('⬇️ Berkas Excel diunduh (data, hasil, dan grafik)', '⬇️ Excel file downloaded (data, results, and charts)')); })
+      .catch(function () { alert(L('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.', 'Could not create the Excel file. Run the analysis first.')); })
+      .then(function () { btn.disabled = false; btn.innerHTML = lbl; });
   }
   /* uji lanjut / kontrol Dunnett / SD-SE: hitung ulang dengan opsi baru, tab aktif dipertahankan */
   $('result').addEventListener('change', function (e) {
@@ -301,19 +321,26 @@
     });
     return plotlyReady;
   }
-  var AX = {showgrid: true, gridcolor: '#E9EFF7', zeroline: false, showline: true, linecolor: '#B6C6DA', ticks: 'outside', tickcolor: '#B6C6DA', automargin: true};
+  var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  var AX = {showgrid: true, gridcolor: '#EEF2F7', zeroline: false, showline: true, linecolor: '#C9D3DF', ticks: 'outside', tickcolor: '#C9D3DF', ticklen: 4, automargin: true, fixedrange: true, title: {standoff: 10}};
   function theme(l) {
     var out = Object.assign({}, l);
-    out.height = l.height || 420; out.margin = l.margin || {l: 56, r: 26, t: 62, b: 56};
+    out.height = l.height || 400; out.margin = l.margin || {l: 56, r: 20, t: 54, b: 56};
     out.paper_bgcolor = 'rgba(0,0,0,0)'; out.plot_bgcolor = 'rgba(255,255,255,0)';
-    out.colorway = ['#2563EB', '#0D9488', '#F59E0B', '#E11D48', '#7C3AED', '#0891B2', '#65A30D', '#DB2777'];
-    out.font = {family: 'Source Sans 3, sans-serif', color: '#0F2A43', size: 13};
-    out.title = Object.assign({x: 0.015, xanchor: 'left', font: {size: 16}}, l.title || {});
-    out.legend = {orientation: 'h', y: -0.2, x: 0};
+    out.colorway = ['#1E3A8A', '#7CB518', '#0E9F9A', '#F59E0B', '#DC4C64', '#6D5BD0', '#3B82F6', '#9CA3AF'];
+    out.font = {family: FONT, color: '#1F2D3D', size: 12.5};
+    out.title = Object.assign({x: 0.01, xanchor: 'left', y: 0.97, font: {size: 14.5, color: '#0E1A2B'}}, typeof l.title === 'string' ? {text: l.title} : (l.title || {}));
+    out.legend = Object.assign({orientation: 'h', y: -0.22, x: 0, font: {size: 12}}, l.legend || {});
+    out.hoverlabel = {bgcolor: '#14223A', bordercolor: '#14223A', font: {color: '#fff', family: FONT, size: 12}};
+    out.dragmode = false;
     if (l.xaxis) out.xaxis = Object.assign({}, AX, l.xaxis);
     if (l.yaxis) out.yaxis = Object.assign({}, AX, l.yaxis);
+    Object.keys(l).forEach(function (k) { if (/^[xy]axis\d+$/.test(k)) out[k] = Object.assign({}, AX, l[k]); });
     return out;
   }
+  var PCFG = {responsive: true, displaylogo: false, scrollZoom: false, doubleClick: false, showTips: false,
+              modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'toggleSpikelines', 'hoverClosestCartesian', 'hoverCompareCartesian', 'zoom3d', 'pan3d', 'orbitRotation', 'tableRotation', 'resetCameraDefault3d', 'resetCameraLastSave3d'],
+              toImageButtonOptions: {format: 'png', scale: 2}};
   window.drawPlots = function (root) {
     var boxes = root.querySelectorAll('.plot-box');
     if (!boxes.length) return;
@@ -325,7 +352,7 @@
         var hh = (d.layout && d.layout.height) || 420;
         el.style.height = hh + 'px';
         if (hh > 500) b.classList.add('wide');
-        Plotly.newPlot(el, d.data, theme(d.layout), {responsive: true, displaylogo: false});
+        Plotly.newPlot(el, d.data, theme(d.layout), PCFG);
         el.setAttribute('data-done', '1');
       });
     }).catch(function () { boxes.forEach(function (b) { b.querySelector('.plot').innerHTML = '<p class="cap">' + L('Grafik tidak dapat dimuat (pustaka grafik tidak terjangkau). Periksa koneksi internet Anda.', 'The chart could not be loaded (the charting library is unreachable). Check your internet connection.') + '</p>'; }); });
