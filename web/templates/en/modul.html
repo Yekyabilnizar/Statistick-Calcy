@@ -5,6 +5,7 @@
 
 {% if pras %}<div class="notice info"><span>📌</span><div>Recommended to study first: {% for p in pras %}<a href="/belajar/{{ p.slug }}">{{ p.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</div></div>{% endif %}
 
+<div class="read-grid"><div class="read-main">
 <div class="lc-wrap" id="lc-wrap" data-slug="{{ mod.slug }}">
   <div class="lc-steps" id="lc-steps"><i></i></div>
   <nav class="lc-nav" id="lc-nav" aria-label="Lesson sections"></nav>
@@ -95,5 +96,21 @@
   {% if nxt %}<a href="/belajar/{{ nxt.slug }}" class="next"><small>Next →</small><b>{{ nxt.title }}</b></a>{% else %}<span></span>{% endif %}
 </nav>
 <p class="cap" style="text-align:center">This material is a study summary and does not replace a textbook. Consult primary sources for publication.</p>
+</div>
+<aside class="read-side" aria-label="In this module">
+  <div class="side-card">
+    <div class="side-k">Module {{ idx }} of {{ total }}</div>
+    <div class="side-t">{{ mod.tahap }}</div>
+    <div class="side-bar" title="Learning path progress"><i style="width:{{ (idx * 100 / total)|round(1) }}%"></i></div>
+    {% if prac %}<a class="btn pri side-btn" href="/metode/{{ prac.slug }}">🧮 Practise in the calculator</a>{% endif %}
+  </div>
+  <div class="side-card side-toc"><div class="side-h">In this module</div>
+    <ol><li><button type="button" data-tab="0">Concept</button></li><li><button type="button" data-tab="1">Theory</button></li><li><button type="button" data-tab="2">Formulas</button></li><li><button type="button" data-tab="3">Worked example</button></li><li><button type="button" data-tab="4">Steps</button></li><li><button type="button" data-tab="5">Reading results</button></li><li><button type="button" data-tab="6">Practice</button></li></ol></div>
+  {% if pras %}<div class="side-card"><div class="side-h">Prerequisites</div><ul>{% for p in pras %}<li><a href="/belajar/{{ p.slug }}">{{ p.title }}</a></li>{% endfor %}</ul></div>{% endif %}
+  {% if nxt %}<div class="side-card"><div class="side-h">Next module</div><a class="side-next" href="/belajar/{{ nxt.slug }}">{{ nxt.title }} →</a></div>{% endif %}
+  {% if lk and lk.ref %}<div class="side-card side-ref"><div class="side-h">Key references</div><ul>{% for r in lk.ref[:3] %}<li>{{ r }}</li>{% endfor %}</ul></div>{% endif %}
+</aside>
+</div>
+
 {% endblock %}
 {% block scripts %}<script src="/static/belajar.js?v={{ asset_v }}" defer></script>{% endblock %}
