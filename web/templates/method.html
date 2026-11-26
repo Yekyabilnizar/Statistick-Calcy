@@ -42,6 +42,18 @@
   <h2>Asumsi yang perlu dipenuhi</h2><p>{{ m.assume }}</p>
   <h2>Cara membaca hasil</h2><p>{{ m.read }}</p>
 </section>
+{% if ext %}
+<section class="prose mx" id="panduan-metode">
+  <h2>Contoh situasi pemakaian</h2><p>{{ ext.kasus }}</p>
+  <h2>Menyiapkan data untuk kalkulator ini</h2><ul>{% for d in ext.data %}<li>{{ d }}</li>{% endfor %}</ul>
+  <h2>Membaca hasil kalkulator, bagian demi bagian</h2><dl class="mx-dl">{% for k, v in ext.baca %}<dt>{{ k }}</dt><dd>{{ v }}</dd>{% endfor %}</dl>
+  <h2>Kesalahan yang sering terjadi</h2><ul class="mx-warn">{% for s in ext.salah %}<li>{{ s }}</li>{% endfor %}</ul>
+  <h2>Contoh penulisan di laporan atau skripsi</h2><blockquote class="mx-q">{{ ext.lapor }}</blockquote>
+  <h2>Pertanyaan yang sering muncul</h2>{% for q, a in ext.faq %}<details class="mx-faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
+  {% if module %}<p class="mx-more">Teori lengkap, penurunan rumus, contoh hitung, dan soal latihan ada di modul <a href="/belajar/{{ module.slug }}">{{ module.title }}</a>.</p>{% endif %}
+</section>
+{% endif %}
+
 
 <h2 class="sec-h">Alur metode</h2><p class="sec-s">Langkah analisis yang dijalankan, dari data sampai kesimpulan.</p>
 {{ flow|safe }}

@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v={{ asset_v }}">
 <meta name="theme-color" content="#14223A">
 <meta property="og:type" content="website"><meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
-<meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="{{ 'en_US' if lang=='en' else 'id_ID' }}"><meta name="twitter:card" content="summary">
+<meta property="og:url" content="{{ canonical }}"><meta property="og:locale" content="{{ 'en_US' if lang=='en' else 'id_ID' }}"><meta property="og:image" content="{{ site_base }}/static/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
@@ -65,7 +65,7 @@
 </footer>
 </div>
 <script>window.LANG="{{ lang }}";window.LP="{{ '/en' if lang=='en' else '' }}";</script>
-<script id="search-index" type="application/json">{{ search_index|safe }}</script>
+<script>window.SIDX="/search-index-{{ lang }}.json?v={{ asset_v }}";</script>
 <script src="/static/site.js?v={{ asset_v }}" defer></script>
 <script src="/static/fx.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
