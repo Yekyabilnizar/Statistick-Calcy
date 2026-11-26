@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="read-grid"><div class="read-main">
 <section class="prose">
 <h2>Kebijakan Privasi</h2>
 <p>Terakhir diperbarui: {{ updated }}.</p>
@@ -25,4 +26,11 @@
 <h2>Kontak</h2>
 <p>{{ contact|safe }}</p>
 </section>
+</div>
+<aside class="read-side">
+  <div class="side-card side-toc side-autotoc"><div class="side-h">Di halaman ini</div><ul></ul></div>
+  <div class="side-card"><div class="side-h">Hubungi kami</div><p class="side-p">Saran, laporan galat, atau pertanyaan seputar metode.</p>{% if contact_email %}<p class="side-p"><a href="mailto:{{ contact_email }}">✉️ {{ contact_email }}</a></p>{% endif %}<a class="btn pri side-btn" href="/masukan">💬 Kirim masukan</a></div>
+  <div class="side-card"><div class="side-h">Tautan cepat</div><ul><li><a href="/belajar">Jalur belajar</a></li><li><a href="/panduan">Panduan memilih metode</a></li><li><a href="/tentang">Tentang GetComput</a></li><li><a href="/privasi">Kebijakan privasi & penafian</a></li></ul></div>
+</aside>
+</div>
 {% endblock %}
