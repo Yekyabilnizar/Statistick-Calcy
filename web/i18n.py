@@ -480,3 +480,25 @@ def check_lengkap(slug):
                 same(c["data"], tc.get("data") or [], "contoh2.data")
             same([c["soal"], c["simpul"]], [tc["soal"], tc["simpul"]], "contoh2.teks")
     return bad
+
+
+# ------------------------------------------------------------------ panduan tambahan halaman kalkulator
+def loc_extra(slug, en=False):
+    """Penjelasan tambahan halaman /metode/<slug>; versi Inggris hanya bila terjemahannya ada."""
+    from . import metode_extra
+    x = metode_extra.EXTRA.get(slug)
+    if not x or not en:
+        return x
+    from .i18n_data.metode_extra_en import EXTRA_EN
+    return EXTRA_EN.get(slug)
+
+
+def check_extra(slug):
+    from . import metode_extra
+    from .i18n_data.metode_extra_en import EXTRA_EN
+    x, t = metode_extra.EXTRA.get(slug), EXTRA_EN.get(slug)
+    if not x:
+        return ["tidak ada (ID)"]
+    if not t:
+        return ["tidak ada (EN)"]
+    return [k for k in ("data", "baca", "salah", "faq") if len(x[k]) != len(t[k])]

@@ -25,7 +25,7 @@ from starlette.responses import FileResponse  # noqa: E402
 from starlette.templating import Jinja2Templates  # noqa: E402
 
 import flows  # noqa: E402
-from web import belajar, core, feedback_web, guide_data, i18n, registry, render  # noqa: E402
+from web import belajar, metode_extra, core, feedback_web, guide_data, i18n, registry, render  # noqa: E402
 from web.i18n import lang_of  # noqa: E402
 from starlette.responses import HTMLResponse  # noqa: E402
 
@@ -86,6 +86,11 @@ def search_index(lang="id"):
     return json.dumps(items, ensure_ascii=False).replace("<", "\\u003c")
 
 
+async def search_index_json(request):
+    lang = "en" if request.path_params.get("lang") == "en" else "id"
+    return Response(search_index(lang), media_type="application/json")
+
+
 def page(request, name, *, title="", description="", path, hero_title="", hero_lead="", hero_tags=None, active=None, status=200,
          key=None, meta_vars=None, ready=None, **ctx):
     lang = lang_of(request)
@@ -106,8 +111,8 @@ def page(request, name, *, title="", description="", path, hero_title="", hero_l
     pk = ("hero" if path == "/" else "group" if path == "/belajar" else "books" if path.startswith("/belajar/") else
           "field" if act == "/rancangan-percobaan" else "charts" if act == "/regresi" else "notes" if act in ("/panduan", "/alur-metode") else "books")
     ctx.setdefault("hero_photo", HOME_PHOTOS[pk][0])
-    ctx.update(title=title, description=description, canonical=b + (p_en if en else path), hero_title=hero_title, hero_lead=hero_lead,
-               hero_tags=hero_tags, nav_items=i18n.NAV[lang], active=active if active is not None else path, search_index=search_index(lang),
+    ctx.update(site_base=b, title=title, description=description, canonical=b + (p_en if en else path), hero_title=hero_title, hero_lead=hero_lead,
+               hero_tags=hero_tags, nav_items=i18n.NAV[lang], active=active if active is not None else path,
                asset_v=ASSET_V, goatcounter=GOATCOUNTER, adsense=ADSENSE, ga_id=GA_ID, jsonld=ctx.get("jsonld"), request=request,
                lang=lang, ready_en=ready, noindex=(en and not ready), alt_id=b + path,
                alt_en=b + ("/en/" if path == "/" else "/en" + path), qs=("?" + request.url.query) if request.url.query else "")
@@ -122,7 +127,8 @@ def contact_html(en=False):
     if CONTACT_EMAIL:
         pre = "Contact us at" if en else "Hubungi kami melalui"
         return f'{pre} <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>.'
-    return "The developer's contact details will be added here." if en else "Kontak pengembang akan ditambahkan di sini."
+    return ('You can also reach the developer through the <a href="/masukan">feedback form</a>; include your email if you would like a reply.' if en
+            else 'Anda juga dapat menghubungi pengembang melalui <a href="/masukan">formulir masukan</a>; sertakan email Anda bila ingin dibalas.')
 
 
 def client_ip(request):
@@ -231,7 +237,8 @@ async def method_page(request):
     return page(request, "method.html", key="method", meta_vars={"t": m["title"], "d": m["desc"]}, ready=m["slug"] in i18n.EN_METHODS, title=f"{m['title']} – Kalkulator Online | GetComput",
                 description=f"{m['desc']} Hitung online: tabel hasil, uji asumsi, grafik, dan interpretasi otomatis.", path=path, active="/" + registry.FAM_PATH[m["family"]],
                 hero_title=m["title"], hero_lead=m["desc"], hero_tags=m["tags"], m=m, fam_name=(i18n.FAM_NAME_EN if lang_of(request) == "en" else registry.FAM_NAME)[m["family"]],
-                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=mod_)
+                fam_path=registry.FAM_PATH[m["family"]], related=related, spec=spec, flow=flow, jsonld=ld, module=mod_,
+                ext=i18n.loc_extra(m["slug"], en))
 
 
 async def guide(request):
@@ -502,8 +509,8 @@ def clean_params(m, df, raw):
             if out[n] is not None and not (abs(out[n]) < 1e15):
                 out[n] = None
         elif t == "select_multi":
-            vs = v if isinstance(v, list) else []
-            out[n] = [x for x in f["options"] if x in vs]
+            vs = {str(x) for x in v} if isinstance(v, list) else set()
+            out[n] = [x for x in f["options"] if str(x) in vs]
         elif t in ("num", "cat", "any", "cat_opt", "any_opt"):
             if v in (None, ""):
                 if t in ("cat_opt", "any_opt"):
@@ -630,6 +637,11 @@ class Guard:
                 h = list(msg.get("headers", []))
                 h += [(b"x-content-type-options", b"nosniff"), (b"referrer-policy", b"strict-origin-when-cross-origin"),
                       (b"x-frame-options", b"SAMEORIGIN")]
+                path = scope["path"]
+                if msg.get("status") == 200 and (path.startswith("/static/") or path.startswith("/search-index")):
+                    versioned = b"v=" in scope.get("query_string", b"")
+                    h = [x for x in h if x[0].lower() != b"cache-control"]
+                    h.append((b"cache-control", b"public, max-age=31536000, immutable" if versioned else b"public, max-age=86400"))
                 msg["headers"] = h
             await send(msg)
         return await self.app(scope, receive, send2)
@@ -639,7 +651,7 @@ routes = [
     Route("/", home), Route("/rancangan-percobaan", family_page), Route("/regresi", family_page),
     Route("/metode/{slug}", method_page), Route("/belajar", learn_index), Route("/belajar/{slug}", learn_module), Route("/panduan", guide), Route("/alur-metode", flow_page), Route("/masukan", feedback_page),
     Route("/api/feedback", api_feedback, methods=["POST"]), Route("/api/{slug}/gen", api_gen, methods=["POST"]), Route("/tentang", about), Route("/privasi", privacy),
-    Route("/robots.txt", robots), Route("/ads.txt", ads_txt), Route("/sitemap.xml", sitemap), Route("/healthz", healthz),
+    Route("/search-index-{lang}.json", search_index_json), Route("/robots.txt", robots), Route("/ads.txt", ads_txt), Route("/sitemap.xml", sitemap), Route("/healthz", healthz),
     Route("/api/parse", api_parse, methods=["POST"]), Route("/api/inspect", api_inspect, methods=["POST"]),
     Route("/api/{slug}/sample", api_sample), Route("/api/{slug}/run", api_run, methods=["POST"]),
     Route("/api/{slug}/xlsx", api_xlsx, methods=["POST"]),
