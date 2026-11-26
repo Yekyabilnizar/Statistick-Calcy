@@ -154,12 +154,13 @@ def too_many(request, limit=None, window=60, bucket=""):
     return False
 
 
-async def read_json(request):
+async def read_json(request, limit=None):
+    limit = limit or MAX_BODY
     cl = request.headers.get("content-length")
-    if cl and cl.isdigit() and int(cl) > MAX_BODY:
+    if cl and cl.isdigit() and int(cl) > limit:
         raise core.InputError("Data terlalu besar (maksimal sekitar 4 MB).")
     body = await request.body()
-    if len(body) > MAX_BODY:
+    if len(body) > limit:
         raise core.InputError("Data terlalu besar (maksimal sekitar 4 MB).")
     try:
         data = json.loads(body or b"{}")
@@ -566,10 +567,12 @@ async def _compute(request, slug):
     m = registry.BY_SLUG.get(slug)
     if not m:
         raise core.InputError("Metode tidak ditemukan.")
-    body = await read_json(request)
+    body = await read_json(request, 16_000_000 if request.url.path.endswith("/xlsx") else None)
+    request.state.body = body
     alpha = body.get("alpha", 0.05)
     alpha = alpha if alpha in ALPHAS else 0.05
     df = await run_in_threadpool(core.parse_table, body.get("csv"))
+    request.state.df = df
     params = clean_params(m, df, body.get("params"))
     opts = body.get("opts") if isinstance(body.get("opts"), dict) else {}
 
@@ -605,10 +608,38 @@ async def api_run(request):
         return _fail(e, "run")
 
 
+def _decode_images(raw):
+    """Gambar grafik dari peramban (PNG base64) untuk disisipkan ke Excel; dibatasi jumlah dan ukurannya."""
+    import base64
+    out = []
+    if not isinstance(raw, list):
+        return out
+    for it in raw[:40]:
+        if not isinstance(it, dict):
+            continue
+        src = str(it.get("png") or "")
+        if not src.startswith("data:image/png;base64,"):
+            continue
+        try:
+            b = base64.b64decode(src.split(",", 1)[1], validate=True)
+        except Exception:
+            continue
+        if b[:8] != b"\x89PNG\r\n\x1a\n" or len(b) > 3_000_000:
+            continue
+        out.append((str(it.get("title") or "")[:120], b))
+    return out
+
+
 async def api_xlsx(request):
     try:
         _, sheets = await _compute(request, request.path_params["slug"])
-        data = await run_in_threadpool(render.to_xlsx, sheets)
+        en = request.state.body.get("lang") == "en"
+        if isinstance(sheets, dict) and not any(str(k).lower().startswith("data") for k in sheets):
+            sheets = {("Input data" if en else "Data masukan"): request.state.df.reset_index(drop=True), **sheets}
+        if isinstance(sheets, dict):
+            sheets = {**{k: v for k, v in sheets.items() if str(k).lower().startswith("data")}, **{k: v for k, v in sheets.items() if not str(k).lower().startswith("data")}}
+        imgs = _decode_images(request.state.body.get("images"))
+        data = await run_in_threadpool(render.to_xlsx, sheets, imgs, "Charts" if en else "Grafik")
         return Response(data, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         headers={"Content-Disposition": f'attachment; filename="hasil_{request.path_params["slug"]}.xlsx"'})
     except Exception as e:

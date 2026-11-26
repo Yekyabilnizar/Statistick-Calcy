@@ -342,8 +342,10 @@ def render(kind, R, alpha, params, opts=None):
     return fn(R, alpha) if fn else render_std(R, alpha)
 
 
-def to_xlsx(sheets):
+def to_xlsx(sheets, images=None, img_sheet="Grafik"):
     from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.utils import get_column_letter
     wb = Workbook()
     wb.remove(wb.active)
     used = set()
@@ -358,6 +360,27 @@ def to_xlsx(sheets):
         ws.append([str(c) for c in df.columns])
         for row in df.itertuples(index=False, name=None):
             ws.append([None if (isinstance(v, float) and not np.isfinite(v)) else (v.item() if hasattr(v, "item") else v) for v in row])
+        hdr_fill, hdr_font = PatternFill("solid", fgColor="14223A"), Font(bold=True, color="FFFFFF")
+        for c in ws[1]:
+            c.fill, c.font, c.alignment = hdr_fill, hdr_font, Alignment(vertical="center", wrap_text=True)
+        ws.freeze_panes = "A2"
+        for j, col in enumerate(df.columns, 1):
+            w = max([len(str(col))] + [len(str(v)) for v in df.iloc[:200, j - 1].tolist()]) if len(df) else len(str(col))
+            ws.column_dimensions[get_column_letter(j)].width = min(max(10, w + 2), 48)
+    if images:
+        from openpyxl.drawing.image import Image as XLImage
+        ws = wb.create_sheet(img_sheet[:31])
+        ws.column_dimensions["A"].width = 3
+        row = 1
+        for title, png in images:
+            ws.cell(row=row, column=2, value=title or img_sheet).font = Font(bold=True, size=12, color="14223A")
+            img = XLImage(io.BytesIO(png))
+            h = img.height or 420
+            if img.width and img.width > 900:
+                img.height = int(h * 900 / img.width)
+                img.width = 900
+            ws.add_image(img, f"B{row + 1}")
+            row += int((img.height or 420) / 20) + 4
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()
