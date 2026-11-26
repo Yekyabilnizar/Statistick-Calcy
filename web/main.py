@@ -388,13 +388,13 @@ async def api_gen(request):
 async def about(request):
     return page(request, "about.html", key="about", title="Tentang GetComput", description="Tentang GetComput: kalkulator analisis statistika berbahasa Indonesia.",
                 path="/tentang", hero_title="Tentang GetComput", hero_lead="Cara membaca hasil, asumsi perhitungan, dan batasan yang perlu diketahui.",
-                hero_tags=["Panduan membaca hasil"], contact=contact_html(lang_of(request) == "en"))
+                hero_tags=["Panduan membaca hasil"], contact=contact_html(lang_of(request) == "en"), contact_email=CONTACT_EMAIL)
 
 
 async def privacy(request):
     return page(request, "privacy.html", key="privacy", title="Kebijakan Privasi & Penafian – GetComput", description="Kebijakan privasi dan penafian GetComput.",
                 path="/privasi", hero_title="Kebijakan Privasi & Penafian", hero_lead="Bagaimana data Anda diperlakukan dan batas tanggung jawab layanan.",
-                contact=contact_html(lang_of(request) == "en"), updated=date.today().strftime("%d-%m-%Y"))
+                contact=contact_html(lang_of(request) == "en"), contact_email=CONTACT_EMAIL, updated=date.today().strftime("%d-%m-%Y"))
 
 
 async def not_found(request, exc):
