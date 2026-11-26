@@ -185,9 +185,9 @@
     chartImages().then(function (imgs) {
       return fetch('/api/' + slug + '/xlsx', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(Object.assign({lang: window.LANG || 'id', images: imgs}, last))});
     })
-      .then(function (r) { if (!r.ok) throw new Error(); return r.blob(); })
+      .then(function (r) { if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.error || ''); }); return r.blob(); })
       .then(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hasil_' + slug + '.xlsx'; document.body.appendChild(a); a.click(); a.remove(); if (window.toast) toast(L('⬇️ Berkas Excel diunduh (data, hasil, dan grafik)', '⬇️ Excel file downloaded (data, results, and charts)')); })
-      .catch(function () { alert(L('Gagal membuat berkas Excel. Jalankan analisis terlebih dahulu.', 'Could not create the Excel file. Run the analysis first.')); })
+      .catch(function (e) { alert((e && e.message) ? e.message : L('Gagal membuat berkas Excel. Coba lagi sebentar lagi.', 'Could not create the Excel file. Please try again shortly.')); })
       .then(function () { btn.disabled = false; btn.innerHTML = lbl; });
   }
   /* uji lanjut / kontrol Dunnett / SD-SE: hitung ulang dengan opsi baru, tab aktif dipertahankan */
