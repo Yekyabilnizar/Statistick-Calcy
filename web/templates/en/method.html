@@ -42,6 +42,18 @@
   <h2>Assumptions to satisfy</h2><p>{{ m.assume }}</p>
   <h2>How to read the results</h2><p>{{ m.read }}</p>
 </section>
+{% if ext %}
+<section class="prose mx" id="panduan-metode">
+  <h2>An example situation</h2><p>{{ ext.kasus }}</p>
+  <h2>Preparing data for this calculator</h2><ul>{% for d in ext.data %}<li>{{ d }}</li>{% endfor %}</ul>
+  <h2>Reading the calculator output, part by part</h2><dl class="mx-dl">{% for k, v in ext.baca %}<dt>{{ k }}</dt><dd>{{ v }}</dd>{% endfor %}</dl>
+  <h2>Common mistakes</h2><ul class="mx-warn">{% for s in ext.salah %}<li>{{ s }}</li>{% endfor %}</ul>
+  <h2>Example wording for a report or thesis</h2><blockquote class="mx-q">{{ ext.lapor }}</blockquote>
+  <h2>Frequently asked questions</h2>{% for q, a in ext.faq %}<details class="mx-faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
+  {% if module %}<p class="mx-more">Full theory, derivations, worked examples, and practice questions are in the module <a href="/belajar/{{ module.slug }}">{{ module.title }}</a>.</p>{% endif %}
+</section>
+{% endif %}
+
 
 <h2 class="sec-h">Method flow</h2><p class="sec-s">The analysis steps that are run, from data to conclusion.</p>
 {{ flow|safe }}
