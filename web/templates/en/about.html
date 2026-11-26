@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="sec-h">How to read the results</h2>
+<div class="read-grid"><div class="read-main">
+<section class="prose">
+<h2>What is GetComput?</h2>
+<p>GetComput is a statistics learning website, in Indonesian and English. The material is arranged in order from the basics to advanced methods, and each topic has a calculator so you can practise with your own data. You choose a method, enter data, and get result tables, charts, assumption tests, and an automatic interpretation that can be downloaded to Excel.</p>
+<h2>Who is it for?</h2>
+<p>Students, researchers, and practitioners who analyse experimental data (agriculture, animal science, fisheries, forestry, health, industry) or observational data, without writing code.</p>
+<h2>How are the calculations done?</h2>
+<p>Calculations use Python scientific libraries (NumPy and SciPy). Analysis of variance for experimental designs uses sequential (Type I) sums of squares with Indonesian reporting conventions: the marks **, *, and tn (not significant), the coefficient of variation (KK), and letter notation for post-hoc tests. The type of sum of squares, reference categories, and estimation method may differ from other software; verification is still recommended for publication.</p>
+</section>
+<section class="prose">
+<h2>How to read the results</h2>
 <div class="sc-wrap" style="max-height:none"><table class="sc-table read"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
 <tr><td class="first"><b>** / * / tn</b></td><td class="wrap">Highly significant (P&lt;0.01) / significant (P&lt;0.05) / not significant.</td></tr>
 <tr><td class="first"><b>KK</b></td><td class="wrap">Coefficient of variation (KK) = √error MS ÷ grand mean × 100%. The smaller it is, the more precise the experiment.</td></tr>
@@ -10,23 +20,26 @@
 <tr><td class="first"><b>AIC / BIC</b></td><td class="wrap">Model selection criteria; smaller is better.</td></tr>
 <tr><td class="first"><b>Odds ratio / IRR / HR</b></td><td class="wrap">Multiplier of odds (logistic), event rate (Poisson), and hazard (Cox) for a 1-unit increase in X.</td></tr>
 </tbody></table></div>
-<h2 class="sec-h">Methodology notes</h2>
+</section>
 <section class="prose">
+<h2>Methodology notes</h2>
 <ul>
 <li>Analysis of variance uses <b>sequential (Type I)</b> sums of squares; on balanced data this equals Type II/III.</li>
 <li>Assumption tests are supportive only; small samples make them underpowered, so also look at the residual plots.</li>
 <li>Post-hoc tests should be used only when the F test is significant. <b>LSD (BNT)</b> does not control type I error across many comparisons; <b>Tukey</b> and <b>Scheffé</b> are more conservative; <b>Dunnett</b> is for comparisons against a control.</li>
 <li>Advanced models (panel, spatial, mixed, Cox, Tobit) are <b>analysis aids</b>; check the model assumptions and consult a statistician for publication.</li>
 </ul>
-<h2>What is GetComput?</h2>
-<p>GetComput is a statistics learning website, in Indonesian and English. The material is arranged in order from the basics to advanced methods, and each topic has a calculator so you can practise with your own data. You choose a method, enter data, and get result tables, charts, assumption tests, and an automatic interpretation that can be downloaded to Excel.</p>
-<h2>Who is it for?</h2>
-<p>Students, researchers, and practitioners who analyse experimental data (agriculture, animal science, fisheries, forestry, health, industry) or observational data, without writing code.</p>
-<h2>How are the calculations done?</h2>
-<p>Calculations use Python scientific libraries (NumPy and SciPy). Analysis of variance for experimental designs uses sequential (Type I) sums of squares with Indonesian reporting conventions: the marks **, *, and tn (not significant), the coefficient of variation (KK), and letter notation for post-hoc tests. The type of sum of squares, reference categories, and estimation method may differ from other software; verification is still recommended for publication.</p>
+</section>
+<section class="prose">
 <h2>Disclaimer</h2>
 <p>Results are a study aid, not a substitute for statistical consultation. The developer is not responsible for decisions made based on the calculation results.</p>
 <h2>Contact and feedback</h2>
-<p>Have a suggestion or found a problem? Use the <a href="/masukan">Feedback</a> page. {{ contact|safe }}</p>
-</section>
+<p>Have a suggestion or found a problem? Use the <a href="/masukan">Feedback</a> page. {{ contact|safe }}</p></section>
+</div>
+<aside class="read-side">
+  <div class="side-card side-toc side-autotoc"><div class="side-h">On this page</div><ul></ul></div>
+  <div class="side-card"><div class="side-h">Contact us</div><p class="side-p">Suggestions, error reports, or questions about methods.</p>{% if contact_email %}<p class="side-p"><a href="mailto:{{ contact_email }}">✉️ {{ contact_email }}</a></p>{% endif %}<a class="btn pri side-btn" href="/masukan">💬 Send feedback</a></div>
+  <div class="side-card"><div class="side-h">Quick links</div><ul><li><a href="/belajar">Learning path</a></li><li><a href="/panduan">Method guide</a></li><li><a href="/tentang">About GetComput</a></li><li><a href="/privasi">Privacy policy & disclaimer</a></li></ul></div>
+</aside>
+</div>
 {% endblock %}

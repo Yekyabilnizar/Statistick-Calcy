@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="read-grid"><div class="read-main">
 <section class="prose">
 <h2>Privacy Policy</h2>
 <p>Last updated: {{ updated }}.</p>
@@ -25,4 +26,11 @@
 <h2>Contact</h2>
 <p>{{ contact|safe }}</p>
 </section>
+</div>
+<aside class="read-side">
+  <div class="side-card side-toc side-autotoc"><div class="side-h">On this page</div><ul></ul></div>
+  <div class="side-card"><div class="side-h">Contact us</div><p class="side-p">Suggestions, error reports, or questions about methods.</p>{% if contact_email %}<p class="side-p"><a href="mailto:{{ contact_email }}">✉️ {{ contact_email }}</a></p>{% endif %}<a class="btn pri side-btn" href="/masukan">💬 Send feedback</a></div>
+  <div class="side-card"><div class="side-h">Quick links</div><ul><li><a href="/belajar">Learning path</a></li><li><a href="/panduan">Method guide</a></li><li><a href="/tentang">About GetComput</a></li><li><a href="/privasi">Privacy policy & disclaimer</a></li></ul></div>
+</aside>
+</div>
 {% endblock %}
